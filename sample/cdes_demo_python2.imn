@@ -1,0 +1,315 @@
+node n1 {
+    type router
+    model router
+    network-config {
+	hostname n1
+	!
+	interface eth0
+	 ip address 10.0.0.1/24
+	 ipv6 address 2001::1/64
+	 mac address 00:00:00:aa:00:02
+	!
+	interface eth1
+	 ip address 10.0.1.1/24
+	 mac address 00:00:00:aa:00:00
+	!
+    }
+    canvas c1
+    iconcoords {85.0 237.0}
+    labelcoords {85.0 269.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth1 n3}
+    interface-peer {eth0 n4}
+}
+
+node n2 {
+    type router
+    model router
+    network-config {
+	hostname n2
+	!
+	interface eth0
+	 mac address 0a:00:00:00:00:00
+	 ip address 10.0.0.2/24
+	!
+	interface eth1
+	 ip address 10.0.2.1/24
+	 ipv6 address 2001:1::1/64
+	 mac address 00:00:00:aa:00:03
+	!
+    }
+    canvas c1
+    iconcoords {250.0 115.0}
+    labelcoords {250.0 147.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n4}
+    interface-peer {eth1 n6}
+}
+
+node n3 {
+    type router
+    model router
+    network-config {
+	hostname n3
+	!
+	interface eth0
+	 ip address 10.0.1.2/24
+	 mac address 00:00:00:aa:00:01
+	!
+    }
+    canvas c1
+    iconcoords {297.0 304.0}
+    labelcoords {297.0 336.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n1}
+}
+
+node n4 {
+    type lanswitch
+    network-config {
+	hostname n4
+	!
+    }
+    canvas c1
+    iconcoords {111.0 128.0}
+    labelcoords {111.0 152.0}
+    custom-image /usr/local/share/core/icons/normal/router_yellow.gif
+    interface-peer {e0 n1}
+    interface-peer {e1 n5}
+    interface-peer {e2 n2}
+}
+
+node n5 {
+    type router
+    model host
+    network-config {
+	hostname n5
+	!
+	interface eth0
+	 mac address 0a:00:00:00:00:00
+	 ip address 10.0.0.2/24
+	!
+    }
+    canvas c1
+    iconcoords {176.0 41.0}
+    labelcoords {176.0 73.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n4}
+}
+
+node n6 {
+    type router
+    model router
+    network-config {
+	hostname n6
+	!
+	interface eth0
+	 ip address 10.0.2.2/24
+	 ipv6 address 2001:1::2/64
+	 mac address 00:00:00:aa:00:04
+	!
+	interface eth1
+	 ip address 10.0.3.1/24
+	 ipv6 address 2001:2::1/64
+	 mac address 00:00:00:aa:00:05
+	!
+	interface eth2
+	 ip address 10.0.4.1/24
+	 ipv6 address 2001:3::1/64
+	 mac address 00:00:00:aa:00:07
+	!
+    }
+    canvas c1
+    iconcoords {356.0 94.0}
+    labelcoords {356.0 126.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth2 n7}
+    interface-peer {eth1 n9}
+    interface-peer {eth0 n2}
+}
+
+node n7 {
+    type router
+    model router
+    network-config {
+	hostname n7
+	!
+	interface eth0
+	 ip address 10.0.4.2/24
+	 ipv6 address 2001:3::2/64
+	 mac address 00:00:00:aa:00:08
+	!
+	interface eth1
+	 ip address 10.0.5.1/24
+	 ipv6 address 2001:4::1/64
+	 mac address 00:00:00:aa:00:09
+	!
+	interface eth2
+	 ip address 10.0.6.1/24
+	 ipv6 address 2001:5::1/64
+	 mac address 00:00:00:aa:00:0b
+	!
+    }
+    canvas c1
+    iconcoords {460.0 96.0}
+    labelcoords {460.0 128.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth2 n8}
+    interface-peer {eth1 n10}
+    interface-peer {eth0 n6}
+}
+
+node n8 {
+    type router
+    model router
+    network-config {
+	hostname n8
+	!
+	interface eth0
+	 ip address 10.0.6.2/24
+	 ipv6 address 2001:5::2/64
+	 mac address 00:00:00:aa:00:0c
+	!
+	interface eth1
+	 ip address 10.0.7.1/24
+	 ipv6 address 2001:6::1/64
+	 mac address 00:00:00:aa:00:0d
+	!
+    }
+    canvas c1
+    iconcoords {545.0 85.0}
+    labelcoords {545.0 117.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth1 n11}
+    interface-peer {eth0 n7}
+}
+
+node n9 {
+    type router
+    model host
+    network-config {
+	hostname n9
+	!
+	interface eth0
+	 ip address 10.0.3.10/24
+	 ipv6 address 2001:2::10/64
+	 mac address 00:00:00:aa:00:06
+	!
+    }
+    canvas c1
+    iconcoords {361.0 21.0}
+    labelcoords {361.0 53.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n6}
+}
+
+node n10 {
+    type router
+    model host
+    network-config {
+	hostname n10
+	!
+	interface eth0
+	 ip address 10.0.5.10/24
+	 ipv6 address 2001:4::10/64
+	 mac address 00:00:00:aa:00:0a
+	!
+    }
+    canvas c1
+    iconcoords {480.0 18.0}
+    labelcoords {480.0 50.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n7}
+}
+
+node n11 {
+    type router
+    model host
+    network-config {
+	hostname n11
+	!
+	interface eth0
+	 ip address 10.0.7.10/24
+	 ipv6 address 2001:6::10/64
+	 mac address 00:00:00:aa:00:0e
+	!
+    }
+    canvas c1
+    iconcoords {630.0 29.0}
+    labelcoords {630.0 61.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n8}
+}
+
+link l1 {
+    nodes {n1 n3}
+}
+
+link l2 {
+    nodes {n4 n1}
+}
+
+link l3 {
+    color blue
+    nodes {n4 n5}
+}
+
+link l4 {
+    color yellow
+    nodes {n4 n2}
+}
+
+link l5 {
+    nodes {n8 n11}
+}
+
+link l6 {
+    nodes {n7 n8}
+}
+
+link l7 {
+    nodes {n7 n10}
+}
+
+link l8 {
+    nodes {n6 n7}
+}
+
+link l9 {
+    nodes {n6 n9}
+}
+
+link l10 {
+    nodes {n2 n6}
+}
+
+canvas c1 {
+    name {Canvas1}
+}
+
+option global {
+    interface_names no
+    ip_addresses yes
+    ipv6_addresses yes
+    node_labels yes
+    link_labels yes
+    show_api yes
+    background_images no
+    annotations yes
+    grid yes
+    traffic_start 0
+}
+
+option session {
+    controlnet=
+    controlnet0=
+    controlnet1=
+    controlnet2=
+    controlnet3=
+    controlnet_updown_script=
+    enablerj45=1
+    enablesdt=0
+    preservedir=0
+    sdturl=tcp://127.0.0.1:50000/
+}
+
