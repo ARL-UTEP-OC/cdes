@@ -6,8 +6,9 @@ import subprocess
 import shlex
 import threading
 import time
-
+import sys
 import os
+from COREIfx.session_reader import SessionReader
 from COREIfx import msg_ifx
 
 class Swapper():
@@ -20,9 +21,28 @@ class Swapper():
         self.conditional_conns = {}
         #The following will be auto-filled in the future
         self.conditional_conns = conditional_conns
-        self.cc_dec = self.conditional_conns.keys()[0]
+        self.conditional_conns_cc_dec = {}
+        
         self.session_number = session_number
-    
+
+        cc_node_numbers = []
+        cc_gw_numbers = []
+
+        for cc_dec in self.conditional_conns.keys():
+            self.conditional_conns_cc_dec[cc_dec] = {}
+            for node in self.conditional_conns[cc_dec]:
+                if node["role"] == "cc_node":
+                    logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
+                    #self.conditional_conns[self.cc_dec]["cc_nodes"][active_cc_node_number] = True
+                    #self.cc_node_numbers.append((node["cc_mac"], node["number"], node["cc_nic"], node["cc_ip4_mask"], node["cc_ip6_mask"], node["cc_ip4"], node["role"], node["cc_ip6"], node["connected"])
+                    cc_node_numbers.append(node)
+                elif node["role"] == "cc_gw":
+                    logging.debug("Swapper(): set_active_conn(): found cc_gw: " + str(node))
+                    #self.conditional_conns[self.cc_dec]["cc_nodes"][active_cc_node_number] = True
+                    cc_gw_numbers.append(node)
+            self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"] = cc_node_numbers
+            self.conditional_conns_cc_dec[cc_dec]["cc_gw_numbers"] = cc_gw_numbers
+
     def read_input(self):
         logging.debug("Swapper(): read_input(): instantiated")
         try:                
@@ -44,29 +64,34 @@ class Swapper():
                 logging.info("Nothing read")
                 continue
             logging.debug("Data: " + str(data))
-            #self.oqueue.put([self.cc_dec, self.conditional_conns[self.cc_dec]["cc_gw"], active_cc_node_name])
-            [cc_dec, cc_gw, active_node_name] = data
-            #self.conditional_conns[self.cc_dec]["cc_nodes"][active_cc_node_name] = True
-            for node in self.conditional_conns[cc_dec]["cc_nodes"].keys():
-                if node == active_node_name:
-                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node+' NUMBER=1000 COMMAND="ifconfig eth0 up"')
-                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node+' GUI_ATTRIBUTES="color=blue"')
-                    self.conditional_conns[self.cc_dec]["cc_nodes"][node] = True
+            #get data from queue
+            [cc_dec, cc_gw, active_node_number] = data
+            for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
+                if node["number"] == active_node_number:
+                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="ifconfig '+node["cc_nic"]+' up"')
+                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node["number"]+' GUI_ATTRIBUTES="color=blue"')
+                    node["connected"] = True
                 else:
-                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node+' NUMBER=1000 COMMAND="ifconfig eth0 down"')
-                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node+' GUI_ATTRIBUTES="color=yellow"')
-                    self.conditional_conns[self.cc_dec]["cc_nodes"][node] = False
+                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="ifconfig '+node["cc_nic"]+' down"')
+                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node["number"]+' GUI_ATTRIBUTES="color=yellow"')
+                    node["connected"] = False
             
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.debug("Swapper(): instantiated")
     
+    if len(sys.argv) < 2:
+        logging.error("Usage: python controller.py <session-number>")
+        exit()       
+
+    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
+    sr = SessionReader(sys.argv[1])
+    conditional_conns = sr.relevant_session_to_JSON()
+
     omqueue = multiprocessing.Queue()
     otqueue = multiprocessing.Queue()
 
-    conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
-
-    sw = Swapper("swapper", omqueue, otqueue, conditional_conns, "1")
+    sw = Swapper("swapper", omqueue, otqueue, conditional_conns, sys.argv[1])
     sw = multiprocessing.Process(target=sw.update_connection)
     sw.start()
     

@@ -1,0 +1,33 @@
+{
+    "4": [
+       {
+          "cc_mac": "0a:00:00:00:00:00", 
+          "number": "5", 
+          "cc_nic": "eth0", 
+          "cc_ip4_mask": "24", 
+          "role": "cc_node", 
+          "cc_ip4": "10.0.0.2", 
+          "connected": "False"
+       }, 
+       {
+          "cc_mac": "0a:00:00:00:00:00", 
+          "number": "2", 
+          "cc_nic": "eth0", 
+          "cc_ip4_mask": "24", 
+          "role": "cc_node", 
+          "cc_ip4": "10.0.0.2", 
+          "connected": "False"
+       }, 
+       {
+          "cc_mac": "00:00:00:aa:00:00", 
+          "number": "1", 
+          "cc_nic": "eth0", 
+          "cc_ip4_mask": "24", 
+          "cc_ip6_mask": "64", 
+          "cc_ip4": "10.0.0.1", 
+          "role": "cc_gw", 
+          "cc_ip6": "2001::1", 
+          "connected": "False"
+       }
+    ]
+ }

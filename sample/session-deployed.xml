@@ -1,0 +1,252 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/tmp/pycore.40119/session-deployed.xml">
+  <networks>
+    <network id="4" name="n4" icon="router_yellow.gif" type="SWITCH">
+      <position x="111" y="128" lat="47.5774583821" lon="-122.130136148" alt="2.0"/>
+    </network>
+  </networks>
+  <devices>
+    <device id="1" name="n1" type="router">
+      <position x="85" y="237" lat="47.5759913126" lon="-122.130679038" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="2" name="n2" icon="router_black.gif" type="router">
+      <position x="236" y="185" lat="47.5766702097" lon="-122.127655949" alt="2.0"/>
+      <services>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="zebra"/>
+        <service name="IPForward"/>
+        <service name="MyService"/>
+      </services>
+    </device>
+    <device id="3" name="n3" type="router">
+      <position x="297" y="304" lat="47.5750549968" lon="-122.126466107" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="5" name="n5" icon="router_black.gif" type="host">
+      <position x="176" y="41" lat="47.5786226441" lon="-122.128820323" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="MyService"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="6" name="n6" type="router">
+      <position x="356" y="94" lat="47.5778800641" lon="-122.125242274" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="7" name="n7" type="router">
+      <position x="460" y="96" lat="47.5778372355" lon="-122.123168554" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="8" name="n8" type="router">
+      <position x="545" y="85" lat="47.5779727124" lon="-122.121470837" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="9" name="n9" type="host">
+      <position x="361" y="21" lat="47.5788644676" lon="-122.125126142" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="10" name="n10" type="host">
+      <position x="480" y="18" lat="47.5788868258" lon="-122.122752091" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="11" name="n11" type="host">
+      <position x="630" y="29" lat="47.5787154563" lon="-122.119762932" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+  </devices>
+  <links>
+    <link node_one="4" node_two="5">
+      <interface_two id="0" name="eth0" mac="0a:00:00:00:00:00" ip4="10.0.0.2" ip4_mask="24"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="4" node_two="2">
+      <interface_two id="0" name="eth0" mac="0a:00:00:00:00:00" ip4="10.0.0.2" ip4_mask="24"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="4" node_two="1">
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.1" ip4_mask="24" ip6="2001::1" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="2" node_two="6">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:03" ip4="10.0.2.1" ip4_mask="24" ip6="2001:1::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:04" ip4="10.0.2.2" ip4_mask="24" ip6="2001:1::2" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="7" node_two="10">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:09" ip4="10.0.5.1" ip4_mask="24" ip6="2001:4::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0a" ip4="10.0.5.10" ip4_mask="24" ip6="2001:4::10" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="7" node_two="8">
+      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:0b" ip4="10.0.6.1" ip4_mask="24" ip6="2001:5::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0c" ip4="10.0.6.2" ip4_mask="24" ip6="2001:5::2" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="6" node_two="7">
+      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:07" ip4="10.0.4.1" ip4_mask="24" ip6="2001:3::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.4.2" ip4_mask="24" ip6="2001:3::2" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="8" node_two="11">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:0d" ip4="10.0.7.1" ip4_mask="24" ip6="2001:6::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0e" ip4="10.0.7.10" ip4_mask="24" ip6="2001:6::10" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="1" node_two="3">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:00" ip4="10.0.1.1" ip4_mask="24"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.1.2" ip4_mask="24"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="6" node_two="9">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:05" ip4="10.0.3.1" ip4_mask="24" ip6="2001:2::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.3.10" ip4_mask="24" ip6="2001:2::10" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+  </links>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="150.0"/>
+  <session_metadata>
+    <configuration name="canvas c1" value="{name {Canvas1}}"/>
+    <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=yes background_images=no annotations=yes grid=yes traffic_start=0"/>
+  </session_metadata>
+  <default_services>
+    <node type="prouter">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+    <node type="cc_node">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="cc_gw">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+  </default_services>
+  <container id="TestBed" name="TestBed">
+    <testHost id="TestBed/researchdev-VM" name="researchdev-VM">
+      <type>physical</type>
+      <address type="IPv4" iface="enp0s3">10.0.2.15/24</address>
+      <testHost id="TestBed/researchdev-VM/n1" name="n1">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.0.1/24</address>
+        <address type="IPv6" iface="eth0">2001::1/64</address>
+        <address type="IPv4" iface="eth1">10.0.1.1/24</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n2" name="n2">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.0.2/24</address>
+        <address type="IPv4" iface="eth1">10.0.2.1/24</address>
+        <address type="IPv6" iface="eth1">2001:1::1/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n3" name="n3">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.1.2/24</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n5" name="n5">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.0.2/24</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n6" name="n6">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.2.2/24</address>
+        <address type="IPv6" iface="eth0">2001:1::2/64</address>
+        <address type="IPv4" iface="eth1">10.0.3.1/24</address>
+        <address type="IPv6" iface="eth1">2001:2::1/64</address>
+        <address type="IPv4" iface="eth2">10.0.4.1/24</address>
+        <address type="IPv6" iface="eth2">2001:3::1/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n7" name="n7">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.4.2/24</address>
+        <address type="IPv6" iface="eth0">2001:3::2/64</address>
+        <address type="IPv4" iface="eth1">10.0.5.1/24</address>
+        <address type="IPv6" iface="eth1">2001:4::1/64</address>
+        <address type="IPv4" iface="eth2">10.0.6.1/24</address>
+        <address type="IPv6" iface="eth2">2001:5::1/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n8" name="n8">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.6.2/24</address>
+        <address type="IPv6" iface="eth0">2001:5::2/64</address>
+        <address type="IPv4" iface="eth1">10.0.7.1/24</address>
+        <address type="IPv6" iface="eth1">2001:6::1/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n9" name="n9">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.3.10/24</address>
+        <address type="IPv6" iface="eth0">2001:2::10/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n10" name="n10">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.5.10/24</address>
+        <address type="IPv6" iface="eth0">2001:4::10/64</address>
+      </testHost>
+      <testHost id="TestBed/researchdev-VM/n11" name="n11">
+        <type>virtual</type>
+        <address type="IPv4" iface="eth0">10.0.7.10/24</address>
+        <address type="IPv6" iface="eth0">2001:6::10/64</address>
+      </testHost>
+    </testHost>
+  </container>
+</scenario>

@@ -7,6 +7,8 @@ import shlex
 import threading
 import time
 from trigger import Trigger
+import sys
+from COREIfx.session_reader import SessionReader
 
 class TimerTrigger(Trigger):  
 
@@ -20,7 +22,7 @@ class TimerTrigger(Trigger):
                 continue
             logging.debug("Data: " + data)
             new_time = int(data)
-            nodes = self.get_cc_node_names()
+            nodes = self.get_cc_node_numbers()
             #set active node every 10 seconds
             if new_time % 10 == 0:
                 logging.debug("10 sec mark")
@@ -34,10 +36,16 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.debug("Controller(): instantiated")
     
+    if len(sys.argv) < 2:
+        logging.error("Usage: python controller.py <session-number>")
+        exit()       
+
+    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
+    sr = SessionReader(sys.argv[1])
+    conditional_conns = sr.relevant_session_to_JSON()
+
     omqueue = multiprocessing.Queue()
     otqueue = multiprocessing.Queue()
-
-    conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
 
     tp = TimerTrigger("trigger", omqueue, otqueue, conditional_conns)
     tp = multiprocessing.Process(target=tp.process_data)

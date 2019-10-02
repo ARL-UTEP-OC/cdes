@@ -2,6 +2,7 @@ import multiprocessing
 import shlex
 import subprocess
 import logging
+import sys, traceback
 
 class Monitor():
     
@@ -9,24 +10,28 @@ class Monitor():
         logging.debug("Monitor(): instantiated")
         self.name = name
         self.cmd = cmd
-        #self.cmd = "./time_cont.sh"
         self.oqueue = oqueue
     
     def run_monitor(self):
         logging.debug("Monitor(): run monitor instantiated")
         proc_name = multiprocessing.current_process().name
-        logging.debug("Monitor(): run_monitor(): Doing something fancy in %s for %s!" % (proc_name, self.name))
-        self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE)
-        logging.debug("Monitor(): run_monitor(): starting readline loop")
-        while True:
-            out = self.p.stdout.readline()
-            if out == '' and self.p.poll() != None:
-                logging.debug("Monitor(): run_monitor(): breaking out")
-                break
-            else: 
-                logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
-                self.oqueue.put(out.strip())
-
+        logging.debug("Monitor(): run_monitor(): Running Monitor in %s for %s!" % (proc_name, self.name))
+        try:
+            self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE)
+            logging.debug("Monitor(): run_monitor(): starting readline loop")
+            while True:
+                out = self.p.stdout.readline()
+                if out == '' and self.p.poll() != None:
+                    logging.debug("Monitor(): run_monitor(): breaking out")
+                    break
+                else: 
+                    logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
+                    self.oqueue.put(out.strip())
+        except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            logging.error("Monitor(): run_monitor(): An error occured ")
+            traceback.print_exception(exc_type, exc_value, exc_traceback)
+            exit() 
 
 if __name__ == '__main__':
    
