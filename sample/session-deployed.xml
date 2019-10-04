@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<scenario name="/tmp/pycore.40119/session-deployed.xml">
+<scenario name="/tmp/pycore.43021/session-deployed.xml">
   <networks>
     <network id="4" name="n4" icon="router_yellow.gif" type="SWITCH">
       <position x="111" y="128" lat="47.5774583821" lon="-122.130136148" alt="2.0"/>
@@ -22,7 +22,6 @@
         <service name="OSPFv3"/>
         <service name="zebra"/>
         <service name="IPForward"/>
-        <service name="MyService"/>
       </services>
     </device>
     <device id="3" name="n3" type="router">
@@ -38,7 +37,6 @@
       <position x="176" y="41" lat="47.5786226441" lon="-122.128820323" alt="2.0"/>
       <services>
         <service name="DefaultRoute"/>
-        <service name="MyService"/>
         <service name="SSH"/>
       </services>
     </device>
@@ -104,9 +102,9 @@
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:00" ip4="10.0.0.1" ip4_mask="24" ip6="2001::1" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
-    <link node_one="2" node_two="6">
-      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:03" ip4="10.0.2.1" ip4_mask="24" ip6="2001:1::1" ip6_mask="64"/>
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:04" ip4="10.0.2.2" ip4_mask="24" ip6="2001:1::2" ip6_mask="64"/>
+    <link node_one="6" node_two="7">
+      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:07" ip4="10.0.4.1" ip4_mask="24" ip6="2001:3::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.4.2" ip4_mask="24" ip6="2001:3::2" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
     <link node_one="7" node_two="10">
@@ -114,24 +112,14 @@
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0a" ip4="10.0.5.10" ip4_mask="24" ip6="2001:4::10" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
-    <link node_one="7" node_two="8">
-      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:0b" ip4="10.0.6.1" ip4_mask="24" ip6="2001:5::1" ip6_mask="64"/>
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0c" ip4="10.0.6.2" ip4_mask="24" ip6="2001:5::2" ip6_mask="64"/>
-      <options type="1" unidirectional="0"/>
-    </link>
-    <link node_one="6" node_two="7">
-      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:07" ip4="10.0.4.1" ip4_mask="24" ip6="2001:3::1" ip6_mask="64"/>
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:08" ip4="10.0.4.2" ip4_mask="24" ip6="2001:3::2" ip6_mask="64"/>
-      <options type="1" unidirectional="0"/>
-    </link>
     <link node_one="8" node_two="11">
       <interface_one id="1" name="eth1" mac="00:00:00:aa:00:0d" ip4="10.0.7.1" ip4_mask="24" ip6="2001:6::1" ip6_mask="64"/>
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0e" ip4="10.0.7.10" ip4_mask="24" ip6="2001:6::10" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
-    <link node_one="1" node_two="3">
-      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:00" ip4="10.0.1.1" ip4_mask="24"/>
-      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.1.2" ip4_mask="24"/>
+    <link node_one="2" node_two="6">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:03" ip4="10.0.2.1" ip4_mask="24" ip6="2001:1::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:04" ip4="10.0.2.2" ip4_mask="24" ip6="2001:1::2" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
     <link node_one="6" node_two="9">
@@ -139,17 +127,33 @@
       <interface_two id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.3.10" ip4_mask="24" ip6="2001:2::10" ip6_mask="64"/>
       <options type="1" unidirectional="0"/>
     </link>
+    <link node_one="7" node_two="8">
+      <interface_one id="2" name="eth2" mac="00:00:00:aa:00:0b" ip4="10.0.6.1" ip4_mask="24" ip6="2001:5::1" ip6_mask="64"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:0c" ip4="10.0.6.2" ip4_mask="24" ip6="2001:5::2" ip6_mask="64"/>
+      <options type="1" unidirectional="0"/>
+    </link>
+    <link node_one="1" node_two="3">
+      <interface_one id="1" name="eth1" mac="00:00:00:aa:00:00" ip4="10.0.1.1" ip4_mask="24"/>
+      <interface_two id="0" name="eth0" mac="00:00:00:aa:00:01" ip4="10.0.1.2" ip4_mask="24"/>
+      <options type="1" unidirectional="0"/>
+    </link>
   </links>
+  <service_configurations>
+    <service name="UserDefined" node="4">
+      <startups>
+        <startup>python /home/researchdev/git/cdes/controller.py</startup>
+      </startups>
+    </service>
+  </service_configurations>
   <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="150.0"/>
   <session_metadata>
     <configuration name="canvas c1" value="{name {Canvas1}}"/>
     <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=yes background_images=no annotations=yes grid=yes traffic_start=0"/>
   </session_metadata>
   <default_services>
-    <node type="prouter">
+    <node type="mdr">
       <service name="zebra"/>
-      <service name="OSPFv2"/>
-      <service name="OSPFv3"/>
+      <service name="OSPFv3MDR"/>
       <service name="IPForward"/>
     </node>
     <node type="PC">
@@ -159,24 +163,13 @@
       <service name="DefaultRoute"/>
       <service name="SSH"/>
     </node>
-    <node type="cc_node">
+    <node type="prouter">
       <service name="zebra"/>
       <service name="OSPFv2"/>
       <service name="OSPFv3"/>
-      <service name="IPForward"/>
-    </node>
-    <node type="mdr">
-      <service name="zebra"/>
-      <service name="OSPFv3MDR"/>
       <service name="IPForward"/>
     </node>
     <node type="router">
-      <service name="zebra"/>
-      <service name="OSPFv2"/>
-      <service name="OSPFv3"/>
-      <service name="IPForward"/>
-    </node>
-    <node type="cc_gw">
       <service name="zebra"/>
       <service name="OSPFv2"/>
       <service name="OSPFv3"/>
