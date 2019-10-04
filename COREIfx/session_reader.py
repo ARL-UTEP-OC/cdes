@@ -78,13 +78,18 @@ class SessionReader():
                     if "ip6" in ifx.attrib:
                         connected_node["cc_ip6"] = ifx.attrib["ip6"]
                         connected_node["cc_ip6_mask"] = ifx.attrib["ip6_mask"]
+                    #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
                     connected_node["role"] = "cc_gw"
 
-                    #if node icon is black, we know this is a cc_node; otherwise, it's a gw
+                    #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
                     for device in root.find('devices').findall('device'):
-                        if device.attrib["id"] == connected_node["number"] and "icon" in device.attrib and device.attrib["icon"] == "router_black.gif":
-                            connected_node["role"] = "cc_node"
-                            break
+                        if device.attrib["id"] == connected_node["number"]:                           
+                            for service in device.find('services').findall('service'):
+                                logging.error("node: " + str(device.attrib["id"]) + " service: " + str(service.attrib["name"]))
+                                if "CC_Node" in service.attrib["name"]:
+                                    #we know this is a good node
+                                    connected_node["role"] = "cc_node"
+                                    break
                                     
                     connected_node["connected"] = "False"
                     connected_nodes.append(connected_node)
