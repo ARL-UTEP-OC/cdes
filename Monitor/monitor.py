@@ -17,6 +17,7 @@ class Monitor():
         proc_name = multiprocessing.current_process().name
         logging.debug("Monitor(): run_monitor(): Running Monitor in %s for %s!" % (proc_name, self.name))
         try:
+            logging.debug("Monitor(): run_monitor: running " + str(self.cmd))
             self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE)
             logging.debug("Monitor(): run_monitor(): starting readline loop")
             while True:
@@ -39,7 +40,7 @@ if __name__ == '__main__':
     logging.debug("Controller(): instantiated")
 
     omqueue = multiprocessing.Queue()
-    cmd = "./time_cont.sh"
+    cmd = "sample/time_cont.sh"
     m = Monitor("monitor", omqueue, cmd)
     mp = multiprocessing.Process(target=m.run_monitor)
     mp.start()
@@ -48,4 +49,4 @@ if __name__ == '__main__':
     while True:
         logging.debug("OM Queue: " + omqueue.get())
     
-    logging.debug("Controller(): Completed")
+    logging.debug("Monitor(): Completed")

@@ -85,7 +85,6 @@ class SessionReader():
                     for device in root.find('devices').findall('device'):
                         if device.attrib["id"] == connected_node["number"]:                           
                             for service in device.find('services').findall('service'):
-                                logging.error("node: " + str(device.attrib["id"]) + " service: " + str(service.attrib["name"]))
                                 if "CC_Node" in service.attrib["name"]:
                                     #we know this is a good node
                                     connected_node["role"] = "cc_node"
@@ -117,7 +116,7 @@ class SessionReader():
         for code_line in res_code.splitlines():
             if code_line.startswith("  DATA:"):
                 code_section = True
-                file_code += "\n" + code_line.split("DATA: ")[1] + "\n"
+                file_code += code_line.split("DATA: ")[1] + "\n"
                 continue
             if "NODE: " in code_line:
                 code_section = False
