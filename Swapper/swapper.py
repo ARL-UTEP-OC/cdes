@@ -33,12 +33,9 @@ class Swapper():
             for node in self.conditional_conns[cc_dec]:
                 if node["role"] == "cc_node":
                     logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
-                    #self.conditional_conns[self.cc_dec]["cc_nodes"][active_cc_node_number] = True
-                    #self.cc_node_numbers.append((node["cc_mac"], node["number"], node["cc_nic"], node["cc_ip4_mask"], node["cc_ip6_mask"], node["cc_ip4"], node["role"], node["cc_ip6"], node["connected"])
                     cc_node_numbers.append(node)
                 elif node["role"] == "cc_gw":
                     logging.debug("Swapper(): set_active_conn(): found cc_gw: " + str(node))
-                    #self.conditional_conns[self.cc_dec]["cc_nodes"][active_cc_node_number] = True
                     cc_gw_numbers.append(node)
             self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"] = cc_node_numbers
             self.conditional_conns_cc_dec[cc_dec]["cc_gw_numbers"] = cc_gw_numbers
