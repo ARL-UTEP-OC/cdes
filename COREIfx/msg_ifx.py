@@ -7,7 +7,7 @@ import optparse
 import os
 import socket
 import sys
-
+import logging
 from core.api.tlv import coreapi
 from core.emulator.enumerations import CORE_API_PORT
 from core.emulator.enumerations import MessageFlags
@@ -20,9 +20,9 @@ def print_available_tlvs(t, tlv_class):
     """
     Print a TLV list.
     """
-    print("TLVs available for %s message:" % t)
+    logging.debug("TLVs available for %s message:" % t)
     for tlv in sorted([tlv for tlv in tlv_class.tlv_type_map], key=lambda x: x.name):
-        print("%s:%s" % (tlv.value, tlv.name))
+        logging.debug("%s:%s" % (tlv.value, tlv.name))
 
 
 def print_examples(name):
@@ -53,9 +53,9 @@ def print_examples(name):
          "srcname=\"./test.log\"",
          "move a test.log file from host to node 2"),
     ]
-    print("Example %s invocations:" % name)
+    logging.debug("Example %s invocations:" % name)
     for cmd, descr in examples:
-        print("  %s %s\n\t\t%s" % (name, cmd, descr))
+        logging.debug("  %s %s\n\t\t%s" % (name, cmd, descr))
 
 
 def receive_message(sock):
@@ -69,7 +69,7 @@ def receive_message(sock):
         data = sock.recv(4096)
         msghdr = data[:coreapi.CoreMessage.header_len]
     except KeyboardInterrupt:
-        print("CTRL+C pressed")
+        logging.debug("CTRL+C pressed")
         sys.exit(1)
 
     if len(msghdr) == 0:
@@ -85,10 +85,10 @@ def receive_message(sock):
     except KeyError:
         msg = coreapi.CoreMessage(msgflags, msghdr, msgdata)
         msg.message_type = msgtype
-        print("unimplemented CORE message type: %s" % msg.type_str())
+        logging.debug("unimplemented CORE message type: %s" % msg.type_str())
         return msg
     if len(data) > msglen + coreapi.CoreMessage.header_len:
-        print("received a message of type %d, dropping %d bytes of extra data" \
+        logging.debug("received a message of type %d, dropping %d bytes of extra data" \
               % (msgtype, len(data) - (msglen + coreapi.CoreMessage.header_len)))
     return msgcls(msgflags, msghdr, msgdata)
 
@@ -104,15 +104,15 @@ def connect_to_session(sock, requested):
     smsg = coreapi.CoreSessionMessage.pack(flags, tlvdata)
     sock.sendall(smsg)
 
-    print("waiting for session list...")
+    logging.debug("waiting for session list...")
     smsgreply = receive_message(sock)
     if smsgreply is None:
-        print("disconnected")
+        logging.debug("disconnected")
         return False
 
     sessstr = smsgreply.get_tlv(SessionTlvs.NUMBER.value)
     if sessstr is None:
-        print("missing session numbers")
+        logging.debug("missing session numbers")
         return False
 
     # join the first session (that is not our own connection)
@@ -120,7 +120,7 @@ def connect_to_session(sock, requested):
     sessions = sessstr.split("|")
     sessions.remove(str(localport))
     if len(sessions) == 0:
-        print("no sessions to join")
+        logging.debug("no sessions to join")
         return False
 
     if not requested:
@@ -128,10 +128,10 @@ def connect_to_session(sock, requested):
     elif requested in sessions:
         session = requested
     else:
-        print("requested session not found!")
+        logging.debug("requested session not found!")
         return False
 
-    print("joining session: %s" % session)
+    logging.debug("joining session: %s" % session)
     tlvdata = coreapi.CoreSessionTlv.pack(SessionTlvs.NUMBER.value, session)
     flags = MessageFlags.ADD.value
     smsg = coreapi.CoreSessionMessage.pack(flags, tlvdata)
@@ -143,12 +143,13 @@ def receive_response(sock, opt):
     """
     Receive and print a CORE message from the given socket.
     """
-    print("waiting for response...")
+    logging.debug("waiting for response...")
     msg = receive_message(sock)
     if msg is None:
-        print("disconnected from %s:%s" % (opt.address, opt.port))
+        logging.debug("disconnected from %s:%s" % (opt.address, opt.port))
         sys.exit(0)
-    print("received message: %s" % msg)
+    logging.debug("received message: %s" % msg)
+    return msg
 
 
 def send_command(cmd):
@@ -263,20 +264,21 @@ def send_command(cmd):
     try:
         sock.connect((opt.address, opt.port))
     except Exception as e:
-        print("Error connecting to %s:%s:\n\t%s" % (opt.address, opt.port, e))
+        logging.debug("Error connecting to %s:%s:\n\t%s" % (opt.address, opt.port, e))
         sys.exit(1)
 
     if opt.tcp and not connect_to_session(sock, opt.session):
-        print("warning: continuing without joining a session!")
+        logging.debug("warning: continuing without joining a session!")
 
+    resp = ""
     sock.sendall(msg)
     if opt.listen:
-        receive_response(sock, opt)
+        resp = receive_response(sock, opt)
     if opt.tcp:
         sock.shutdown(socket.SHUT_RDWR)
     sock.close()
+    return resp
 #    sys.exit(0)
-
 
 if __name__ == "__main__":
     main()
