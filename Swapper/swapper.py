@@ -30,7 +30,7 @@ class Swapper():
 
         for cc_dec in self.conditional_conns.keys():
             self.conditional_conns_cc_dec[cc_dec] = {}
-            for node in self.conditional_conns[cc_dec]:
+            for node in self.conditional_conns[cc_dec]["connected_nodes"]:
                 if node["role"] == "cc_node":
                     logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
                     cc_node_numbers.append(node)

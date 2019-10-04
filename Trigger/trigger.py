@@ -24,7 +24,7 @@ class Trigger():
         self.cc_gw_numbers = []
         self.cc_node_numbers = []
     
-        for node in self.conditional_conns[self.cc_dec]:
+        for node in self.conditional_conns[self.cc_dec]["connected_nodes"]:
             if node["role"] == "cc_node":
                 logging.debug("Trigger(): set_active_conn(): found cc_node: " + str(node))
                 self.cc_node_numbers.append(node["number"])

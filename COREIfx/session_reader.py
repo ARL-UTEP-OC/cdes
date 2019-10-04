@@ -41,6 +41,7 @@ class SessionReader():
                 monitor_code = self.get_node_file(node, "CC_DecisionNode", "MyMonitor.sh")
                 trigger_code = self.get_node_file(node, "CC_DecisionNode", "MyTrigger.py")
                 swapper_code = self.get_node_file(node, "CC_DecisionNode", "MySwapper.py")
+                
             #setup entry for node
             conditional_conn = {}
             cc_node_number = node.attrib["id"]            
@@ -48,6 +49,7 @@ class SessionReader():
             conditional_conn["MyMonitor.sh"] = monitor_code
             conditional_conn["MyTrigger.py"] = trigger_code
             conditional_conn["MySwapper.py"] = swapper_code
+
             logging.debug("Found node: " + str(conditional_conn))
 
             #now find all connected nodes and whether they're cc_gw or cc_node; store associated data
@@ -87,7 +89,7 @@ class SessionReader():
                     connected_node["connected"] = "False"
                     connected_nodes.append(connected_node)
             conditional_conn["connected_nodes"] = connected_nodes
-            conditional_conns[node.attrib["id"]] = conditional_conn["connected_nodes"]
+            conditional_conns[node.attrib["id"]] = conditional_conn
         return conditional_conns
 
     def get_conditional_conns(self, cc_dec_number):
