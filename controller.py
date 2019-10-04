@@ -3,6 +3,7 @@ from Trigger.timer_trigger import TimerTrigger
 from Swapper.swapper import Swapper
 from Monitor.monitor import Monitor
 from COREIfx.session_reader import SessionReader
+import imp
 import logging
 import time
 import sys
@@ -33,7 +34,7 @@ class Controller():
         if monitor_cmd == None:
             logging.error("Controller(): cdes_run(): No monitor command was passed in, quitting")
             exit()
-        print("MONITORCMD: " + str(monitor_cmd))
+
         cmd = os.path.abspath(monitor_cmd)
         if session_number == None:
             logging.error("Controller(): cdes_run(): No session number was passed in, quitting")
@@ -54,7 +55,18 @@ class Controller():
         mp = multiprocessing.Process(target=m.run_monitor)
         mp.start()
 
-        tp = TimerTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns)
+        #If the user defined a custom Trigger, load it now
+        #get cc_dec name
+        first_cc_dec = conditional_conns.keys()[0]
+        cc_dec_name = conditional_conns[first_cc_dec]["name"]
+        filepath = os.path.realpath(__file__)
+        file_dir = os.path.dirname(filepath)
+        custom_file_path = os.path.join(file_dir,"Trigger",cc_dec_name,"MyTrigger.py")
+        if os.path.exists(custom_file_path):
+            DynLoadedClass = imp.load_source('MyTrigger', custom_file_path)
+            tp = DynLoadedClass.MyTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns)
+        else: 
+            tp = TimerTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns)
         tp = multiprocessing.Process(target=tp.process_data)
         tp.start()
         

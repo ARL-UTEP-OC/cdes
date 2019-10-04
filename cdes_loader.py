@@ -118,9 +118,11 @@ if __name__ == '__main__':
 
 ###Instantiate the new module via a system call
 
-        cmd = "python "+os.path.join(cdes_scen_dir,"controller.py")+" " +os.path.join(monitor_file_node_path,"MyMonitor.sh")+" "+session_number
-        print("CMD is: " + cmd +  " CWD "+cdes_scen_dir)
-        p = subprocess.Popen(shlex.split(cmd), cwd=cdes_scen_dir)
+        #cmd = "python "+os.path.join(cdes_scen_dir,"controller.py")+" " +os.path.join(monitor_file_node_path,"MyMonitor.sh")+" "+session_number
+        #p = subprocess.Popen(shlex.split(cmd), cwd=cdes_scen_dir)
+        controller = imp.load_source('Controller', os.path.join(cdes_scen_dir,"controller.py"))
+        cr = controller.Controller()
+        cr.cdes_run(monitor_cmd=os.path.join(monitor_file_node_path,"MyMonitor.sh"), session_number=session_number, conditional_conns=conditional_conns)
     
     except Exception as e:
         exc_type, exc_value, exc_traceback = sys.exc_info()

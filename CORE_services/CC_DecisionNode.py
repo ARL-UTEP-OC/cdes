@@ -102,10 +102,10 @@ done
 
 import time
 #Required import
-from trigger import Trigger
+from Trigger.trigger import Trigger
 
 #Required class name that inherits Trigger
-class TimerTrigger(Trigger):  
+class MyTrigger(Trigger):  
     
     #Required function
     def process_data(self):
@@ -114,19 +114,21 @@ class TimerTrigger(Trigger):
 ####Modify to process Monitor's data and Trigger a switch####
             # read a line of input (from Monitor's stdout)
             data = self.read_input_line()
+            print("READ: " + str(data))
             #if data yet exists, restart loop
             if data == None:
                 continue
             # if data exists, we know it's epoch time; 
             # read it as an integer
             new_time = int(data)
-            
+            #get the cc_node numbers
+            nodes = self.get_cc_node_numbers()
             #set active node every 10 seconds
             if new_time % 10 == 0:
                 if new_time %20 == 0:
-                    self.set_active_conn(self.get_cc_node_numbers()[0])
+                    self.set_active_conn(nodes[0])
                 else:
-                    self.set_active_conn(self.get_cc_node_numbers()[1])
+                    self.set_active_conn(nodes[1])
 ####
 """            
         return cfg
