@@ -4,23 +4,53 @@ import xml.etree.ElementTree as ET
 import logging
 import os
 import json
-import sys
+import sys, traceback
 from COREIfx import msg_ifx
 #from core.api.tlv.coreapi import CoreConfMessage, CoreEventMessage
 
 class SessionReader():
     
     def __init__(self, session_number=None):
-        logging.debug("Monitor(): instantiated")
+        logging.debug("SessionReader(): instantiated")
         if session_number == None:
             #just get one from /tmp/pycore***
             logging.error("No session number was provided")
             exit()
         self.session_number = session_number
         self.filename = os.path.join("/tmp","pycore."+str(session_number),"session-deployed.xml")
+        state = self.get_session_state()
+        logging.debug("Current session state: " + str(state))
+        if state == None:
+            logging.debug("Exiting since session data is not available: " + str(state))
+            exit()
+
         self.conditional_conns = self.relevant_session_to_JSON()
 
+    def get_session_state(self):
+        logging.debug("SessionReader(): get_session_state() instantiated")
+
+        try:
+        #check first if directory exists
+            session_path = os.path.dirname(self.filename)
+            session_state_path = os.path.join(session_path,"state")
+            if os.path.exists(session_path) == False or os.path.exists(session_state_path) == False:
+                logging.debug("SessionReader(): get_session_state() session does not exist!")
+                return None
+            logging.debug("SessionReader(): get_session_state() session found!")
+            #read state file
+            state_file_state = open(session_state_path,"r").readlines()[0]
+            logging.error("STATE: " + str(state_file_state))
+            exit()
+            return state_file_state
+        except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            logging.error("SessionReader(): get_session_state(): An error occured ")
+            traceback.print_exception(exc_type, exc_value, exc_traceback)
+            exit() 
+        return None
+
     def relevant_session_to_JSON(self):
+        logging.debug("SessionReader(): relevant_session_to_JSON() instantiated")
         tree = ET.parse(self.filename)
         root = tree.getroot()
         conditional_conns = {}
@@ -136,8 +166,12 @@ if __name__ == "__main__":
     
     sr = SessionReader(sys.argv[1])
     logging.debug("Printing All")
+    state = sr.get_session_state
+    logging.debug("Current session state: " + str(state))
+    if state == None:
+        logging.debug("Exiting since session data is not available: " + str(state))
+        exit()
     logging.info(json.dumps(sr.relevant_session_to_JSON(), indent=3))
     logging.debug("Printing only #4")
     logging.info(json.dumps(sr.get_conditional_conns("4"), indent=3))
     #conditional_conns = get_conditional_conns()
-
