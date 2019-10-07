@@ -88,7 +88,7 @@ Follow these steps to create and run a simple cdes scenario.
 - cn1 -> r2
 - cn1 -> h2
 
-3. Right click on the following nodes and select -these services
+3. Right click on the following nodes and select these services
 - cdes1: **CC_DecisionNode** (Modify the MyMonitor.sh and MyTrigger.py to define custom behavior)
 - cn1 and cn2: **CC_Node**
 
