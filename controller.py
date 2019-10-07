@@ -30,7 +30,7 @@ class Controller():
         return []
 
     def cdes_run(self, session_number=None, monitor_cmd=None, conditional_conns=None):
-        logging.debug('Controller(): cdes_run(): Instantiated')
+        logging.debug("Controller(): cdes_run(): Instantiated")
         if monitor_cmd == None:
             logging.error("Controller(): cdes_run(): No monitor command was passed in, quitting")
             exit()
@@ -78,29 +78,28 @@ class Controller():
         # Keep looping until the scenario is no longer in a Run state
         state = sr.get_session_state()
         if state == None:
-            logging.error("Session "+str(session_number)+" no longer exists, exitting")
+            logging.error("Controller(): cdes_run(): Session "+str(session_number)+" no longer exists, exitting")
             exit()
         while "4 RUNTIME_STATE" in state:
-            logging.debug("Session "+str(session_number)+" session Still running, continuing operations")
+            logging.debug("Controller(): cdes_run(): Session "+str(session_number)+" session Still running, continuing operations")
             if state == None:
-                logging.error("Session "+str(session_number)+" no longer exists, exitting")
+                logging.error("Controller(): cdes_run(): Session "+str(session_number)+" no longer exists, exitting")
                 break
             time.sleep(5)
             state = sr.get_session_state()
         
         # Logic to terminate all processes goes here
-        logging.error("Cleaning up and exiting "+str(session_number))
+        logging.error("Controller(): cdes_run(): Cleaning up and exiting "+str(session_number))
         imonitor_queue.put("exit")
-        logging.debug("Waiting for Monitor process to fininsh to gracefully exit")
+        logging.debug("Controller(): cdes_run(): Waiting for Monitor process to fininsh to gracefully exit")
         mp.join()
-        # while mp.is_alive() == True:
-        #     logging.debug("Waiting for process to fininsh to gracefully exit")
-        #     time.sleep(3)
-        logging.debug("Done.")
+        logging.debug("Controller(): cdes_run(): Done. Terminating Monitor.")
         mp.terminate()
+        logging.debug("Controller(): cdes_run(): Done. Terminating Trigger.")
         tp.terminate()
+        logging.debug("Controller(): cdes_run(): Done. Terminating Swapper.")
         sw.terminate()
-        exit()
+        logging.debug("Controller(): cdes_run(): Done.")
 
 if __name__ == '__main__':
    
