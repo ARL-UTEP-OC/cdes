@@ -6,11 +6,13 @@ import sys, traceback
 
 class Monitor():
     
-    def __init__(self, name, oqueue, cmd):
+    def __init__(self, name, iqueue, oqueue, cmd):
         logging.debug("Monitor(): instantiated")
         self.name = name
         self.cmd = cmd
+        self.iqueue = iqueue
         self.oqueue = oqueue
+        self.p = None
     
     def run_monitor(self):
         logging.debug("Monitor(): run monitor instantiated")
@@ -27,12 +29,38 @@ class Monitor():
                     break
                 else: 
                     logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
+                    # Before adding to the output queue, make sure we're not terminating
+                    if self.iqueue.empty() == False:
+                        if self.p.poll() == None:
+                            logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                            self.p.terminate()
+                        break
                     self.oqueue.put(out.strip())
         except Exception as e:
+            if self.p != None:
+                logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                self.p.terminate()
+                if self.p.poll() == None:
+                    logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                    self.p.terminate()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             logging.error("Monitor(): run_monitor(): An error occured ")
             traceback.print_exception(exc_type, exc_value, exc_traceback)
-            exit() 
+            exit()
+    
+    def cleanup(self):
+        try:
+            if self.p != None:
+                logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                self.p.terminate()
+                if self.p.poll() == None:
+                    logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                    self.p.terminate()
+        except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            logging.error("Monitor(): cleanup(): An error occured ")
+            traceback.print_exception(exc_type, exc_value, exc_traceback)
+            exit()
 
 if __name__ == '__main__':
    

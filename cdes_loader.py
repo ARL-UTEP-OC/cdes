@@ -80,6 +80,20 @@ if __name__ == '__main__':
 
 ###Get node states
     sr = SessionReader(session_number)
+    # First check to make sure the session is in a running state
+    state = sr.get_session_state()
+    if state == None:
+        logging.error("Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+        exit()
+    while "4 RUNTIME_STATE" not in state:
+        logging.warning("Session "+str(session_number)+" Is not yet in the running state... waiting and then trying again")
+        if state == None:
+            logging.error("Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+            exit()
+        time.sleep(3)
+        state = sr.get_session_state()
+
+    # Get the current topology
     conditional_conns = sr.relevant_session_to_JSON()
 
 ###Create a subfolder for all CC_DecisionNodes and write their custom files there

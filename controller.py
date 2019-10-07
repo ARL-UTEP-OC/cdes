@@ -43,7 +43,8 @@ class Controller():
 
         if conditional_conns == None:
             conditional_conns = sr.relevant_session_to_JSON()
-        #print(json.dumps(conditional_conns, indent=3))
+        # For knowning when to quit
+        imonitor_queue = multiprocessing.Queue()
 
         omonitor_queue = multiprocessing.Queue()
         
@@ -51,7 +52,7 @@ class Controller():
 
         oswapper_queue = multiprocessing.Queue()
 
-        m = Monitor("monitor", omonitor_queue, cmd)
+        m = Monitor("monitor", imonitor_queue, omonitor_queue, cmd)
         mp = multiprocessing.Process(target=m.run_monitor)
         mp.start()
 
@@ -74,6 +75,32 @@ class Controller():
         sw = multiprocessing.Process(target=sw.update_connection)
         sw.start()
 
+        # Keep looping until the scenario is no longer in a Run state
+        state = sr.get_session_state()
+        if state == None:
+            logging.error("Session "+str(session_number)+" no longer exists, exitting")
+            exit()
+        while "4 RUNTIME_STATE" in state:
+            logging.debug("Session "+str(session_number)+" session Still running, continuing operations")
+            if state == None:
+                logging.error("Session "+str(session_number)+" no longer exists, exitting")
+                break
+            time.sleep(5)
+            state = sr.get_session_state()
+        
+        # Logic to terminate all processes goes here
+        logging.error("Cleaning up and exiting "+str(session_number))
+        imonitor_queue.put("exit")
+        logging.debug("Waiting for Monitor process to fininsh to gracefully exit")
+        mp.join()
+        # while mp.is_alive() == True:
+        #     logging.debug("Waiting for process to fininsh to gracefully exit")
+        #     time.sleep(3)
+        logging.debug("Done.")
+        mp.terminate()
+        tp.terminate()
+        sw.terminate()
+        exit()
 
 if __name__ == '__main__':
    

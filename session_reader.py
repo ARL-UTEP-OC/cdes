@@ -39,8 +39,8 @@ class SessionReader():
             logging.debug("SessionReader(): get_session_state() session found!")
             #read state file
             state_file_state = open(session_state_path,"r").readlines()[0]
-            logging.debug("SessionReader(): get_session_state(): State: " + str(state_file_state))
-
+            logging.error("STATE: " + str(state_file_state))
+            exit()
             return state_file_state
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
