@@ -13,7 +13,7 @@ from COREIfx import msg_ifx
 
 class Swapper():
     
-    def __init__(self, name, iqueue, oqueue, conditional_conns, session_number = None):
+    def __init__(self, name, iqueue, oqueue, conditional_conns, session_number, cc_dec_number):
         logging.debug("Swapper(): instantiated")
         self.name = name
         self.iqueue = iqueue
@@ -28,17 +28,17 @@ class Swapper():
         cc_node_numbers = []
         cc_gw_numbers = []
 
-        for cc_dec in self.conditional_conns.keys():
-            self.conditional_conns_cc_dec[cc_dec] = {}
-            for node in self.conditional_conns[cc_dec]["connected_nodes"]:
-                if node["role"] == "cc_node":
-                    logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
-                    cc_node_numbers.append(node)
-                elif node["role"] == "cc_gw":
-                    logging.debug("Swapper(): set_active_conn(): found cc_gw: " + str(node))
-                    cc_gw_numbers.append(node)
-            self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"] = cc_node_numbers
-            self.conditional_conns_cc_dec[cc_dec]["cc_gw_numbers"] = cc_gw_numbers
+
+        self.conditional_conns_cc_dec[cc_dec_number] = {}
+        for node in self.conditional_conns[cc_dec_number]["connected_nodes"]:
+            if node["role"] == "cc_node":
+                logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
+                cc_node_numbers.append(node)
+            elif node["role"] == "cc_gw":
+                logging.debug("Swapper(): set_active_conn(): found cc_gw: " + str(node))
+                cc_gw_numbers.append(node)
+        self.conditional_conns_cc_dec[cc_dec_number]["cc_node_numbers"] = cc_node_numbers
+        self.conditional_conns_cc_dec[cc_dec_number]["cc_gw_numbers"] = cc_gw_numbers
 
     def read_input(self):
         logging.debug("Swapper(): read_input(): instantiated")

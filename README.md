@@ -24,7 +24,6 @@ This system is based on the following node constructs:
 
 ### Limitations
 * Currently no support for scenarios with wireless nodes.
-* Currently only one cdes node can exist in a scenario.
 
 Both of these issues will be available soon.
 

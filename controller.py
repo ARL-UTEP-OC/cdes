@@ -14,7 +14,7 @@ class Controller():
     def __init__(self):
         logging.debug("Controller(): instantiated")   
         filepath = os.path.realpath(__file__)
-        print("PATH!!!!!: " + str(filepath))
+        logging.debug('Controller()" running from directory: ' + str(filepath))
     
     def get_sorted_in_dirs(self, path, dircontains=""):
         logging.debug('Controller()" get_sorted_in_dirs(): Instantiated')
@@ -43,37 +43,53 @@ class Controller():
 
         if conditional_conns == None:
             conditional_conns = sr.relevant_session_to_JSON()
-        # For knowning when to quit
-        imonitor_queue = multiprocessing.Queue()
-
-        omonitor_queue = multiprocessing.Queue()
         
-        otrigger_queue = multiprocessing.Queue()
+        imonitor_queues = []
+        omonitor_queues = [] 
+        otrigger_queues = [] 
+        oswapper_queues = [] 
 
-        oswapper_queue = multiprocessing.Queue()
+        monitor_processes = []
+        trigger_processes = []
+        swapper_processes = []
 
-        m = Monitor("monitor", imonitor_queue, omonitor_queue, cmd)
-        mp = multiprocessing.Process(target=m.run_monitor)
-        mp.start()
+        for cc_dec_node in conditional_conns.keys():
+            logging.debug("Controller(): cdes_run(): In loop")
+            # For knowning when to quit
+            imonitor_queue = multiprocessing.Queue()
+            omonitor_queue = multiprocessing.Queue()
+            otrigger_queue = multiprocessing.Queue()
+            oswapper_queue = multiprocessing.Queue()
 
-        #If the user defined a custom Trigger, load it now
-        #get cc_dec name
-        first_cc_dec = conditional_conns.keys()[0]
-        cc_dec_name = conditional_conns[first_cc_dec]["name"]
-        filepath = os.path.realpath(__file__)
-        file_dir = os.path.dirname(filepath)
-        custom_file_path = os.path.join(file_dir,"Trigger",cc_dec_name,"MyTrigger.py")
-        if os.path.exists(custom_file_path):
-            DynLoadedClass = imp.load_source('MyTrigger', custom_file_path)
-            tp = DynLoadedClass.MyTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns)
-        else: 
-            tp = TimerTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns)
-        tp = multiprocessing.Process(target=tp.process_data)
-        tp.start()
-        
-        sw = Swapper("swapper", otrigger_queue, oswapper_queue, conditional_conns, session_number)
-        sw = multiprocessing.Process(target=sw.update_connection)
-        sw.start()
+            imonitor_queues.append(imonitor_queue)
+            omonitor_queues.append(omonitor_queue)
+            otrigger_queues.append(otrigger_queue)
+            oswapper_queues.append(oswapper_queue)
+
+            m = Monitor("monitor", imonitor_queue, omonitor_queue, cmd)
+            mp = multiprocessing.Process(target=m.run_monitor)
+            mp.start()
+            monitor_processes.append(mp)
+
+            #If the user defined a custom Trigger, load it now
+            #get cc_dec name
+            cc_dec_name = conditional_conns[cc_dec_node]["name"]
+            filepath = os.path.realpath(__file__)
+            file_dir = os.path.dirname(filepath)
+            custom_file_path = os.path.join(file_dir,"Trigger",cc_dec_name,"MyTrigger.py")
+            if os.path.exists(custom_file_path):
+                DynLoadedClass = imp.load_source('MyTrigger', custom_file_path)
+                tp = DynLoadedClass.MyTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns, cc_dec_node)
+            else: 
+                tp = TimerTrigger("trigger", omonitor_queue, otrigger_queue, conditional_conns, cc_dec_node)
+            tpm = multiprocessing.Process(target=tp.process_data)
+            tpm.start()
+            trigger_processes.append(tpm)
+            
+            sw = Swapper("swapper", otrigger_queue, oswapper_queue, conditional_conns, session_number, cc_dec_node)
+            swp = multiprocessing.Process(target=sw.update_connection)
+            swp.start()
+            swapper_processes.append(swp)
 
         # Keep looping until the scenario is no longer in a Run state
         state = sr.get_session_state()
@@ -89,17 +105,18 @@ class Controller():
             state = sr.get_session_state()
         
         # Logic to terminate all processes goes here
-        logging.error("Controller(): cdes_run(): Cleaning up and exiting "+str(session_number))
-        imonitor_queue.put("exit")
-        logging.debug("Controller(): cdes_run(): Waiting for Monitor process to fininsh to gracefully exit")
-        mp.join()
-        logging.debug("Controller(): cdes_run(): Done. Terminating Monitor.")
-        mp.terminate()
-        logging.debug("Controller(): cdes_run(): Done. Terminating Trigger.")
-        tp.terminate()
-        logging.debug("Controller(): cdes_run(): Done. Terminating Swapper.")
-        sw.terminate()
-        logging.debug("Controller(): cdes_run(): Done.")
+        for cc in range(0,len(monitor_processes)):
+            logging.debug("Controller(): cdes_run(): Cleaning up and exiting "+str(session_number))
+            imonitor_queues[cc].put("exit")
+            logging.debug("Controller(): cdes_run(): Waiting for Monitor process to fininsh to gracefully exit")
+            monitor_processes[cc].join()
+            logging.debug("Controller(): cdes_run(): Done. Terminating Monitor.")
+            monitor_processes[cc].terminate()
+            logging.debug("Controller(): cdes_run(): Done. Terminating Trigger.")
+            trigger_processes[cc].terminate()
+            logging.debug("Controller(): cdes_run(): Done. Terminating Swapper.")
+            swapper_processes[cc].terminate()
+            logging.debug("Controller(): cdes_run(): Done.")
 
 if __name__ == '__main__':
    

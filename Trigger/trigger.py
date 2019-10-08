@@ -11,7 +11,7 @@ from COREIfx.session_reader import SessionReader
 
 class Trigger():
     
-    def __init__(self, name, iqueue, oqueue, conditional_conns):
+    def __init__(self, name, iqueue, oqueue, conditional_conns, cc_dec_number):
         logging.debug("Trigger(): instantiated")
         self.name = name
         self.iqueue = iqueue
@@ -19,8 +19,8 @@ class Trigger():
         self.conditional_conns = {}
         #The following will be auto-filled in the future
         self.conditional_conns = conditional_conns
-        ##TODO: make this work with more than one at a time
-        self.cc_dec = self.conditional_conns.keys()[0]
+        #works for the specific cc_dec
+        self.cc_dec = cc_dec_number
         self.cc_gw_numbers = []
         self.cc_node_numbers = []
     
