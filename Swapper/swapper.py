@@ -66,6 +66,7 @@ class Swapper():
             for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
                 if node["number"] == active_node_number:
                     msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="ifconfig '+node["cc_nic"]+' up"')
+                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh"')
                     msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node["number"]+' GUI_ATTRIBUTES="color=blue"')
                     node["connected"] = True
                 else:
