@@ -73,7 +73,7 @@ At this time, you should see the link between the CC Decision Node and the CC No
 Follow these steps to create and run a simple cdes scenario.
 
 1. Start CORE, click on the side bar and add the following nodes to the canvas
--  host x 2 (h1, h2)
+- host x 2 (h1, h2)
 - router x 2 (r1, r2)
 - PC (p1)
 - cc_node x 2 (cn1, cn2)
