@@ -24,12 +24,10 @@ class TimerTrigger(Trigger):
             new_time = int(data)
             nodes = self.get_cc_node_numbers()
             #set active node every 10 seconds
-            if new_time % 10 == 0:
-                logging.debug("10 sec mark")
-                if new_time %20 == 0:
-                    self.set_active_conn(nodes[0])
-                else:
-                    self.set_active_conn(nodes[1])
+            if new_time % 20 == 0:
+                self.set_active_conn(nodes[1])                
+            elif new_time %10 == 0:
+                self.set_active_conn(nodes[0])    
     
 if __name__ == '__main__':
    
