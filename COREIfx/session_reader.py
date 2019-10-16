@@ -57,7 +57,7 @@ class SessionReader():
         #First find a switch type node with the the type "SWITCH"
         for node in root.find('networks').findall('network'):
             if node.attrib["type"] != "SWITCH":
-                return ""
+                continue
             #since we know it's a switch, now we'll check if it has the CC_DecisionNode service
             services_resp = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services TYPE=1 -l --tcp'))
             is_cc_node = False
