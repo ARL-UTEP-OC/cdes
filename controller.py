@@ -85,8 +85,9 @@ class Controller():
             tpm = multiprocessing.Process(target=tp.process_data)
             tpm.start()
             trigger_processes.append(tpm)
-            
-            sw = Swapper("swapper", otrigger_queue, oswapper_queue, conditional_conns, session_number, cc_dec_node)
+
+            short_session_number = self.short_session_id(session_number)
+            sw = Swapper("swapper", otrigger_queue, oswapper_queue, conditional_conns, session_number, short_session_number, cc_dec_node)
             swp = multiprocessing.Process(target=sw.update_connection)
             swp.start()
             swapper_processes.append(swp)
@@ -117,6 +118,12 @@ class Controller():
             logging.debug("Controller(): cdes_run(): Done. Terminating Swapper.")
             swapper_processes[cc].terminate()
             logging.debug("Controller(): cdes_run(): Done.")
+    
+    def short_session_id(self, session_number):
+        logging.debug("Controller(): short_session_id(): Instantiated")
+        snum = int(session_number)
+        ans = (snum >> 8) ^ (snum & ((1 << 8) - 1))
+        return ("%x" % ans)
 
 if __name__ == '__main__':
    

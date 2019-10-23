@@ -54,10 +54,17 @@ class SessionReader():
         tree = ET.parse(self.filename)
         root = tree.getroot()
         conditional_conns = {}
+        
+        switches = []
+        switch_ids = []
+        links = root.find('links').findall('link')
         #First find a switch type node with the the type "SWITCH"
         for node in root.find('networks').findall('network'):
-            if node.attrib["type"] != "SWITCH":
-                continue
+            if node.attrib["type"] == "SWITCH":
+                switches.append(node)
+                switch_ids.append(node.attrib["id"])
+
+        for node in switches:
             #since we know it's a switch, now we'll check if it has the CC_DecisionNode service
             services_resp = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services TYPE=1 -l --tcp'))
             is_cc_node = False
@@ -66,11 +73,14 @@ class SessionReader():
                     #we know this is a good node
                     is_cc_node = True
                     break
-            if is_cc_node:
-                #get the source code for files
-                monitor_code = self.get_node_file(node, "CC_DecisionNode", "MyMonitor.sh")
-                trigger_code = self.get_node_file(node, "CC_DecisionNode", "MyTrigger.py")
-                swapper_code = self.get_node_file(node, "CC_DecisionNode", "MySwapper.py")
+            
+            if is_cc_node == False:
+                continue
+
+            #get the source code for files
+            monitor_code = self.get_node_file(node, "CC_DecisionNode", "MyMonitor.sh")
+            trigger_code = self.get_node_file(node, "CC_DecisionNode", "MyTrigger.py")
+            swapper_code = self.get_node_file(node, "CC_DecisionNode", "MySwapper.py")
                 
             #setup entry for node
             conditional_conn = {}
@@ -83,7 +93,7 @@ class SessionReader():
             logging.debug("Found node: " + str(conditional_conn))
 
             #now find all connected nodes and whether they're cc_gw or cc_node; store associated data
-            links = root.find('links').findall('link')
+            
             connected_nodes = []
             for link in links:
                 connected_node = {}
@@ -101,13 +111,20 @@ class SessionReader():
                     if ifx == None:
                         continue
                     #found a connection, now we have to add all details
-                    connected_node["cc_nic"] = ifx.attrib["name"]
-                    connected_node["cc_mac"] = ifx.attrib["mac"]
-                    connected_node["cc_ip4"] = ifx.attrib["ip4"]
-                    connected_node["cc_ip4_mask"] = ifx.attrib["ip4_mask"]
-                    if "ip6" in ifx.attrib:
-                        connected_node["cc_ip6"] = ifx.attrib["ip6"]
-                        connected_node["cc_ip6_mask"] = ifx.attrib["ip6_mask"]
+                    #get the type of the node
+                    if connected_node["number"] in switch_ids:
+                        #switch to switch conns won't have any other useful information
+                        connected_node["node_type"] = "SWITCH"
+                    else:
+                        #switch to node will have additional useful information
+                        connected_node["node_type"] = "other"
+                        connected_node["cc_nic"] = ifx.attrib["name"]
+                        connected_node["cc_mac"] = ifx.attrib["mac"]
+                        connected_node["cc_ip4"] = ifx.attrib["ip4"]
+                        connected_node["cc_ip4_mask"] = ifx.attrib["ip4_mask"]
+                        if "ip6" in ifx.attrib:
+                            connected_node["cc_ip6"] = ifx.attrib["ip6"]
+                            connected_node["cc_ip6_mask"] = ifx.attrib["ip6_mask"]
                     #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
                     connected_node["role"] = "cc_gw"
 
@@ -119,7 +136,14 @@ class SessionReader():
                                     #we know this is a good node
                                     connected_node["role"] = "cc_node"
                                     break
-                                    
+                    #now check if the connected switches/nets have the CC_Node service enabled
+                    services_resp = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services TYPE=1 -l --tcp'))
+                    is_cc_node = False
+                    for line in services_resp.splitlines():
+                        if "CC_DecisionNode" in line:
+                            connected_node["role"] = "cc_node"
+                            break
+
                     connected_node["connected"] = "False"
                     connected_nodes.append(connected_node)
             conditional_conn["connected_nodes"] = connected_nodes
@@ -155,6 +179,10 @@ class SessionReader():
                 file_code += code_line + "\n"
         return file_code
 
+    def get_node_services(self, node):
+        res_services = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services OPAQUE=service' +' TYPE=1 -l --tcp'))
+        return res_services
+
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
@@ -172,6 +200,5 @@ if __name__ == "__main__":
         logging.debug("Exiting since session data is not available: " + str(state))
         exit()
     logging.info(json.dumps(sr.relevant_session_to_JSON(), indent=3))
-    logging.debug("Printing only #4")
-    logging.info(json.dumps(sr.get_conditional_conns("4"), indent=3))
+
     #conditional_conns = get_conditional_conns()

@@ -13,7 +13,7 @@ from COREIfx import msg_ifx
 
 class Swapper():
     
-    def __init__(self, name, iqueue, oqueue, conditional_conns, session_number, cc_dec_number):
+    def __init__(self, name, iqueue, oqueue, conditional_conns, session_number, short_session_number, cc_dec_number):
         logging.debug("Swapper(): instantiated")
         self.name = name
         self.iqueue = iqueue
@@ -24,6 +24,7 @@ class Swapper():
         self.conditional_conns_cc_dec = {}
         
         self.session_number = session_number
+        self.short_session_number = short_session_number
 
         cc_node_numbers = []
         cc_gw_numbers = []
@@ -63,17 +64,71 @@ class Swapper():
             logging.debug("Data: " + str(data))
             #get data from queue
             [cc_dec, cc_gw, active_node_number] = data
+            logging.error("Swapper(): update_connection(): looking at nodes: " + str(self.conditional_conns_cc_dec[cc_dec]))
             for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
                 if node["number"] == active_node_number:
-                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="ifconfig '+node["cc_nic"]+' up"')
-                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh"')
-                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node["number"]+' GUI_ATTRIBUTES="color=blue"')
-                    node["connected"] = True
+                    if node["node_type"] == "SWITCH":
+                        self.enable_net_node(self.short_session_number, cc_dec, node)
+                    else:
+                        self.enable_other_node(self.session_number, cc_dec, node)
                 else:
-                    msg_ifx.send_command('-s'+self.session_number+' EXECUTE NODE='+node["number"]+' NUMBER=1000 COMMAND="ifconfig '+node["cc_nic"]+' down"')
-                    msg_ifx.send_command('-s'+self.session_number+' LINK N1_NUMBER='+cc_dec+' N2_NUMBER='+node["number"]+' GUI_ATTRIBUTES="color=yellow"')
-                    node["connected"] = False
+                    if node["node_type"] == "SWITCH":
+                        self.disable_net_node(self.short_session_number, cc_dec, node)
+                    else:
+                        self.disable_other_node(self.session_number, cc_dec, node)
+
+    def enable_other_node(self, session_number, cc_dec_number, cc_node):
+        logging.debug("Swapper(): enable_other_node(): instantiated")
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up"')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh"')
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        cc_node["connected"] = True
+
+    def disable_other_node(self, session_number, cc_dec_number, cc_node):
+        logging.debug("Swapper(): disable_other_node(): instantiated")
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down"')
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow"')
+        cc_node["connected"] = False
+
+    def enable_net_node(self, short_session_number, cc_dec_number, cc_node):
+        logging.debug("Swapper(): enable_net_node(): instantiated")
+        #system call to enable the interface (since CORE doesn't properly remove/stop the interfaces... yet?)
+        suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
+        localname = "veth" + suffix
+        cmd = 'ifconfig '+ localname + ' up'
+        p = subprocess.Popen(shlex.split(cmd))
+
+        suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
+        localname = "veth" + suffix
+        cmd = 'ifconfig '+ localname + ' up'
+        p = subprocess.Popen(shlex.split(cmd))
+
+        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        cc_node["connected"] = True
+
+    def disable_net_node(self, short_session_number, cc_dec_number, cc_node):
+        logging.debug("Swapper(): disable_net_node(): instantiated")
+        #system call to enable the interface (since CORE doesn't properly remove/stop the interfaces... yet?)
+        suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
+        localname = "veth" + suffix
+        cmd = 'ifconfig '+ localname + ' down'
+        p = subprocess.Popen(shlex.split(cmd))
+
+        suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
+        localname = "veth" + suffix
+        cmd = 'ifconfig '+ localname + ' down'
+        p = subprocess.Popen(shlex.split(cmd))
+
+        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        cc_node["connected"] = False
             
+
+def short_session_id(session_number):
+        logging.debug("Swapper(): short_session_id(): Instantiated")
+        snum = int(session_number)
+        ans = (snum >> 8) ^ (snum & ((1 << 8) - 1))
+        return ("%x" % ans)
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.debug("Swapper(): instantiated")
@@ -89,15 +144,18 @@ if __name__ == '__main__':
     omqueue = multiprocessing.Queue()
     otqueue = multiprocessing.Queue()
 
-    sw = Swapper("swapper", omqueue, otqueue, conditional_conns, sys.argv[1])
+    sw = Swapper("swapper", omqueue, otqueue, conditional_conns, sys.argv[1], short_session_id(int(sys.argv[1])), "3")
     sw = multiprocessing.Process(target=sw.update_connection)
     sw.start()
     
     # Get output and print to screen
     for i in xrange(60):
-        omqueue.put(["4", "1", "2"])
+        omqueue.put(["3", "1", "4"])
         time.sleep(10)
-        omqueue.put(["4", "1", "5"])    
+        omqueue.put(["3", "1", "5"])    
         time.sleep(10)
-
+        omqueue.put(["3", "1", "13"])    
+        time.sleep(10)
+        omqueue.put(["3", "1", "14"])    
+        time.sleep(10)
     logging.debug("Swapper(): Completed")
