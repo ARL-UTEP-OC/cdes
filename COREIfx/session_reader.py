@@ -6,6 +6,9 @@ import os
 import json
 import sys, traceback
 from COREIfx import msg_ifx
+from COREIfx.imnparser import imnparser
+from pyparsing import nestedExpr, originalTextFor
+
 #from core.api.tlv.coreapi import CoreConfMessage, CoreEventMessage
 
 class SessionReader():
@@ -17,7 +20,21 @@ class SessionReader():
             logging.error("No session number was provided")
             exit()
         self.session_number = session_number
-        self.filename = os.path.join("/tmp","pycore."+str(session_number),"session-deployed.xml")
+        logging.debug("SessionReader(): init(): Retrieving imn filename")
+        services_resp = str(msg_ifx.send_command('-s'+self.session_number+' SESSION flags=STRING --tcp -l'))
+        self.imnfilename = ""
+        for line in services_resp.splitlines():
+            if "FILE: " in line:
+                #we know this line has the imn filename
+                ###TODO### Need to make sure we get the correct filename associated with the session
+                self.imnfilename = line.split("FILE: ")[1].split("|")[0]
+                break
+        if self.imnfilename == "":
+            logging.error("No associated imn file found. Exiting")
+            return
+        logging.debug("SessionReader(): init(): Found filename: " + str(self.imnfilename))
+
+        self.xmlfilename = os.path.join("/tmp","pycore."+str(session_number),"session-deployed.xml")       
         state = self.get_session_state()
         logging.debug("Current session state: " + str(state))
         if state == None:
@@ -31,7 +48,7 @@ class SessionReader():
 
         try:
         #check first if directory exists
-            session_path = os.path.dirname(self.filename)
+            session_path = os.path.dirname(self.xmlfilename)
             session_state_path = os.path.join(session_path,"state")
             if os.path.exists(session_path) == False or os.path.exists(session_state_path) == False:
                 logging.debug("SessionReader(): get_session_state() session does not exist!")
@@ -51,30 +68,59 @@ class SessionReader():
 
     def relevant_session_to_JSON(self):
         logging.debug("SessionReader(): relevant_session_to_JSON() instantiated")
-        tree = ET.parse(self.filename)
+        iparser = imnparser(self.imnfilename)
+        tree = ET.parse(self.xmlfilename)
         root = tree.getroot()
         conditional_conns = {}
-        
+        name_id_map = {}
         switches = []
         switch_ids = []
         links = root.find('links').findall('link')
-        #First find a switch type node with the the type "SWITCH"
+
+        device_services = {}
+        switch_services = {}
+        #find all devices (non-switch/hub/wireless) and identify their name/id mappings and services
+        logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding devices")
+        for device in root.find('devices').findall('device'):
+            #keep track of mappings
+            name_id_map[device.attrib["name"]] = device.attrib["id"]
+            services = ""
+            for service in device.find('services').findall('service'):
+                services += " " + str(service.attrib["name"])
+            #store the services that are enabled for this device
+            device_services[device.attrib["id"]] = services
+
+        logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding switches")
+        #find switch type nodes (the type "SWITCH") and then store the name/id mappings
         for node in root.find('networks').findall('network'):
             if node.attrib["type"] == "SWITCH":
                 switches.append(node)
                 switch_ids.append(node.attrib["id"])
+                #keep track of mappings
+                name_id_map[node.attrib["name"]] = node.attrib["id"]
+
+        #now obtain the services for all switch nodes
+        logging.debug("SessionReader(): relevant_session_to_JSON(): " + "obtaining services for switches")
+        data = iparser.get_file_data()       
+        switch_services = iparser.extract_lanswitch_services(data)
+
+        # for node_id in node_name_services:
+        #     logging.error("Iterating over switch node services" + str(node_id))
+        #     #hostname = node_name
+        #     #node_id = name_id_map[hostname]
+        #     services = node_name_services[node_id]
+        #     if services == "":
+        #         continue
+        #     switch_services[node_id] = services
+        logging.error("switch services: " + str(switch_services)) 
+        #exit()
 
         for node in switches:
-            #since we know it's a switch, now we'll check if it has the CC_DecisionNode service
-            services_resp = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services TYPE=1 -l --tcp'))
-            is_cc_node = False
-            for line in services_resp.splitlines():
-                if "CC_DecisionNode" in line:
-                    #we know this is a good node
-                    is_cc_node = True
-                    break
-            
-            if is_cc_node == False:
+            logging.debug("SessionReader(): relevant_session_to_JSON(): " + "traversing through switches; processing CC_DecisionNode")
+            node_id = node.attrib["id"]
+            #check if this is a decision node
+            #if it isn't move on to the next switch
+            if "CC_DecisionNode" not in switch_services[node_id]:
                 continue
 
             #get the source code for files
@@ -125,24 +171,22 @@ class SessionReader():
                         if "ip6" in ifx.attrib:
                             connected_node["cc_ip6"] = ifx.attrib["ip6"]
                             connected_node["cc_ip6_mask"] = ifx.attrib["ip6_mask"]
+                    
                     #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
                     connected_node["role"] = "cc_gw"
 
                     #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
-                    for device in root.find('devices').findall('device'):
-                        if device.attrib["id"] == connected_node["number"]:                           
-                            for service in device.find('services').findall('service'):
-                                if "CC_Node" in service.attrib["name"]:
-                                    #we know this is a good node
-                                    connected_node["role"] = "cc_node"
-                                    break
-                    #now check if the connected switches/nets have the CC_Node service enabled
-                    services_resp = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services TYPE=1 -l --tcp'))
-                    is_cc_node = False
-                    for line in services_resp.splitlines():
-                        if "CC_DecisionNode" in line:
+                    ##TODO REPLACE DEVICE TRAVERSAL
+                    if connected_node["number"] in device_services:
+                        if "CC_Node" in device_services[connected_node["number"]]:
+                            #we know this is a good node
                             connected_node["role"] = "cc_node"
-                            break
+
+                    #now check if the connected switches/nets have the CC_Node service enabled
+                    if connected_node["number"] in switch_services:
+                        if "CC_Node" in switch_services[connected_node["number"]]:
+                            #we know this is a good node
+                            connected_node["role"] = "cc_node"
 
                     connected_node["connected"] = "False"
                     connected_nodes.append(connected_node)
