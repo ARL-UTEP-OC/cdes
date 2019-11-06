@@ -46,9 +46,14 @@ Copy the custom services into your CORE services folder:
 
 For example, 
 ```
-cp CORE_configs/myservices /home/user/.core/myservices -rf
+cp CORE_configs/myservices /home/username/.core/myservices -rf
 
-cp CORE_configs/myconfigs/nodes.conf /home/user/.core/nodes.conf -rf
+cp CORE_configs/myconfigs/nodes.conf /home/username/.core/nodes.conf -rf
+```
+
+Now enable the custom services to run by adding the following line to /etc/core/core.conf
+```
+custom_services_dir = /home/username/.core/myservices
 ```
 
 To run the sample scenario, follow the steps in [Run a Sample scenario](#run-a-sample-scenario).
