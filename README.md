@@ -54,7 +54,7 @@ Copy the custom services into your CORE services folder:
 
 For example, 
 ```
-cp CORE_configs/myservices /home/username/.core/myservices -rf
+cp CORE_configs/myservices/* /home/username/.core/myservices/ -rf
 
 cp CORE_configs/myconfigs/nodes.conf /home/username/.core/nodes.conf -rf
 ```
