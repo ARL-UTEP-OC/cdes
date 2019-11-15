@@ -31,6 +31,8 @@ class Trigger():
             elif node["role"] == "cc_gw":
                 logging.debug("Trigger(): set_active_conn(): found cc_gw: " + str(node))
                 self.cc_gw_numbers.append(node["number"])
+        if len(self.cc_node_numbers) > 0:
+                self.set_active_conn(self.cc_node_numbers[0])
 
     def read_input_line(self):
         logging.debug("Trigger(): read_input_line(): instantiated")
