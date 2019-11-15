@@ -85,6 +85,8 @@ Lastly, press the Start button on the GUI.
 
 At this time, you should see the link between the CC Decision Node and the CC Nodes toggle from blue (connected) to yellow (not connected) in 10 second intervals.
 
+Several other samples are available. They are located in the samples/scenario/ directory.
+
 ### Create a New Scenario
 Follow these steps to create and run a simple cdes scenario.
 
