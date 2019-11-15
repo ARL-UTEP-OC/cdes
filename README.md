@@ -72,6 +72,12 @@ Open the scenario in the CORE-GUI
 ```
 core-gui sample/scenario/CC_NodeTest.imn
 ```
+Click on Session -> Hooks
+- Modify the runtime hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
+```
+python /home/username/cdes/cdes_loader.py &
+```
+
 Lastly, press the Start button on the GUI.
 
 At this time, you should see the link between the CC Decision Node and the CC Nodes toggle from blue (connected) to yellow (not connected) in 10 second intervals.
