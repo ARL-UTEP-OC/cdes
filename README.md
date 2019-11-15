@@ -100,7 +100,7 @@ Follow these steps to create and run a simple cdes scenario.
 
 4. Load CDES into the CORE scenario by 
 - Click on Session -> Hooks
-- Add a new runtime hook and add a command to run the cdes_loader.py at startup, e.g.,
+- Add a new runtime hook and have it load the cdes_loader.py at startup, e.g.,
 ```
 python /home/username/cdes/cdes_loader.py &
 ```
