@@ -86,7 +86,7 @@ python /home/username/cdes/cdes_loader.py &
 
 Lastly, press the Start button on the GUI.
 
-At this time, you should see the link between the CC Decision Node and the CC Nodes toggle from blue (connected) to yellow (not connected) in 10 second intervals.
+At this time, you should see the link between the CC Decision Node and the CC Nodes toggle from blue (connected) to yellow (not connected) in 60 second intervals.
 
 Several other samples are available. They are located in the samples/scenario/ directory.
 
@@ -120,7 +120,7 @@ python /home/username/cdes/cdes_loader.py &
 
 5. Run the scenario by click on the play button
 
-You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
+You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 60 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
 
 ### Troubleshooting
 
