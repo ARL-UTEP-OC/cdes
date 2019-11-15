@@ -335,10 +335,10 @@ annotation a6 {
 annotation a7 {
     iconcoords {362.0 202.0}
     type text
-    label {Allow ~40 seconds for routes to converge after switch before accessing deep nodes.}
+    label {Allow ~60 seconds for routes to converge after switch before accessing deep nodes.}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     canvas c1
 }
 
