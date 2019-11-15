@@ -23,6 +23,9 @@ This system is based on the following node constructs:
 
 * Conditional Connection Gateway (CC_GW): A node that is also connected to the CC_Decision Node, but whose connection is connected throughout the emulation. This node may be used for more complex swapping behavior, e.g., using routes, software defined networking, etc. to redirect traffic.
 
+### Limitations
+Currently, for CDES to work, you must be running only a single instance of CORE and a single session. There will be a fix in the next update.
+
 ### Installation
 CIT-GEN has been tested on:
 * Ubuntu 16.04 LTE (64-bit)
