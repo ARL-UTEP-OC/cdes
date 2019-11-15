@@ -40,6 +40,11 @@ Clone the source and then cd into the directory:
 git clone https://github.com/raistlinJ/cdes
 cd cdes
 ```
+Install the pyparser dependency
+```
+pip install pyparser
+```
+
 Copy the custom services into your CORE services folder:
 
 For example, 
