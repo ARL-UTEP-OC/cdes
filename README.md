@@ -25,7 +25,7 @@ This system is based on the following node constructs:
 
 ### Limitations
 * For CDES to work correctly, only a single instance of CORE and a single session is allowed. 
-* In the default time-based samples, all conditional nodes are enabled until the timer triggers; then certain connections will be disabled
+* When using the default Trigger, there is a short time at the start of the emulation when all conditional links will be enabled (roughly 3-4 seconds).
 
 There will be a fix in the next update.
 
