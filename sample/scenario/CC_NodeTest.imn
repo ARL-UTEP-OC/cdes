@@ -8,33 +8,11 @@ node n1 {
 	 ip address 10.0.1.1/24
 	 ipv6 address 2001:1::1/64
 	!
-	interface eth0
-	 ip address 10.0.0.1/24
-	 ipv6 address 2001:0::1/64
-	!
     }
     canvas c1
     iconcoords {204.0 155.0}
     labelcoords {204.0 187.0}
-    interface-peer {eth0 n2}
     interface-peer {eth1 n3}
-}
-
-node n2 {
-    type router
-    model host
-    network-config {
-	hostname n2
-	!
-	interface eth0
-	 ip address 10.0.0.10/24
-	 ipv6 address 2001:0::10/64
-	!
-    }
-    canvas c1
-    iconcoords {110.0 252.0}
-    labelcoords {110.0 284.0}
-    interface-peer {eth0 n1}
 }
 
 node n3 {
@@ -306,11 +284,6 @@ node n12 {
     interface-peer {eth0 n9}
 }
 
-link l1 {
-    nodes {n2 n1}
-    bandwidth 0
-}
-
 link l2 {
     nodes {n1 n3}
     bandwidth 0
@@ -359,6 +332,85 @@ link l10 {
 link l11 {
     nodes {n9 n12}
     bandwidth 0
+}
+
+annotation a1 {
+    iconcoords {304.0 9.0 650.0 167.0}
+    type rectangle
+    label {HoneyNet1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a2 {
+    iconcoords {292.0 236.0 717.0 568.0}
+    type rectangle
+    label {HoneyNet2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a3 {
+    iconcoords {151.0 597.0}
+    type text
+    label {N1 is conditionally connected to one of two honey nets.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 18
+    canvas c1
+}
+
+annotation a4 {
+    iconcoords {256.0 596.0}
+    type text
+    label {}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 18
+    canvas c1
+}
+
+annotation a5 {
+    type text
+    iconcoords {278.0 596.0}
+    label {}
+    canvas c1
+}
+
+annotation a6 {
+    type text
+    iconcoords {318.0 603.0}
+    label {}
+    canvas c1
+}
+
+annotation a7 {
+    iconcoords {362.0 202.0}
+    type text
+    label {Allow time for routes to converge before accessing deep nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a8 {
+    type text
+    iconcoords {155.0 268.0}
+    label {}
+    canvas c1
 }
 
 canvas c1 {

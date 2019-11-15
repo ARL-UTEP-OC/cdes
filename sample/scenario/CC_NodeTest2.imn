@@ -1,55 +1,16 @@
-node n1 {
-    type router
-    model router
-    network-config {
-	hostname n1
-	!
-	interface eth1
-	 ip address 10.0.1.1/24
-	 ipv6 address 2001:1::1/64
-	!
-	interface eth0
-	 ip address 10.0.0.1/24
-	 ipv6 address 2001:0::1/64
-	!
-    }
-    canvas c1
-    iconcoords {204.0 155.0}
-    labelcoords {204.0 187.0}
-    interface-peer {eth0 n2}
-    interface-peer {eth1 n3}
-}
-
-node n2 {
-    type router
-    model host
-    network-config {
-	hostname n2
-	!
-	interface eth0
-	 ip address 10.0.0.10/24
-	 ipv6 address 2001:0::10/64
-	!
-    }
-    canvas c1
-    iconcoords {110.0 252.0}
-    labelcoords {110.0 284.0}
-    interface-peer {eth0 n1}
-}
-
-node n3 {
+node n13 {
     type lanswitch
     network-config {
-	hostname n3
+	hostname decnode
 	!
     }
     canvas c1
-    iconcoords {319.0 205.0}
-    labelcoords {319.0 229.0}
-    interface-peer {e0 n1}
-    interface-peer {e1 n4}
-    interface-peer {e2 n5}
+    iconcoords {228.0 302.0}
+    labelcoords {228.0 326.0}
     services {CC_DecisionNode}
+    interface-peer {e1 n2}
+    interface-peer {e0 n6}
+    interface-peer {e2 n3}
     custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
@@ -87,11 +48,10 @@ node n3 {
 	            #get the cc_node numbers
 	            nodes = self.get_cc_node_numbers()
 	            #set active node every 10 seconds
-	            if new_time % 10 == 0:
-	                if new_time %20 == 0:
-	                    self.set_active_conn(nodes[0])
-	                else:
-	                    self.set_active_conn(nodes[1])
+	            if new_time % 20 == 0:
+	                self.set_active_conn(nodes[1])                
+	            elif new_time %10 == 0:
+	                self.set_active_conn(nodes[0])                       
 	####
 	
 	}
@@ -114,270 +74,248 @@ node n3 {
 	
 	}
     }
-    interface-peer {e3 n13}
+}
+
+node n2 {
+    type router
+    model host
+    network-config {
+	hostname outclient
+	!
+	interface eth0
+	 ip address 10.0.1.10/24
+	!
+    }
+    canvas c1
+    iconcoords {150.0 387.0}
+    labelcoords {150.0 419.0}
+    interface-peer {eth0 n13}
+}
+
+node n3 {
+    type router
+    model router
+    network-config {
+	hostname n3
+	!
+	interface eth2
+	 ip address 10.0.1.2/24
+	 mac address 00:00:00:00:00:aa
+	!
+	interface eth1
+	 ip address 10.0.2.1/24
+	!
+	interface eth0
+	 ip address 10.0.0.1/24
+	!
+    }
+    canvas c1
+    iconcoords {238.0 188.0}
+    labelcoords {237.0 170.0}
+    interface-peer {eth0 n1}
+    interface-peer {eth1 n4}
+    interface-peer {eth2 n13}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n4 {
     type router
-    model cc_node
+    model router
     network-config {
 	hostname n4
 	!
 	interface eth1
 	 ip address 10.0.3.1/24
-	 ipv6 address 2001:3::1/64
 	!
 	interface eth0
-	 ip address 10.0.1.2/24
-	 ipv6 address 2001:1::2/64
+	 ip address 10.0.2.2/24
 	!
     }
     canvas c1
-    iconcoords {380.0 109.0}
-    labelcoords {380.0 141.0}
+    iconcoords {380.0 213.0}
+    labelcoords {379.0 193.0}
     interface-peer {eth0 n3}
-    interface-peer {eth1 n6}
-    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    interface-peer {eth1 n5}
 }
 
 node n5 {
     type router
-    model cc_node
+    model host
     network-config {
-	hostname n5
-	!
-	interface eth3
-	 ip address 10.0.5.1/24
-	 ipv6 address 2001:5::1/64
-	!
-	interface eth2
-	 ip address 10.0.4.1/24
-	 ipv6 address 2001:4::1/64
-	!
-	interface eth1
-	 ip address 10.0.2.1/24
-	 ipv6 address 2001:2::1/64
+	hostname legitserver
 	!
 	interface eth0
-	 ip address 10.0.1.3/24
-	 ipv6 address 2001:1::3/64
+	 ip address 10.0.3.10/24
 	!
     }
     canvas c1
-    iconcoords {382.0 273.0}
-    labelcoords {381.0 305.0}
+    iconcoords {514.0 162.0}
+    labelcoords {514.0 194.0}
+    interface-peer {eth0 n4}
+}
+
+node n1 {
+    type router
+    model PC
+    network-config {
+	hostname legitclient
+	!
+	interface eth0
+	 ip address 10.0.0.20/24
+	!
+    }
+    canvas c1
+    iconcoords {90.0 213.0}
+    labelcoords {90.0 245.0}
     interface-peer {eth0 n3}
-    interface-peer {eth1 n7}
-    interface-peer {eth2 n8}
-    interface-peer {eth3 n9}
-    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
 }
 
 node n6 {
     type router
-    model host
+    model router
     network-config {
 	hostname n6
 	!
 	interface eth0
-	 ip address 10.0.3.10/24
-	 ipv6 address 2001:3::10/64
+	 ip address 10.0.1.2/24
+	 mac address 00:00:00:00:00:aa
+	!
+	interface eth1
+	 ip address 10.0.4.1/24
 	!
     }
     canvas c1
-    iconcoords {528.0 85.0}
-    labelcoords {528.0 117.0}
-    interface-peer {eth0 n4}
+    iconcoords {350.0 357.0}
+    labelcoords {350.0 389.0}
+    interface-peer {eth0 n13}
+    interface-peer {eth1 n7}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n7 {
     type router
-    model router
-    network-config {
-	hostname n7
-	!
-	interface eth1
-	 ip address 10.0.6.1/24
-	 ipv6 address 2001:6::1/64
-	!
-	interface eth0
-	 ip address 10.0.2.2/24
-	 ipv6 address 2001:2::2/64
-	!
-    }
-    canvas c1
-    iconcoords {511.0 279.0}
-    labelcoords {511.0 311.0}
-    interface-peer {eth0 n5}
-    interface-peer {eth1 n10}
-}
-
-node n8 {
-    type router
-    model router
-    network-config {
-	hostname n8
-	!
-	interface eth1
-	 ip address 10.0.7.1/24
-	 ipv6 address 2001:7::1/64
-	!
-	interface eth0
-	 ip address 10.0.4.2/24
-	 ipv6 address 2001:4::2/64
-	!
-    }
-    canvas c1
-    iconcoords {507.0 388.0}
-    labelcoords {507.0 420.0}
-    interface-peer {eth0 n5}
-    interface-peer {eth1 n11}
-}
-
-node n9 {
-    type router
-    model router
-    network-config {
-	hostname n9
-	!
-	interface eth1
-	 ip address 10.0.8.1/24
-	 ipv6 address 2001:8::1/64
-	!
-	interface eth0
-	 ip address 10.0.5.2/24
-	 ipv6 address 2001:5::2/64
-	!
-    }
-    canvas c1
-    iconcoords {405.0 447.0}
-    labelcoords {405.0 479.0}
-    interface-peer {eth0 n5}
-    interface-peer {eth1 n12}
-}
-
-node n10 {
-    type router
     model host
     network-config {
-	hostname n10
+	hostname honeyserver
 	!
 	interface eth0
-	 ip address 10.0.6.10/24
-	 ipv6 address 2001:6::10/64
+	 ip address 10.0.4.10/24
 	!
     }
     canvas c1
-    iconcoords {661.0 271.0}
-    labelcoords {661.0 303.0}
-    interface-peer {eth0 n7}
-}
-
-node n11 {
-    type router
-    model host
-    network-config {
-	hostname n11
-	!
-	interface eth0
-	 ip address 10.0.7.10/24
-	 ipv6 address 2001:7::10/64
-	!
-    }
-    canvas c1
-    iconcoords {647.0 416.0}
-    labelcoords {647.0 448.0}
-    interface-peer {eth0 n8}
-}
-
-node n12 {
-    type router
-    model host
-    network-config {
-	hostname n12
-	!
-	interface eth0
-	 ip address 10.0.8.10/24
-	 ipv6 address 2001:8::10/64
-	!
-    }
-    canvas c1
-    iconcoords {478.0 534.0}
-    labelcoords {478.0 566.0}
-    interface-peer {eth0 n9}
-}
-
-node n13 {
-    type lanswitch
-    network-config {
-	hostname n13
-	!
-    }
-    canvas c1
-    iconcoords {214.0 328.0}
-    labelcoords {214.0 352.0}
-    interface-peer {e0 n3}
-    services {CC_Node}
+    iconcoords {502.0 399.0}
+    labelcoords {502.0 431.0}
+    interface-peer {eth0 n6}
 }
 
 link l1 {
-    nodes {n2 n1}
+    nodes {n2 n13}
     bandwidth 0
 }
 
 link l2 {
-    color blue
     nodes {n1 n3}
-}
-
-link l3 {
-    color yellow
-    nodes {n3 n4}
-}
-
-link l4 {
-    color yellow
-    nodes {n3 n5}
-}
-
-link l5 {
-    nodes {n5 n7}
     bandwidth 0
 }
 
+link l3 {
+    nodes {n3 n4}
+    bandwidth 0
+}
+
+link l4 {
+    nodes {n4 n5}
+    bandwidth 0
+}
+
+link l5 {
+    color blue
+    nodes {n13 n6}
+}
+
 link l6 {
-    nodes {n4 n6}
+    nodes {n6 n7}
     bandwidth 0
 }
 
 link l7 {
-    nodes {n5 n8}
-    bandwidth 0
+    color yellow
+    nodes {n13 n3}
 }
 
-link l8 {
-    nodes {n5 n9}
-    bandwidth 0
+annotation a1 {
+    iconcoords {26.0 131.0 635.0 260.0}
+    type rectangle
+    label {Legitimate Network}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
 }
 
-link l9 {
-    nodes {n7 n10}
-    bandwidth 0
+annotation a2 {
+    iconcoords {246.0 313.0 600.0 463.0}
+    type rectangle
+    label {Honey Network}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
 }
 
-link l10 {
-    nodes {n8 n11}
-    bandwidth 0
+annotation a3 {
+    iconcoords {98.0 326.0 239.0 431.0}
+    type rectangle
+    label {Untrusted Node}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #c0c04b
+    width 0
+    border black
+    rad 25
+    canvas c1
 }
 
-link l11 {
-    nodes {n9 n12}
-    bandwidth 0
+annotation a4 {
+    iconcoords {199.0 262.0 270.0 314.0}
+    type rectangle
+    label {Decision Maker}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #19be56
+    width 0
+    border black
+    rad 20
+    canvas c1
 }
 
-link l12 {
-    nodes {n3 n13}
-    bandwidth 0
+annotation a5 {
+    iconcoords {7.0 87.0}
+    type text
+    label {An untrusted node is conditionally connected to either the legitimate or honeynet.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 18
+    canvas c1
+}
+
+annotation a6 {
+    type text
+    iconcoords {266.0 98.0}
+    label {}
+    canvas c1
 }
 
 canvas c1 {

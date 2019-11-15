@@ -1,20 +1,3 @@
-node n1 {
-    type router
-    model host
-    network-config {
-	hostname h1
-	!
-	interface eth0
-	 ip address 10.0.0.10/24
-	 ipv6 address 2001:0::10/64
-	!
-    }
-    canvas c1
-    iconcoords {79.0 139.0}
-    labelcoords {79.0 171.0}
-    interface-peer {eth0 n3}
-}
-
 node n2 {
     type router
     model host
@@ -46,15 +29,10 @@ node n3 {
 	 ip address 10.0.1.1/24
 	 ipv6 address 2001:1::1/64
 	!
-	interface eth0
-	 ip address 10.0.0.1/24
-	 ipv6 address 2001:0::1/64
-	!
     }
     canvas c1
     iconcoords {178.0 142.0}
     labelcoords {178.0 174.0}
-    interface-peer {eth0 n1}
     interface-peer {eth1 n7}
     interface-peer {eth2 n8}
 }
@@ -356,11 +334,6 @@ node n12 {
     interface-peer {eth0 n10}
 }
 
-link l1 {
-    nodes {n1 n3}
-    bandwidth 0
-}
-
 link l2 {
     nodes {n3 n7}
     bandwidth 0
@@ -409,6 +382,72 @@ link l10 {
 link l11 {
     nodes {n10 n12}
     bandwidth 0
+}
+
+annotation a1 {
+    iconcoords {308 27 602 124}
+    type rectangle
+    label {Honey Net 1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a2 {
+    iconcoords {304 145 621 253}
+    type rectangle
+    label {Honey Net 2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a3 {
+    iconcoords {293.0 265.0 582.0 352.0}
+    type rectangle
+    label {Honey Net 3}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a4 {
+    iconcoords {299.0 375.0 591.0 489.0}
+    type rectangle
+    label {Honey Net 4}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a5 {
+    iconcoords {16.0 17.0}
+    type text
+    label {CDES supports multiple decision nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 18
+    canvas c1
 }
 
 canvas c1 {
