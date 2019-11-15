@@ -81,19 +81,18 @@ At this time, you should see the link between the CC Decision Node and the CC No
 Follow these steps to create and run a simple cdes scenario.
 
 1. Start CORE, click on the side bar and add the following nodes to the canvas
-- host x 2 (**h1**, **h2**)
 - router x 2 (**r1**, **r2**)
 - PC (**p1**)
 - cc_node x 2 (**cn1**, **cn2**)
 - ethernet switch (**cdes1**)
+- host x 1 (**h1**)
 
 2. Connect the nodes as follows
-- h1 -> r1
 - r1 -> cdes1
 - cdes1 -> cn1
 - cdes1 -> cn2
 - cn1 -> r2
-- cn1 -> h2
+- cn1 -> h1
 
 3. Right click on the following nodes and select these services
 - cdes1: **CC_DecisionNode** (Modify the MyMonitor.sh and MyTrigger.py to define custom behavior)
@@ -105,4 +104,4 @@ Follow these steps to create and run a simple cdes scenario.
 
 5. Run the scenario by click on the play button
 
-You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds.
+You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
