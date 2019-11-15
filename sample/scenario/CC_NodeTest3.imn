@@ -10,8 +10,8 @@ node n2 {
 	!
     }
     canvas c1
-    iconcoords {551.0 211.0}
-    labelcoords {551.0 243.0}
+    iconcoords {561.0 219.0}
+    labelcoords {561.0 251.0}
     interface-peer {eth0 n6}
 }
 
@@ -49,8 +49,8 @@ node n4 {
 	!
     }
     canvas c1
-    iconcoords {547.0 77.0}
-    labelcoords {547.0 109.0}
+    iconcoords {569.0 83.0}
+    labelcoords {569.0 115.0}
     interface-peer {eth0 n5}
 }
 
@@ -122,7 +122,7 @@ node n7 {
 	# 2. Read the input (from the Monitor) by calling self.read_input_line()
 	# 3. Call the self.active_conn method with the cc node number as a parameter.
 	# The following is a sample that reads time information from the Monitor and 
-	# will swap between nodes every 10 milliseconds
+	# will swap between nodes every 60 milliseconds
 	
 	import time
 	#Required import
@@ -148,8 +148,8 @@ node n7 {
 	            #get the cc_node numbers
 	            nodes = self.get_cc_node_numbers()
 	            #set active node every 10 seconds
-	            if new_time % 10 == 0:
-	                if new_time %20 == 0:
+	            if new_time % 60 == 0:
+	                if new_time %120 == 0:
 	                    self.set_active_conn(nodes[0])
 	                else:
 	                    self.set_active_conn(nodes[1])
@@ -175,17 +175,24 @@ node n7 {
 	
 	}
     }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
+	}
+    }
 }
 
 node n8 {
     type lanswitch
     network-config {
-	hostname n8
+	hostname cdes2
 	!
     }
     canvas c1
-    iconcoords {254.0 339.0}
-    labelcoords {254.0 363.0}
+    iconcoords {329.0 363.0}
+    labelcoords {329.0 387.0}
     interface-peer {e0 n3}
     interface-peer {e1 n9}
     interface-peer {e2 n10}
@@ -227,8 +234,8 @@ node n8 {
 	            #get the cc_node numbers
 	            nodes = self.get_cc_node_numbers()
 	            #set active node every 10 seconds
-	            if new_time % 10 == 0:
-	                if new_time %20 == 0:
+	            if new_time % 60 == 0:
+	                if new_time %120 == 0:
 	                    self.set_active_conn(nodes[0])
 	                else:
 	                    self.set_active_conn(nodes[1])
@@ -252,6 +259,13 @@ node n8 {
 	date +%s
 	done
 	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -312,8 +326,8 @@ node n11 {
 	!
     }
     canvas c1
-    iconcoords {531.0 315.0}
-    labelcoords {531.0 347.0}
+    iconcoords {549.0 323.0}
+    labelcoords {549.0 355.0}
     interface-peer {eth0 n9}
 }
 
@@ -329,8 +343,8 @@ node n12 {
 	!
     }
     canvas c1
-    iconcoords {534.0 452.0}
-    labelcoords {534.0 484.0}
+    iconcoords {554.0 457.0}
+    labelcoords {554.0 489.0}
     interface-peer {eth0 n10}
 }
 
@@ -390,7 +404,7 @@ annotation a1 {
     label {Honey Net 1}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -404,7 +418,7 @@ annotation a2 {
     label {Honey Net 2}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -418,7 +432,7 @@ annotation a3 {
     label {Honey Net 3}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -432,7 +446,7 @@ annotation a4 {
     label {Honey Net 4}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -446,7 +460,17 @@ annotation a5 {
     label {CDES supports multiple decision nodes.}
     labelcolor black
     fontfamily {Arial}
-    fontsize 18
+    fontsize {18}
+    canvas c1
+}
+
+annotation a6 {
+    iconcoords {34.0 510.0}
+    type text
+    label {Allow ~40 seconds for routes to converge after switch before accessing deep nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
     canvas c1
 }
 

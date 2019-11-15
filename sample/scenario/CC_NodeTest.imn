@@ -64,9 +64,9 @@ node n3 {
 	            new_time = int(data)
 	            #get the cc_node numbers
 	            nodes = self.get_cc_node_numbers()
-	            #set active node every 10 seconds
-	            if new_time % 10 == 0:
-	                if new_time %20 == 0:
+	            #set active node every 30 seconds
+	            if new_time % 60 == 0:
+	                if new_time %120 == 0:
 	                    self.set_active_conn(nodes[0])
 	                else:
 	                    self.set_active_conn(nodes[1])
@@ -90,6 +90,13 @@ node n3 {
 	date +%s
 	done
 	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -290,12 +297,12 @@ link l2 {
 }
 
 link l3 {
-    color blue
+    color yellow
     nodes {n3 n4}
 }
 
 link l4 {
-    color yellow
+    color blue
     nodes {n3 n5}
 }
 
@@ -368,7 +375,7 @@ annotation a3 {
     label {N1 is conditionally connected to one of two honey nets.}
     labelcolor black
     fontfamily {Arial}
-    fontsize 18
+    fontsize {18}
     canvas c1
 }
 
@@ -378,7 +385,7 @@ annotation a4 {
     label {}
     labelcolor black
     fontfamily {Arial}
-    fontsize 18
+    fontsize {18}
     canvas c1
 }
 
@@ -399,7 +406,7 @@ annotation a6 {
 annotation a7 {
     iconcoords {362.0 202.0}
     type text
-    label {Allow time for routes to converge before accessing deep nodes.}
+    label {Allow ~40 seconds for routes to converge after switch before accessing deep nodes.}
     labelcolor black
     fontfamily {Arial}
     fontsize 12

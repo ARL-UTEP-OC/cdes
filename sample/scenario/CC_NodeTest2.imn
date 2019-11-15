@@ -48,9 +48,9 @@ node n13 {
 	            #get the cc_node numbers
 	            nodes = self.get_cc_node_numbers()
 	            #set active node every 10 seconds
-	            if new_time % 20 == 0:
+	            if new_time % 30 == 0:
 	                self.set_active_conn(nodes[1])                
-	            elif new_time %10 == 0:
+	            elif new_time %15 == 0:
 	                self.set_active_conn(nodes[0])                       
 	####
 	
@@ -72,6 +72,13 @@ node n13 {
 	date +%s
 	done
 	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -99,8 +106,8 @@ node n3 {
 	hostname n3
 	!
 	interface eth2
-	 ip address 10.0.1.2/24
 	 mac address 00:00:00:00:00:aa
+	 ip address 10.0.1.1/24
 	!
 	interface eth1
 	 ip address 10.0.2.1/24
@@ -178,8 +185,8 @@ node n6 {
 	hostname n6
 	!
 	interface eth0
-	 ip address 10.0.1.2/24
 	 mac address 00:00:00:00:00:aa
+	 ip address 10.0.1.1/24
 	!
 	interface eth1
 	 ip address 10.0.4.1/24
@@ -231,7 +238,7 @@ link l4 {
 }
 
 link l5 {
-    color blue
+    color yellow
     nodes {n13 n6}
 }
 
@@ -241,7 +248,7 @@ link l6 {
 }
 
 link l7 {
-    color yellow
+    color blue
     nodes {n13 n3}
 }
 
@@ -251,7 +258,7 @@ annotation a1 {
     label {Legitimate Network}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -265,7 +272,7 @@ annotation a2 {
     label {Honey Network}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -279,7 +286,7 @@ annotation a3 {
     label {Untrusted Node}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #c0c04b
     width 0
     border black
@@ -293,7 +300,7 @@ annotation a4 {
     label {Decision Maker}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #19be56
     width 0
     border black
@@ -307,7 +314,7 @@ annotation a5 {
     label {An untrusted node is conditionally connected to either the legitimate or honeynet.}
     labelcolor black
     fontfamily {Arial}
-    fontsize 18
+    fontsize {18}
     canvas c1
 }
 
@@ -315,6 +322,16 @@ annotation a6 {
     type text
     iconcoords {266.0 98.0}
     label {}
+    canvas c1
+}
+
+annotation a7 {
+    iconcoords {310.0 286.0}
+    type text
+    label {Allow ~40 seconds for routes to converge after switch before accessing deep nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
     canvas c1
 }
 
