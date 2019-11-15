@@ -195,10 +195,13 @@ class SessionReader():
         return conditional_conns
 
     def get_conditional_conns(self, cc_dec_number):
+        logging.debug("SessionReader(): get_conditional_conns(): instantiated")
         return self.conditional_conns[cc_dec_number]
 
     def get_node_file(self, node, service_name, filename):
+        logging.debug("SessionReader(): get_node_file(): instantiated")
         #First check if file exists:
+        logging.debug("SessionReader(): get_node_file(): checking if file exists")
         res = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services OPAQUE=service:'+service_name+' TYPE=1 -l --tcp'))
         file_exists = False
         for line in res.splitlines():
@@ -208,6 +211,7 @@ class SessionReader():
         if file_exists == False:
             return ""
         #Get file contents
+        logging.debug("SessionReader(): get_node_file(): getting file contents")
         res_code = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services OPAQUE=service:'+service_name+':'+filename+' TYPE=1 -l --tcp'))
         file_code = ""
         code_section = False
@@ -224,6 +228,7 @@ class SessionReader():
         return file_code
 
     def get_node_services(self, node):
+        logging.debug("SessionReader(): get_node_services(): instantiated")
         res_services = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node.attrib["id"] +' OBJECT=services OPAQUE=service' +' TYPE=1 -l --tcp'))
         return res_services
 
