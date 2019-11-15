@@ -9,6 +9,7 @@
         - [Linux](#linux)
     - [Run a Sample Scenario](#run-a-sample-scenario)
     - [Create a New Scenario](#create-a-new-scenario)
+    - [Troubleshooting](#troubleshooting)
 
 ### Description
 CDES is an extension to the Common Open Research Emulator. The main purpose of this system is to enable conditional connections among nodes in emulated networks. 
@@ -22,11 +23,6 @@ This system is based on the following node constructs:
 
 * Conditional Connection Gateway (CC_GW): A node that is also connected to the CC_Decision Node, but whose connection is connected throughout the emulation. This node may be used for more complex swapping behavior, e.g., using routes, software defined networking, etc. to redirect traffic.
 
-### Limitations
-* Currently no support for scenarios with wireless nodes.
-
-Both of these issues will be available soon.
-
 ### Installation
 CIT-GEN has been tested on:
 * Ubuntu 16.04 LTE (64-bit)
@@ -35,6 +31,7 @@ CIT-GEN has been tested on:
 ##### Requirements
 * [Python 2.x ](https://www.python.org/download/releases/2.7/)
 * [CORE v4.7+](https://github.com/coreemu/core/)
+* [pyparser](https://pypi.org/project/pyparser/)
 
 ##### Linux
 Clone the source and then cd into the directory:
@@ -42,6 +39,11 @@ Clone the source and then cd into the directory:
 git clone https://github.com/raistlinJ/cdes
 cd cdes
 ```
+Install the pyparser dependency
+```
+pip install pyparser
+```
+
 Copy the custom services into your CORE services folder:
 
 For example, 
@@ -78,19 +80,18 @@ At this time, you should see the link between the CC Decision Node and the CC No
 Follow these steps to create and run a simple cdes scenario.
 
 1. Start CORE, click on the side bar and add the following nodes to the canvas
-- host x 2 (**h1**, **h2**)
 - router x 2 (**r1**, **r2**)
 - PC (**p1**)
 - cc_node x 2 (**cn1**, **cn2**)
 - ethernet switch (**cdes1**)
+- host x 1 (**h1**)
 
 2. Connect the nodes as follows
-- h1 -> r1
 - r1 -> cdes1
 - cdes1 -> cn1
 - cdes1 -> cn2
 - cn1 -> r2
-- cn1 -> h2
+- cn1 -> h1
 
 3. Right click on the following nodes and select these services
 - cdes1: **CC_DecisionNode** (Modify the MyMonitor.sh and MyTrigger.py to define custom behavior)
@@ -98,8 +99,18 @@ Follow these steps to create and run a simple cdes scenario.
 
 4. Load CDES into the CORE scenario by 
 - Click on Session -> Hooks
-- Add a new runtime hook and have it load the cdes_loader.sh file in the folder with the cdes source
+- Add a new runtime hook and have it load the cdes_loader.py at startup, e.g.,
+```
+python /home/username/cdes/cdes_loader.py &
+```
 
 5. Run the scenario by click on the play button
 
-You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds.
+You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
+
+### Troubleshooting
+
+The CDES logs will be located in the temporary directory associated with the current CORE session.
+```
+/tmp/pycore.<session-number>/runtime_hook.sh.log
+```
