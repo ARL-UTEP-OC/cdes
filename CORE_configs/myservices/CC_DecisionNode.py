@@ -98,7 +98,7 @@ done
 # 2. Read the input (from the Monitor) by calling self.read_input_line()
 # 3. Call the self.active_conn method with the cc node number as a parameter.
 # The following is a sample that reads time information from the Monitor and 
-# will swap between nodes every 10 milliseconds
+# will swap between nodes every 60 seconds
 
 import time
 #Required import
@@ -123,10 +123,10 @@ class MyTrigger(Trigger):
             new_time = int(data)
             #get the cc_node numbers
             nodes = self.get_cc_node_numbers()
-            #set active node every 10 seconds
-            if new_time % 20 == 0:
+            #set active node every 60 seconds
+            if new_time % 120 == 0:
                 self.set_active_conn(nodes[1])                
-            elif new_time %10 == 0:
+            elif new_time %60 == 0:
                 self.set_active_conn(nodes[0])                       
 ####
 """            
