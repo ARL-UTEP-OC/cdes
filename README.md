@@ -9,6 +9,7 @@
         - [Linux](#linux)
     - [Run a Sample Scenario](#run-a-sample-scenario)
     - [Create a New Scenario](#create-a-new-scenario)
+    - [Troubleshooting](#troubleshooting)
 
 ### Description
 CDES is an extension to the Common Open Research Emulator. The main purpose of this system is to enable conditional connections among nodes in emulated networks. 
@@ -21,8 +22,6 @@ This system is based on the following node constructs:
 * Conditional Connection Node (CC_Node): A node that is connected to the CC_Decision Node. The connection to this node is dependent on the underlying logic defined in the Decision Node
 
 * Conditional Connection Gateway (CC_GW): A node that is also connected to the CC_Decision Node, but whose connection is connected throughout the emulation. This node may be used for more complex swapping behavior, e.g., using routes, software defined networking, etc. to redirect traffic.
-
-### Limitations
 
 ### Installation
 CIT-GEN has been tested on:
@@ -108,3 +107,10 @@ python /home/username/cdes/cdes_loader.py &
 5. Run the scenario by click on the play button
 
 You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 10 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
+
+### Troubleshooting
+
+The CDES logs will be located in the temporary directory associated with the current CORE session.
+```
+/tmp/pycore.<session-number>/runtime_hook.sh.log
+```
