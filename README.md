@@ -23,9 +23,6 @@ This system is based on the following node constructs:
 * Conditional Connection Gateway (CC_GW): A node that is also connected to the CC_Decision Node, but whose connection is connected throughout the emulation. This node may be used for more complex swapping behavior, e.g., using routes, software defined networking, etc. to redirect traffic.
 
 ### Limitations
-* Currently no support for scenarios with wireless nodes.
-
-Both of these issues will be available soon.
 
 ### Installation
 CIT-GEN has been tested on:
