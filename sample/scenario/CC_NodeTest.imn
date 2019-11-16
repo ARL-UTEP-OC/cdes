@@ -338,7 +338,7 @@ annotation a7 {
     label {Allow ~60 seconds for routes to converge after switch before accessing deep nodes.}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
