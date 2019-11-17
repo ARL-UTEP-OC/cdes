@@ -56,13 +56,13 @@ class Trigger():
         #     else:
         #         logging.info("Nothing read")
     
-    def set_active_conn(self, active_cc_node_number):
+    def set_active_conn(self, active_cc_node_number, disable_others=True):
         logging.debug("Trigger(): set_active_conn(): instantiated")
 
         #find the node to activate
         if active_cc_node_number in self.cc_node_numbers:
             logging.debug("Trigger(): set_active_conn(): found node to activate")
-            self.oqueue.put([self.cc_dec, self.cc_gw_numbers, active_cc_node_number])
+            self.oqueue.put([self.cc_dec, self.cc_gw_numbers, active_cc_node_number, disable_others])
         else:
             logging.error("Invalid Node Specified for Activation")
             raise NameError()

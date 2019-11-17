@@ -122,7 +122,7 @@ node n7 {
 	# 2. Read the input (from the Monitor) by calling self.read_input_line()
 	# 3. Call the self.active_conn method with the cc node number as a parameter.
 	# The following is a sample that reads time information from the Monitor and 
-	# will switch to other honeynet after 90 seconds
+	# will enable other honeynet after 30 seconds
 	
 	import time
 	#Required import
@@ -152,10 +152,10 @@ node n7 {
 	            new_time = int(data)
 	            if start_time == 0:
 	                start_time = new_time
-	            #set active node after 90 seconds
-	            if (new_time - start_time >= 90) and changed == False:
+	            #enable other honeynet after 30 seconds
+	            if (new_time - start_time >= 30) and changed == False:
 	                print("SWITCHING TO NODE 1")
-	                self.set_active_conn(nodes[1])
+	                self.set_active_conn(nodes[1], disable_others=False)
 	                changed = True               
 	####
 	
@@ -202,6 +202,13 @@ node n8 {
     interface-peer {e2 n10}
     services {CC_DecisionNode}
     custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
+	}
+    }
+    custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
@@ -212,7 +219,7 @@ node n8 {
 	# 2. Read the input (from the Monitor) by calling self.read_input_line()
 	# 3. Call the self.active_conn method with the cc node number as a parameter.
 	# The following is a sample that reads time information from the Monitor and 
-	# will switch to other honeynet after 90 seconds
+	# will enable other honeynet after 30 seconds
 	
 	import time
 	#Required import
@@ -242,10 +249,10 @@ node n8 {
 	            new_time = int(data)
 	            if start_time == 0:
 	                start_time = new_time
-	            #set active node after 90 seconds
-	            if (new_time - start_time >= 90) and changed == False:
+	            #enable other honeynet after 30 seconds
+	            if (new_time - start_time >= 30) and changed == False:
 	                print("SWITCHING TO NODE 1")
-	                self.set_active_conn(nodes[1])
+	                self.set_active_conn(nodes[1], disable_others=False)
 	                changed = True               
 	####
 	
@@ -267,13 +274,6 @@ node n8 {
 	date +%s
 	done
 	
-	}
-    }
-    custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -362,12 +362,12 @@ link l2 {
 }
 
 link l3 {
-    color Blue
+    color blue
     nodes {n7 n5}
 }
 
 link l4 {
-    color blue
+    color Yellow
     nodes {n7 n6}
 }
 
@@ -387,12 +387,12 @@ link l7 {
 }
 
 link l8 {
-    color Blue
+    color blue
     nodes {n8 n9}
 }
 
 link l9 {
-    color blue
+    color yellow
     nodes {n8 n10}
 }
 
@@ -409,10 +409,10 @@ link l11 {
 annotation a1 {
     iconcoords {308 27 602 124}
     type rectangle
-    label {Honey Net 1}
+    label {Legit Net 1}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     color #C0C0FF
     width 0
     border black
@@ -423,10 +423,10 @@ annotation a1 {
 annotation a2 {
     iconcoords {304 145 621 253}
     type rectangle
-    label {Honey Net 2}
+    label {Honey Net 1}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     color #C0C0FF
     width 0
     border black
@@ -437,10 +437,10 @@ annotation a2 {
 annotation a3 {
     iconcoords {293.0 265.0 582.0 352.0}
     type rectangle
-    label {Honey Net 3}
+    label {Legit Net 2}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     color #C0C0FF
     width 0
     border black
@@ -451,10 +451,10 @@ annotation a3 {
 annotation a4 {
     iconcoords {299.0 375.0 591.0 489.0}
     type rectangle
-    label {Honey Net 4}
+    label {Honey Net 2}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     color #C0C0FF
     width 0
     border black
@@ -465,10 +465,10 @@ annotation a4 {
 annotation a5 {
     iconcoords {16.0 17.0}
     type text
-    label {CDES supports multiple decision nodes (change after 90 seconds).}
+    label {CDES supports multiple decision nodes (enables additional honeynets after 30 seconds).}
     labelcolor black
     fontfamily {Arial}
-    fontsize {18}
+    fontsize 18
     canvas c1
 }
 

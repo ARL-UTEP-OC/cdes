@@ -63,7 +63,7 @@ class Swapper():
                 continue
             logging.debug("Data: " + str(data))
             #get data from queue
-            [cc_dec, cc_gw, active_node_number] = data
+            [cc_dec, cc_gw, active_node_number, disable_others] = data
             logging.error("Swapper(): update_connection(): looking at nodes: " + str(self.conditional_conns_cc_dec[cc_dec]))
             for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
                 if node["number"] == active_node_number:
@@ -72,10 +72,11 @@ class Swapper():
                     else:
                         self.enable_other_node(self.session_number, cc_dec, node)
                 else:
-                    if node["node_type"] == "SWITCH":
-                        self.disable_net_node(self.short_session_number, cc_dec, node)
-                    else:
-                        self.disable_other_node(self.session_number, cc_dec, node)
+                    if disable_others == True:
+                        if node["node_type"] == "SWITCH":
+                            self.disable_net_node(self.short_session_number, cc_dec, node)
+                        else:
+                            self.disable_other_node(self.session_number, cc_dec, node)
 
     def enable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): enable_other_node(): instantiated")
