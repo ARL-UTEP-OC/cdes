@@ -3,6 +3,9 @@ import shlex
 import subprocess
 import logging
 import sys, traceback
+import psutil
+import os, signal 
+import select
 
 class Monitor():
     
@@ -22,27 +25,28 @@ class Monitor():
             logging.debug("Monitor(): run_monitor: running " + str(self.cmd))
             self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE)
             logging.debug("Monitor(): run_monitor(): starting readline loop")
+            poll_obj = select.poll()
+            poll_obj.register(self.p.stdout, select.POLLIN)
             while True:
-                out = self.p.stdout.readline()
-                if out == '' and self.p.poll() != None:
-                    logging.debug("Monitor(): run_monitor(): breaking out")
+                if self.iqueue.empty() == False:
+                    self.cleanup()
                     break
-                else: 
-                    logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
-                    # Before adding to the output queue, make sure we're not terminating
-                    if self.iqueue.empty() == False:
-                        if self.p.poll() == None:
-                            logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
-                            self.p.terminate()
+                poll_result = poll_obj.poll(0)
+                if poll_result:
+                    out = self.p.stdout.readline()
+                    logging.debug("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
+                    if out == '' and self.p.poll() != None:
+                        self.cleanup()
+                        logging.debug("Monitor(): run_monitor(): breaking out")
                         break
-                    self.oqueue.put(out.strip())
+                    else: 
+                        logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
+                        # Before adding to the output queue, make sure we're not terminating
+                        self.oqueue.put(out.strip())
         except Exception as e:
             if self.p != None:
                 logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
-                self.p.terminate()
-                if self.p.poll() == None:
-                    logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
-                    self.p.terminate()
+                self.cleanup()
             exc_type, exc_value, exc_traceback = sys.exc_info()
             logging.error("Monitor(): run_monitor(): An error occured ")
             traceback.print_exception(exc_type, exc_value, exc_traceback)
@@ -52,9 +56,15 @@ class Monitor():
         try:
             if self.p != None:
                 logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                logging.error("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
+                for child in psutil.Process(self.p.pid).children(recursive=True):
+                    child.terminate()
                 self.p.terminate()
                 if self.p.poll() == None:
                     logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
+                    logging.error("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
+                    for child in psutil.Process(self.p.pid).children(recursive=True):
+                        child.terminate()
                     self.p.terminate()
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
