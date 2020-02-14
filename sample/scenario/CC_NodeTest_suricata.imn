@@ -12,13 +12,6 @@ node n13 {
     interface-peer {e0 n6}
     interface-peer {e2 n3}
     custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
-	}
-    }
-    custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
@@ -81,6 +74,13 @@ node n13 {
 	
 	tail /tmp/suricata-out/fast.log -f
 	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
