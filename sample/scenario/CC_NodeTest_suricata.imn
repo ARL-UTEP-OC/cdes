@@ -46,12 +46,13 @@ node n13 {
 	            #if data yet exists, restart loop
 	            if data == None:
 	                continue
-	            # if data exists, we know there was an alert; 
-	            # let's switch if there are more than 10 alerts
-	            numAlerts = numAlerts + 1
-	            if numAlerts == 20:
-	               #set active node
-	               self.set_active_conn(nodes[0])                
+	            if "1100001" in data:
+	                # if data exists, we know there was an alert; 
+	                # let's switch if there are more than 10 alerts
+	                numAlerts = numAlerts + 1
+	                if numAlerts == 20:
+	                   #set active node
+	                   self.set_active_conn(nodes[0])                
 	####
 	
 	}
@@ -240,7 +241,7 @@ link l4 {
 }
 
 link l5 {
-    color yellow
+    color blue
     nodes {n13 n6}
 }
 
@@ -250,7 +251,7 @@ link l6 {
 }
 
 link l7 {
-    color blue
+    color yellow
     nodes {n13 n3}
 }
 
@@ -989,4 +990,3 @@ option global {
 
 option session {
 }
-
