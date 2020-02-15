@@ -390,6 +390,590 @@ alert icmp 10.0.1.10 any -> any any (msg:"ICMP packet"; sid:1100001; rev:1; clas
 EOF
 }
 
+hook 2:suricata_configuration_hook.sh {
+#!/bin/sh
+# session hook script; write commands here to execute on the host at the
+# specified state
+
+mkdir /tmp/suricata-out/
+
+cat << EOF > /tmp/suricata-out/suricata-debian.yaml
+
+
+%YAML 1.1
+---
+
+
+
+
+
+
+host-mode: auto
+
+
+
+
+
+
+default-log-dir: /var/log/suricata/
+
+unix-command:
+  enabled: no
+
+stats:
+  enabled: yes
+  interval: 8
+
+outputs:
+
+  - fast:
+      enabled: yes
+      filename: fast.log
+      append: yes
+
+  - eve-log:
+      enabled: yes
+      filename: eve.json
+      types:
+        - alert:
+
+            xff:
+              enabled: no
+              mode: extra-data
+              deployment: reverse
+              header: X-Forwarded-For
+        - http:
+        - dns
+        - tls:
+        - files:
+        - smtp:
+
+        - ssh
+        - stats:
+
+  - unified2-alert:
+      enabled: no
+      filename: unified2.alert
+
+
+
+
+      xff:
+        enabled: no
+        mode: extra-data
+        deployment: reverse
+        header: X-Forwarded-For
+
+  - http-log:
+      enabled: yes
+      filename: http.log
+      append: yes
+
+  - tls-log:
+      append: yes
+
+  - tls-store:
+      enabled: no
+
+  - dns-log:
+      enabled: no
+      filename: dns.log
+      append: yes
+
+  - pcap-log:
+      enabled:  no
+      filename: log.pcap
+
+      limit: 1000mb
+
+      max-files: 2000
+
+
+  - alert-debug:
+      enabled: no
+      filename: alert-debug.log
+      append: yes
+
+  - alert-prelude:
+      enabled: no
+      profile: suricata
+      log-packet-content: no
+      log-packet-header: yes
+
+  - stats:
+      enabled: yes
+      filename: stats.log
+
+  - syslog:
+      enabled: no
+      facility: local5
+
+  - drop:
+      enabled: no
+      filename: drop.log
+      append: yes
+
+  - file-store:
+
+  - file-log:
+      enabled: no
+      filename: files-json.log
+      append: yes
+
+
+  - tcp-data:
+      enabled: no
+      type: file
+      filename: tcp-data.log
+
+  - http-body-data:
+      enabled: no
+      type: file
+      filename: http-data.log
+
+  - lua:
+      enabled: no
+      scripts:
+
+magic-file: /usr/share/file/magic
+
+nfq:
+
+nflog:
+  - group: 2
+    buffer-size: 18432
+  - group: default
+    qthreshold: 1
+    qtimeout: 100
+    max-size: 20000
+
+af-packet:
+  - interface: eth0
+    threads: auto
+    cluster-id: 99
+    cluster-type: cluster_flow
+    defrag: yes
+    use-mmap: yes
+  - interface: eth1
+    threads: auto
+    cluster-id: 98
+    cluster-type: cluster_flow
+    defrag: yes
+  - interface: default
+
+netmap:
+ - interface: eth2
+   threads: auto
+ - interface: default
+
+legacy:
+  uricontent: enabled
+
+
+detect-engine:
+  - profile: medium
+  - custom-values:
+      toclient-src-groups: 2
+      toclient-dst-groups: 2
+      toclient-sp-groups: 2
+      toclient-dp-groups: 3
+      toserver-src-groups: 2
+      toserver-dst-groups: 4
+      toserver-sp-groups: 2
+      toserver-dp-groups: 25
+  - sgh-mpm-context: auto
+  - inspection-recursion-limit: 3000
+
+threading:
+  set-cpu-affinity: no
+  cpu-affinity:
+    - management-cpu-set:
+    - receive-cpu-set:
+    - decode-cpu-set:
+        cpu: [ 0, 1 ]
+        mode: "balanced"
+    - stream-cpu-set:
+        cpu: [ "0-1" ]
+    - detect-cpu-set:
+        cpu: [ "all" ]
+        prio:
+          low: [ 0 ]
+          medium: [ "1-2" ]
+          high: [ 3 ]
+          default: "medium"
+    - verdict-cpu-set:
+        cpu: [ 0 ]
+        prio:
+          default: "high"
+    - reject-cpu-set:
+        cpu: [ 0 ]
+        prio:
+          default: "low"
+    - output-cpu-set:
+        cpu: [ "all" ]
+        prio:
+           default: "medium"
+  detect-thread-ratio: 1.5
+
+cuda:
+  mpm:
+    data-buffer-size-min-limit: 0
+    data-buffer-size-max-limit: 1500
+    cudabuffer-buffer-size: 500mb
+    gpu-transfer-size: 50mb
+    batching-timeout: 2000
+    device-id: 0
+    cuda-streams: 2
+
+
+mpm-algo: ac
+
+
+pattern-matcher:
+  - b2g:
+      search-algo: B2gSearchBNDMq
+      hash-size: low
+      bf-size: medium
+  - b3g:
+      search-algo: B3gSearchBNDMq
+      hash-size: low
+      bf-size: medium
+  - wumanber:
+      hash-size: low
+      bf-size: medium
+
+
+defrag:
+  memcap: 32mb
+  hash-size: 65536
+  prealloc: yes
+  timeout: 60
+
+
+
+flow:
+  memcap: 64mb
+  hash-size: 65536
+  prealloc: 10000
+  emergency-recovery: 30
+
+vlan:
+  use-for-tracking: true
+
+
+flow-timeouts:
+
+  default:
+    new: 30
+    established: 300
+    closed: 0
+    emergency-new: 10
+    emergency-established: 100
+    emergency-closed: 0
+  tcp:
+    new: 60
+    established: 3600
+    closed: 120
+    emergency-new: 10
+    emergency-established: 300
+    emergency-closed: 20
+  udp:
+    new: 30
+    established: 300
+    emergency-new: 10
+    emergency-established: 100
+  icmp:
+    new: 30
+    established: 300
+    emergency-new: 10
+    emergency-established: 100
+
+stream:
+  memcap: 32mb
+  reassembly:
+    memcap: 128mb
+    toserver-chunk-size: 2560
+    toclient-chunk-size: 2560
+    randomize-chunk-size: yes
+
+host:
+  hash-size: 4096
+  prealloc: 1000
+  memcap: 16777216
+
+
+logging:
+
+  default-log-level: notice
+
+
+  default-output-filter:
+
+  outputs:
+  - console:
+      enabled: yes
+  - file:
+      enabled: no
+      filename: /var/log/suricata/suricata.log
+  - syslog:
+      enabled: no
+      facility: local5
+      format: "[%i] <%d> -- "
+
+mpipe:
+
+  load-balance: dynamic
+
+  iqueue-packets: 2048
+
+  inputs:
+  - interface: xgbe2
+  - interface: xgbe3
+  - interface: xgbe4
+
+
+  stack:
+    size128: 0
+    size256: 9
+    size512: 0
+    size1024: 0
+    size1664: 7
+    size4096: 0
+    size10386: 0
+    size16384: 0
+
+pfring:
+  - interface: eth0
+    threads: 1
+
+    cluster-id: 99
+
+    cluster-type: cluster_flow
+  - interface: default
+
+pcap:
+  - interface: eth0
+  - interface: default
+
+pcap-file:
+  checksum-checks: auto
+
+ipfw:
+
+
+default-rule-path: /etc/suricata/rules
+rule-files:
+- custom.rules
+
+classification-file: /etc/suricata/classification.config
+reference-config-file: /etc/suricata/reference.config
+
+vars:
+
+  address-groups:
+
+    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
+
+    EXTERNAL_NET: "!$HOME_NET"
+
+    HTTP_SERVERS: "$HOME_NET"
+
+    SMTP_SERVERS: "$HOME_NET"
+
+    SQL_SERVERS: "$HOME_NET"
+
+    DNS_SERVERS: "$HOME_NET"
+
+    TELNET_SERVERS: "$HOME_NET"
+
+    AIM_SERVERS: "$EXTERNAL_NET"
+
+    DNP3_SERVER: "$HOME_NET"
+
+    DNP3_CLIENT: "$HOME_NET"
+
+    MODBUS_CLIENT: "$HOME_NET"
+
+    MODBUS_SERVER: "$HOME_NET"
+
+    ENIP_CLIENT: "$HOME_NET"
+
+    ENIP_SERVER: "$HOME_NET"
+
+  port-groups:
+
+    HTTP_PORTS: "80"
+
+    SHELLCODE_PORTS: "!80"
+
+    ORACLE_PORTS: 1521
+
+    SSH_PORTS: 22
+
+    DNP3_PORTS: 20000
+
+    MODBUS_PORTS: 502
+
+
+
+host-os-policy:
+  windows: [0.0.0.0/0]
+  bsd: []
+  bsd-right: []
+  old-linux: []
+  linux: [10.0.0.0/8, 192.168.1.100, "8762:2352:6241:7245:E000:0000:0000:0000"]
+  old-solaris: []
+  solaris: ["::1"]
+  hpux10: []
+  hpux11: []
+  irix: []
+  macos: []
+  vista: []
+  windows2k3: []
+
+
+asn1-max-frames: 256
+
+engine-analysis:
+  rules-fast-pattern: yes
+  rules: yes
+
+pcre:
+  match-limit: 3500
+  match-limit-recursion: 1500
+
+app-layer:
+  protocols:
+    tls:
+      enabled: yes
+      detection-ports:
+        dp: 443
+
+    dcerpc:
+      enabled: yes
+    ftp:
+      enabled: yes
+    ssh:
+      enabled: yes
+    smtp:
+      enabled: yes
+      mime:
+        decode-mime: yes
+
+        decode-base64: yes
+        decode-quoted-printable: yes
+
+        header-value-depth: 2000
+
+        extract-urls: yes
+        body-md5: no
+      inspected-tracker:
+        content-limit: 1000
+        content-inspect-min-size: 1000
+        content-inspect-window: 1000
+    imap:
+      enabled: detection-only
+    msn:
+      enabled: detection-only
+    smb:
+      enabled: yes
+      detection-ports:
+        dp: 139
+    modbus:
+
+      enabled: no
+      detection-ports:
+        dp: 502
+    dns:
+
+
+      tcp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+      udp:
+        enabled: yes
+        detection-ports:
+          dp: 53
+    http:
+      enabled: yes
+
+      libhtp:
+
+         default-config:
+           personality: IDS
+
+           request-body-limit: 100kb
+           response-body-limit: 100kb
+
+           request-body-minimal-inspect-size: 32kb
+           request-body-inspect-window: 4kb
+           response-body-minimal-inspect-size: 40kb
+           response-body-inspect-window: 16kb
+
+           http-body-inline: auto
+
+
+           double-decode-path: no
+           double-decode-query: no
+
+         server-config:
+
+
+
+profiling:
+
+  rules:
+
+    enabled: yes
+    filename: rule_perf.log
+    append: yes
+
+    sort: avgticks
+
+    limit: 100
+
+    json: true
+
+  keywords:
+    enabled: yes
+    filename: keyword_perf.log
+    append: yes
+
+  packets:
+
+    enabled: yes
+    filename: packet_stats.log
+    append: yes
+
+    csv:
+
+      enabled: no
+      filename: packet_stats.csv
+
+  locks:
+    enabled: no
+    filename: lock_stats.log
+    append: yes
+
+  pcap-log:
+    enabled: no
+    filename: pcaplog_stats.log
+    append: yes
+
+
+coredump:
+  max-dump: unlimited
+
+napatech:
+    hba: -1
+
+    use-all-streams: yes
+
+    streams: [1, 2, 3]
+EOF
+}
+
 option global {
     interface_names no
     ip_addresses yes
