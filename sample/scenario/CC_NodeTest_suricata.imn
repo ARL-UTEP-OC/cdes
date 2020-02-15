@@ -12,13 +12,6 @@ node n13 {
     interface-peer {e0 n6}
     interface-peer {e2 n3}
     custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
-	}
-    }
-    custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
@@ -82,6 +75,13 @@ node n13 {
 	
 	tail /tmp/suricata-out/fast.log -f
 	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -241,7 +241,7 @@ link l4 {
 }
 
 link l5 {
-    color yellow
+    color blue
     nodes {n13 n6}
 }
 
@@ -251,7 +251,7 @@ link l6 {
 }
 
 link l7 {
-    color blue
+    color yellow
     nodes {n13 n3}
 }
 
@@ -374,7 +374,7 @@ hook 4:suricatastart_runtime_hook.sh {
 
 echo "" > /tmp/suricata-out/fast.log
 
-suricata -c /tmp/suricata-out/suricata-debian.yaml -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules -i any --pidfile /tmp/suricata.pid -D
+suricata -c /etc/suricata/suricata-debian.yaml -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules -i any --pidfile /tmp/suricata.pid -D
 }
 
 hook 2:suricata_rule_hook.sh {
