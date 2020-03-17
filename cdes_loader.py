@@ -99,7 +99,7 @@ if __name__ == '__main__':
 ###Create a subfolder for all CC_DecisionNodes and write their custom files there
 ###Get absolute path where this current script exists
     try:
-        #Create directors for each node
+        #Create directories for each node
         cdes_scen_dir_monitor_code = os.path.join(cdes_scen_dir,"Monitor")
         cdes_scen_dir_trigger_code = os.path.join(cdes_scen_dir,"Trigger")
         cdes_scen_dir_swapper_code = os.path.join(cdes_scen_dir,"Swapper")
