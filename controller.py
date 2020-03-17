@@ -155,7 +155,7 @@ if __name__ == '__main__':
     
     # Get output and print to screen
     while True:
-        logging.debug("Processing...)
+        logging.debug("Processing...")
         time.sleep(0.1)
     
     logging.debug("Controller(): Completed")
