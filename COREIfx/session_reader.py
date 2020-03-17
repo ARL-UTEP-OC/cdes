@@ -112,26 +112,28 @@ class SessionReader():
                     name_id_map[node.attrib["name"]] = node.attrib["id"]
 
             #find service files for switch type nodes and then store them
-            services = root.find('service_configurations').findall('service')
-            node_num = ""
-            service_name = ""
-            filename = ""
-            file_code = ""
-            for service in services:
-                #Pulling service name and node id from tags
-                node_num = service.attrib["node"]
-                service_name = service.attrib["name"]
-                if node_num in switch_ids:
+            services = root.find('service_configurations')
+            if services != None:
+                services = services.findall('service')
+                node_num = ""
+                service_name = ""
+                filename = ""
+                file_code = ""
+                for service in services:
+                    #Pulling service name and node id from tags
+                    node_num = service.attrib["node"]
                     service_name = service.attrib["name"]
-                    #Pulling filenames from tags
-                    files = service.find("files").findall("file")
-                    for filenode in files:
-                        filename = filenode.attrib["name"]
-                        #Pulling source code from tags
-                        file_code = filenode.text
-                        switch_service_configurations[(node_num, service_name, filename)] = file_code
+                    if node_num in switch_ids:
+                        service_name = service.attrib["name"]
+                        #Pulling filenames from tags
+                        files = service.find("files").findall("file")
+                        for filenode in files:
+                            filename = filenode.attrib["name"]
+                            #Pulling source code from tags
+                            file_code = filenode.text
+                            switch_service_configurations[(node_num, service_name, filename)] = file_code
 
-            #now obtain the services for all switch nodes
+            #now obtain the "enabled" services for all switch nodes
             logging.debug("SessionReader(): relevant_session_to_JSON(): " + "obtaining enabled services for switches")
             data = iparser.get_file_data()       
             switch_services = iparser.extract_lanswitch_services(data)
@@ -148,15 +150,20 @@ class SessionReader():
                     continue
 
                 #get the source code for files
-                if (node_id, "CC_DecisionNode", "MyMonitor.sh") not in switch_service_configurations:
-                    monitor_code = ""
-                else: monitor_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyMonitor.sh")]
-                if (node_id, "CC_DecisionNode", "MyTrigger.py") not in switch_service_configurations:
-                    trigger_code = ""
-                else: trigger_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyTrigger.py")]
-                if (node_id, "CC_DecisionNode", "MySwapper.py") not in switch_service_configurations:
-                    swapper_code = ""
-                else: swapper_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MySwapper.py")]
+                #First get data from xml file
+                #if it's not there, then it means that values are from default, so we use coresendmsg
+                if (node_id, "CC_DecisionNode", "MyMonitor.sh") in switch_service_configurations:
+                    monitor_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyMonitor.sh")]
+                else: 
+                    monitor_code = self.get_node_file(node_id, "CC_DecisionNode", "MyMonitor.sh")
+                if (node_id, "CC_DecisionNode", "MyTrigger.py") in switch_service_configurations:
+                    trigger_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyTrigger.py")]
+                else: 
+                    trigger_code = self.get_node_file(node_id, "CC_DecisionNode", "MyTrigger.py")
+                if (node_id, "CC_DecisionNode", "MySwapper.py") in switch_service_configurations:
+                    swapper_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MySwapper.py")]
+                else: 
+                    swapper_code = self.get_node_file(node_id, "CC_DecisionNode", "MySwapper.py")
                     
                 #setup entry for node
                 conditional_conn = {}
@@ -229,6 +236,34 @@ class SessionReader():
             traceback.print_exception(exc_type, exc_value, exc_traceback)
             return None
 
+    def get_node_file(self, node_id, service_name, filename):
+        logging.debug("SessionReader(): get_node_file(): instantiated")
+        #First check if file exists:
+        logging.debug("SessionReader(): get_node_file(): checking if file exists")
+        res = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node_id +' OBJECT=services OPAQUE=service:'+service_name+' TYPE=1 -l --tcp'))
+        file_exists = False
+        for line in res.splitlines():
+            if filename in line:
+                file_exists = True
+                break
+        if file_exists == False:
+            return ""
+        #Get file contents
+        logging.debug("SessionReader(): get_node_file(): getting file contents")
+        res_code = str(msg_ifx.send_command('-s'+self.session_number+' CONFIG NODE='+node_id +' OBJECT=services OPAQUE=service:'+service_name+':'+filename+' TYPE=1 -l --tcp'))
+        file_code = ""
+        code_section = False
+        for code_line in res_code.splitlines():
+            if code_line.startswith("  DATA:"):
+                code_section = True
+                file_code += code_line.split("DATA: ")[1] + "\n"
+                continue
+            if "NODE: " in code_line:
+                code_section = False
+                break
+            if code_section:
+                file_code += code_line + "\n"
+        return file_code
 
     def get_conditional_conns(self, cc_dec_number):
         logging.debug("SessionReader(): get_conditional_conns(): instantiated")
