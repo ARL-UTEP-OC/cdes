@@ -10,22 +10,21 @@ import fileinput
 class imnparser():
     
     def __init__(self, imnfilename):
-        logging.debug("tcl_parser(): instantiated")
+        logging.debug("imnparser(): instantiated")
         self.imnfilename = imnfilename
         self.lanswitch_services = {}
-        logging.debug("tcl_parser(): init(): Complete")
+        logging.debug("imnparser(): init(): Complete")
     
     def get_file_data(self):
-        logging.debug("tcl_parser(): get_lanswitch_service instantiated")
+        logging.debug("imnparser(): get_file_data(): instantiated")
         try:
             with open(self.imnfilename, 'r') as file:
                 imndata = file.read()
             
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            logging.error("SessionReader(): get_session_state(): An error occured ")
+            logging.error("imnparser(): get_file_data(): An error occured ")
             traceback.print_exception(exc_type, exc_value, exc_traceback)
-            exit() 
         return imndata
 
     def parse_f5_config(self, config):
@@ -119,17 +118,55 @@ class imnparser():
                     lanswitch_services[hostname] = services
         return lanswitch_services
 
+###Not needed, but sample of how to access deeper data
+    # def extract_trigger_files(self, config):
+    #     """Extract lanswitch_services from a sanitized F5 config.
+
+    #     All lanswitch_services are returned in a mapping of node hostname to the list of
+    #     services.
+    #     """
+    #     commands = self.parse_f5_config(config)
+
+    #     lanswitch_trigger_files = {}
+    #     trigger_file = ""
+
+    #     for cmd in commands:
+    #         islanswitch = False
+    #         hasTriggerFile = False
+    #         hostname = ""
+    #         if cmd[0] == 'node':
+    #             hostname = cmd[1].split("n")[1].strip()
+    #             #print("Found Node!" + " " + str(hostname))
+    #             node_data = cmd[2]
+    #             for p1 in node_data:
+    #                 if p1[0] == 'type':
+    #                     if len(p1) == 2:
+    #                         #print(str(p[1]))
+    #                         islanswitch = True
+    #                 if p1[0] == 'custom-config':
+    #                     if len(p1) > 1:
+    #                         p1_custom_config = p1[1]
+    #                         print("Custom config " + str(p1_custom_config))
+    #                         if len(p1_custom_config[0]) > 1 and len(p1_custom_config[0][0]) > 1: #need at least custom-config-id, custom-command, and config
+    #                             print("custom-config 1 level down:" + str(p1_custom_config[1][1]))
+    #                             p1_filename = p1_custom_config[1][1]
+    #                             if p1_filename == "MyTrigger.py":
+    #                                 if len(p1_custom_config) > 2 and len(p1_custom_config[2]) > 1:
+    #                                     hasTriggerFile = True
+    #                                     trigger_file = str(p1_custom_config[2][1])
+    #             if islanswitch and hasTriggerFile:
+    #                 lanswitch_trigger_files[hostname] = trigger_file
+    #     return lanswitch_trigger_files
+
 if __name__ == '__main__':
     import pprint
 
-    filename = "/home/researchdev/Desktop/myfile.imn"
-    parser = imn_parser(filename)
+    filename = "sample/scenario/CC_NodeTest.imn"
+    parser = imnparser(filename)
     
     data = parser.get_file_data()
-    #data = ''.join(fileinput.input())
     
     services = parser.extract_lanswitch_services(data)
-    try:
-        pprint.pprint(services)
-    except RuntimeError as exc:
-        print exc
+    pprint.pprint(services)
+    #print("SERVICE:\n"+ str(services["6"]))
+    

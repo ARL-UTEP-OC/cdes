@@ -245,7 +245,7 @@ if __name__ == "__main__":
     logging.debug("SessionReader(): instantiated")
     
     if len(sys.argv) < 2:
-        logging.error("Usage: python controller.py <session-number>")
+        logging.error("Usage: python test_session_reader.py <session-number>")
         exit()       
     
     sr = SessionReader(sys.argv[1])
@@ -255,6 +255,4 @@ if __name__ == "__main__":
     if state == None:
         logging.debug("Exiting since session data is not available: " + str(state))
         exit()
-    logging.info(json.dumps(sr.relevant_session_to_JSON(), indent=3))
-
-    #conditional_conns = get_conditional_conns()
+    logging.debug(json.dumps(sr.relevant_session_to_JSON(), indent=3))

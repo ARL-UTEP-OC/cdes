@@ -14,17 +14,17 @@ class Controller():
     def __init__(self):
         logging.debug("Controller(): instantiated")   
         filepath = os.path.realpath(__file__)
-        logging.debug('Controller()" running from directory: ' + str(filepath))
+        logging.debug("Controller(): init(): running from directory: " + str(filepath))
     
     def get_sorted_in_dirs(self, path, dircontains=""):
-        logging.debug('Controller()" get_sorted_in_dirs(): Instantiated')
+        logging.debug("Controller(): get_sorted_in_dirs(): Instantiated")
         name_list = os.listdir(path)
         dirs = []
         for name in name_list:
             fullpath = os.path.join(path,name)
             if os.path.isdir(fullpath) and (dircontains in name):
                 dirs.append(fullpath)
-        logging.debug('get_sorted_in_dirs(): Completed')
+        logging.debug("Controller(): get_sorted_in_dirs(): Completed")
         if dirs != None:
             return sorted(dirs)
         return []
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     
     # Get output and print to screen
     while True:
-        #logging.debug("Processing...)
+        logging.debug("Processing...)
         time.sleep(0.1)
     
     logging.debug("Controller(): Completed")

@@ -18,9 +18,9 @@ class TimerTrigger(Trigger):
         while True:
             data = self.read_input_line()
             if data == None:
-                logging.info("Nothing read")
+                logging.debug("TimerTrigger: process_data(): Nothing to read in queue, continuing")
                 continue
-            logging.debug("Data: " + data)
+            logging.debug("TimerTrigger: process_data(): Data pulled from queue: " + str(data))
             new_time = int(data)
             nodes = self.get_cc_node_numbers()
             #set active node every 10 seconds
@@ -38,7 +38,7 @@ if __name__ == '__main__':
         logging.error("Usage: python controller.py <session-number>")
         exit()       
 
-    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
+    #sample: conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
     sr = SessionReader(sys.argv[1])
     conditional_conns = sr.relevant_session_to_JSON()
 

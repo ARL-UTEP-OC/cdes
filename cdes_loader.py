@@ -15,14 +15,14 @@ import json
 import shutil
 
 def get_sorted_in_dirs(path, dircontains=""):
-    logging.debug('get_sorted_in_dirs(): Instantiated')
+    logging.debug("CDES_Loader(): get_sorted_in_dirs(): Instantiated")
     name_list = os.listdir(path)
     dirs = []
     for name in name_list:
         fullpath = os.path.join(path,name)
         if os.path.isdir(fullpath) and (dircontains in name):
             dirs.append(fullpath)
-    logging.debug('get_sorted_in_dirs(): Completed')
+    logging.debug("CDES_Loader():get_sorted_in_dirs(): Completed")
     if dirs != None:
         return sorted(dirs)
     return []
@@ -36,17 +36,17 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         dirs = get_sorted_in_dirs("/tmp/", dircontains="pycore")
         if len(dirs) == 0:
-            logging.error("No sessions exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+            logging.error("CDES_Loader(): Main(): No sessions exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
             exit()
         scen_dir = dirs[0]
         session_number = scen_dir.split("pycore.")[1]
-        logging.warning("Session Number was not passed in; will use latest: " + session_number)
+        logging.warning("CDES_Loader(): Main(): Session Number was not passed in; will use latest: " + session_number)
 
     elif len(sys.argv) == 2:
         session_number = sys.argv[1]
         scen_dir = os.path.join("/tmp","pycore."+str(sys.argv[1]))
         if os.path.exists(scen_dir) == False:
-            logging.error("Session "+str(sys.argv[1])+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+            logging.error("CDES_Loader(): Main(): Session "+str(sys.argv[1])+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
             exit()
 
     else:
@@ -58,11 +58,11 @@ if __name__ == '__main__':
         cdes_dir = os.path.dirname(filepath)
         cdes_scen_dir = os.path.join(scen_dir,"cdes")
         if os.path.exists(cdes_scen_dir):
-            logging.debug("Path EXISTS SO REMOVING " + str(cdes_scen_dir))
+            logging.debug("CDES_Loader(): Main(): Path EXISTS SO REMOVING " + str(cdes_scen_dir))
             shutil.rmtree(cdes_scen_dir)
     except Exception as e:
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        logging.error("CDES_Loader(): run_monitor(): An error occured ")
+        logging.error("CDES_Loader(): Main(): An error occured ")
         traceback.print_exception(exc_type, exc_value, exc_traceback)
         exit() 
 
@@ -71,11 +71,11 @@ if __name__ == '__main__':
         shutil.copytree(cdes_dir, cdes_scen_dir)
     # Directories are the same
     except shutil.Error as e:
-        logging.error('Directory not copied. Error: %s' % e)
+        logging.error("CDES_Loader(): Main(): Directory not copied. Error: %s" % e)
         exit()
     # Any error saying that the directory doesn't exist
     except OSError as e:
-        logging.error('Directory not copied. Error: %s' % e)
+        logging.error("CDES_Loader(): Main(): Directory not copied. Error: %s" % e)
         exit()
 
 ###Get node states
@@ -83,12 +83,12 @@ if __name__ == '__main__':
     # First check to make sure the session is in a running state
     state = sr.get_session_state()
     if state == None:
-        logging.error("Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+        logging.error("CDES_Loader(): Main(): Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
         exit()
     while "4 RUNTIME_STATE" not in state:
-        logging.warning("Session "+str(session_number)+" Is not yet in the running state... waiting and then trying again")
+        logging.warning("CDES_Loader(): Main(): Session "+str(session_number)+" Is not yet in the running state... waiting and then trying again")
         if state == None:
-            logging.error("Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
+            logging.error("CDES_Loader(): Main(): Session "+str(session_number)+" does not exist, make sure core-daemon is running. \n You can start it by running /etc/init.d/core-daemon start")
             exit()
         time.sleep(3)
         state = sr.get_session_state()
@@ -140,8 +140,8 @@ if __name__ == '__main__':
     
     except Exception as e:
         exc_type, exc_value, exc_traceback = sys.exc_info()
-        logging.error("CDES_Loader(): An error occured ")
+        logging.error("CDES_Loader(): Main(): An error occured ")
         traceback.print_exception(exc_type, exc_value, exc_traceback)
         exit() 
     
-    logging.debug("CDES_Loader(): Completed")
+    logging.debug("CDES_Loader(): Main(): Completed")

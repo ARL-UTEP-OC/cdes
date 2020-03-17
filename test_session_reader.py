@@ -26,4 +26,4 @@ if __name__ == "__main__":
     if state == None:
         logging.debug("Exiting since session data is not available: " + str(state))
         exit()
-    logging.info(json.dumps(sr.relevant_session_to_JSON(), indent=3))
+    logging.debug(json.dumps(sr.relevant_session_to_JSON(), indent=3))

@@ -42,19 +42,13 @@ class Trigger():
         except TimeoutError:
             logging.debug("Trigger(): process_data(): Timed out")
             return None
-        except Empty:
-            logging.debug("Trigger(): process_data(): Timed out")
+        except Exception:
+            logging.debug("Trigger(): process_data(): Exception occured")
             return None
 
     #abstractmethod
     def process_data(self):
         raise NotImplementedError()
-        # while True:
-        #     data = self.read_input_line()
-        #     if data != None:
-        #         logging.info("Data: " + data)
-        #     else:
-        #         logging.info("Nothing read")
     
     def set_active_conn(self, active_cc_node_number, disable_others=True):
         logging.debug("Trigger(): set_active_conn(): instantiated")
@@ -81,7 +75,7 @@ class Trigger():
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
-    logging.debug("Controller(): instantiated")
+    logging.debug("Trigger(): Main(): instantiated")
     
     if len(sys.argv) < 2:
         logging.error("Usage: python controller.py <session-number>")
@@ -107,4 +101,4 @@ if __name__ == '__main__':
     while True:
         logging.debug("OT Queue: " + otqueue.get())
     
-    logging.debug("Controller(): Completed")
+    logging.debug("Trigger(): Completed")

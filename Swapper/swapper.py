@@ -59,9 +59,9 @@ class Swapper():
         while True:
             data = self.read_input()
             if data == None:
-                logging.info("Nothing read")
+                logging.debug("Swapper(): update_connection(): Nothing to read in queue, continuing")
                 continue
-            logging.debug("Data: " + str(data))
+            logging.debug("Swapper(): update_connection(): data pulled from queue: " + str(data))
             #get data from queue
             [cc_dec, cc_gw, active_node_number, disable_others] = data
             logging.error("Swapper(): update_connection(): looking at nodes: " + str(self.conditional_conns_cc_dec[cc_dec]))
