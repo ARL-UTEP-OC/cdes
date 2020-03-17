@@ -37,7 +37,7 @@ CIT-GEN has been tested on:
 ##### Requirements
 * [Python 2.x ](https://www.python.org/download/releases/2.7/)
 * [CORE v4.7+](https://github.com/coreemu/core/)
-* [pyparser](https://pypi.org/project/pyparsing/)
+* [pyparsing](https://pypi.org/project/pyparsing/)
 
 ##### Linux
 Clone the source and then cd into the directory:
@@ -45,9 +45,9 @@ Clone the source and then cd into the directory:
 git clone https://github.com/raistlinJ/cdes
 cd cdes
 ```
-Install the pyparsing dependency
+Install the dependencies
 ```
-pip install pyparsing
+pip install -r requirements.txt
 ```
 
 Copy the custom services into your CORE services folder:
