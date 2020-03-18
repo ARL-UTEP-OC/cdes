@@ -7,7 +7,7 @@ node n13 {
     canvas c1
     iconcoords {228.0 302.0}
     labelcoords {228.0 326.0}
-    services {CC_DecisionNode UserDefined}
+    services {CC_DecisionNode}
     interface-peer {e1 n2}
     interface-peer {e0 n6}
     interface-peer {e2 n3}
@@ -34,10 +34,6 @@ node n13 {
 	    #Required function
 	    def process_data(self):
 	        #forever loop to process data
-	        numAlerts = 0
-	        #get the cc_node numbers
-	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[1])    
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
 	            # read a line of input (from Monitor's stdout)
@@ -46,13 +42,16 @@ node n13 {
 	            #if data yet exists, restart loop
 	            if data == None:
 	                continue
-	            if "1100001" in data:
-	                # if data exists, we know there was an alert; 
-	                # let's switch if there are more than 10 alerts
-	                numAlerts = numAlerts + 1
-	                if numAlerts == 20:
-	                   #set active node
-	                   self.set_active_conn(nodes[0])                
+	            # if data exists, we know it's epoch time; 
+	            # read it as an integer
+	            new_time = int(data)
+	            #get the cc_node numbers
+	            nodes = self.get_cc_node_numbers()
+	            #set active node every 30 seconds
+	            if new_time % 30 == 0:
+	                self.set_active_conn(nodes[1])                
+	            elif new_time %15 == 0:
+	                self.set_active_conn(nodes[0])                       
 	####
 	
 	}
@@ -67,13 +66,11 @@ node n13 {
 	# The stdout from this code will be given to MyTrigger.py for processing.
 	# This is an example of using epoch time as the monitor data
 	
-	#while [ True ]
-	#do
-	#sleep 1
-	#date +%s
-	#done
-	
-	tail /tmp/suricata-out/fast.log -f
+	while [ True ]
+	do
+	sleep 1
+	date +%s
+	done
 	
 	}
     }
@@ -125,7 +122,8 @@ node n3 {
     interface-peer {eth0 n1}
     interface-peer {eth1 n4}
     interface-peer {eth2 n13}
-    services {OSPFv2 OSPFv3 zebra CC_Node IPForward UserDefined}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n4 {
@@ -200,6 +198,7 @@ node n6 {
     interface-peer {eth0 n13}
     interface-peer {eth1 n7}
     services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n7 {
@@ -239,7 +238,7 @@ link l4 {
 }
 
 link l5 {
-    color yellow
+    color Blue
     nodes {n13 n6}
 }
 
@@ -342,7 +341,7 @@ annotation a8 {
     label {Changes every 15 seconds.}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     canvas c1
 }
 
@@ -350,54 +349,11 @@ canvas c1 {
     name {Canvas1}
 }
 
-hook 4:startcdes_runtime_hook.sh {
+hook 4:runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
 # specified state
 python /home/researchdev/cdes/cdes_loader.py &
-}
-
-hook 6:suricatastop_shutdown_hook.sh {
-#!/bin/sh
-# session hook script; write commands here to execute on the host at the
-# specified state
-
-kill `cat /tmp/suricata.pid`
-}
-
-hook 4:suricatastart_runtime_hook.sh {
-#!/bin/sh
-# session hook script; write commands here to execute on the host at the
-# specified state
-
-echo "" > /tmp/suricata-out/fast.log
-
-if [ -f /etc/suricata/suricata-debian.yaml ]
-then
-  SURICATA_YAML=/etc/suricata/suricata-debian.yaml
-else
-  SURICATA_YAML=/etc/suricata/suricata.yaml
-fi
-
-INTERFACES=`find /sys/class/net/ -mindepth 1 -maxdepth 1 -name 'b.*' -printf "-i %f "`
-
-echo suricata -c $SURICATA_YAML -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules $INTERFACES --pidfile /tmp/suricata.pid -D > /tmp/suricommand.txt
-
-suricata -c $SURICATA_YAML -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules $INTERFACES --pidfile /tmp/suricata.pid -D
-}
-
-hook 2:suricata_rule_hook.sh {
-#!/bin/sh
-# session hook script; write commands here to execute on the host at the
-# specified state
-
-mkdir /tmp/suricata-out/
-mkdir /tmp/suricata-out/rules
-
-cat << EOF > /tmp/suricata-out/rules/custom.rules
-
-alert icmp 10.0.1.10 any -> any any (msg:"ICMP packet"; sid:1100001; rev:1; classtype:icmp-event;)
-EOF
 }
 
 option global {
@@ -415,3 +371,4 @@ option global {
 
 option session {
 }
+
