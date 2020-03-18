@@ -126,7 +126,6 @@ node n3 {
     interface-peer {eth1 n4}
     interface-peer {eth2 n13}
     services {OSPFv2 OSPFv3 zebra CC_Node IPForward UserDefined}
-    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n4 {
@@ -201,7 +200,6 @@ node n6 {
     interface-peer {eth0 n13}
     interface-peer {eth1 n7}
     services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
-    custom-image /usr/local/share/core/icons/normal/router_black.gif
 }
 
 node n7 {
@@ -241,7 +239,7 @@ link l4 {
 }
 
 link l5 {
-    color blue
+    color yellow
     nodes {n13 n6}
 }
 
@@ -251,7 +249,7 @@ link l6 {
 }
 
 link l7 {
-    color yellow
+    color blue
     nodes {n13 n3}
 }
 
@@ -374,7 +372,18 @@ hook 4:suricatastart_runtime_hook.sh {
 
 echo "" > /tmp/suricata-out/fast.log
 
-suricata -c /etc/suricata/suricata-debian.yaml -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules -i any --pidfile /tmp/suricata.pid -D
+if [ -f /etc/suricata/suricata-debian.yaml ]
+then
+  SURICATA_YAML=/etc/suricata/suricata-debian.yaml
+else
+  SURICATA_YAML=/etc/suricata/suricata.yaml
+fi
+
+INTERFACES=`find /sys/class/net/ -mindepth 1 -maxdepth 1 -name 'b.*' -printf "-i %f "`
+
+echo suricata -c $SURICATA_YAML -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules $INTERFACES --pidfile /tmp/suricata.pid -D > /tmp/suricommand.txt
+
+suricata -c $SURICATA_YAML -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules $INTERFACES --pidfile /tmp/suricata.pid -D
 }
 
 hook 2:suricata_rule_hook.sh {
@@ -406,4 +415,3 @@ option global {
 
 option session {
 }
-
