@@ -72,7 +72,7 @@ The provided sample scenario consists of a decision node and two conditional nod
 The following are the steps for staring the sample:
 Run the Core Daemon if it is not yet started
 ```
-sudo /etc/init.d/core-daemon start
+sudo /etc/init.d/core-daemon restart
 ```
 Open the scenario in the CORE-GUI
 ```
