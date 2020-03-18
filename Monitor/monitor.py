@@ -55,14 +55,14 @@ class Monitor():
     def cleanup(self):
         try:
             if self.p != None:
-                logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
-                logging.error("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
+                logging.debug("Monitor(): run_monitor(): Terminating Monitor Process ")
+                logging.debug("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
                 for child in psutil.Process(self.p.pid).children(recursive=True):
                     child.terminate()
                 self.p.terminate()
                 if self.p.poll() == None:
-                    logging.error("Monitor(): run_monitor(): Terminating Monitor Process ")
-                    logging.error("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
+                    logging.debug("Monitor(): run_monitor(): Terminating Monitor Process ")
+                    logging.debug("Monitor(): child procs: " + str(psutil.Process(self.p.pid).children(recursive=True)))
                     for child in psutil.Process(self.p.pid).children(recursive=True):
                         child.terminate()
                     self.p.terminate()
