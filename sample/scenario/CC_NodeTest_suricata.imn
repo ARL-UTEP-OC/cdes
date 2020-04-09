@@ -339,10 +339,10 @@ annotation a7 {
 annotation a8 {
     iconcoords {69.0 108.0}
     type text
-    label {Changes every 15 seconds.}
+    label {Changes after 20 ICMP packets from 10.0.1.10.}
     labelcolor black
     fontfamily {Arial}
-    fontsize {12}
+    fontsize 12
     canvas c1
 }
 
