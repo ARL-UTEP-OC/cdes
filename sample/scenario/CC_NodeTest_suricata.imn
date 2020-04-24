@@ -239,7 +239,7 @@ link l4 {
 }
 
 link l5 {
-    color yellow
+    color Blue
     nodes {n13 n6}
 }
 
@@ -339,7 +339,7 @@ annotation a7 {
 annotation a8 {
     iconcoords {69.0 108.0}
     type text
-    label {Changes every 15 seconds.}
+    label {Changes after 20 ICMP packets from 10.0.1.10.}
     labelcolor black
     fontfamily {Arial}
     fontsize {12}
@@ -354,7 +354,7 @@ hook 4:startcdes_runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
 # specified state
-python /home/researchdev/cdes/cdes_loader.py &
+python3 /home/researchdev/cdes/cdes_loader.py &
 }
 
 hook 6:suricatastop_shutdown_hook.sh {
@@ -379,7 +379,7 @@ else
   SURICATA_YAML=/etc/suricata/suricata.yaml
 fi
 
-INTERFACES=`find /sys/class/net/ -mindepth 1 -maxdepth 1 -name 'b.*' -printf "-i %f "`
+INTERFACES=`find /sys/class/net/ -mindepth 1 -maxdepth 1 -name 'b.*' -printf '-i %f '`
 
 echo suricata -c $SURICATA_YAML -l /tmp/suricata-out/ -S /tmp/suricata-out/rules/custom.rules $INTERFACES --pidfile /tmp/suricata.pid -D > /tmp/suricommand.txt
 
@@ -415,3 +415,4 @@ option global {
 
 option session {
 }
+

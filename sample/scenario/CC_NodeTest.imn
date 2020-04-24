@@ -12,6 +12,13 @@ node n13 {
     interface-peer {e0 n6}
     interface-peer {e2 n3}
     custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
+	}
+    }
+    custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
@@ -33,6 +40,8 @@ node n13 {
 	    
 	    #Required function
 	    def process_data(self):
+	        nodes = self.get_cc_node_numbers()
+	        self.set_active_conn(nodes[1], True)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -46,10 +55,9 @@ node n13 {
 	            # read it as an integer
 	            new_time = int(data)
 	            #get the cc_node numbers
-	            nodes = self.get_cc_node_numbers()
 	            #set active node every 30 seconds
 	            if new_time % 30 == 0:
-	                self.set_active_conn(nodes[1])                
+	                self.set_active_conn(nodes[1])
 	            elif new_time %15 == 0:
 	                self.set_active_conn(nodes[0])                       
 	####
@@ -72,13 +80,6 @@ node n13 {
 	date +%s
 	done
 	
-	}
-    }
-    custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
 	}
     }
 }
@@ -173,8 +174,8 @@ node n1 {
 	!
     }
     canvas c1
-    iconcoords {90.0 213.0}
-    labelcoords {90.0 245.0}
+    iconcoords {90.0 212.0}
+    labelcoords {90.0 244.0}
     interface-peer {eth0 n3}
 }
 
@@ -341,7 +342,7 @@ annotation a8 {
     label {Changes every 15 seconds.}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
@@ -353,7 +354,7 @@ hook 4:runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
 # specified state
-python /home/researchdev/cdes/cdes_loader.py &
+python3 /home/researchdev/cdes/cdes_loader.py &
 }
 
 option global {

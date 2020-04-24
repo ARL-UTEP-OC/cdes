@@ -23,7 +23,7 @@ class Monitor():
         logging.debug("Monitor(): run_monitor(): Running Monitor in %s for %s!" % (proc_name, self.name))
         try:
             logging.debug("Monitor(): run_monitor: running " + str(self.cmd))
-            self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE)
+            self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE, encoding="utf-8")
             logging.debug("Monitor(): run_monitor(): starting readline loop")
             poll_obj = select.poll()
             poll_obj.register(self.p.stdout, select.POLLIN)
@@ -72,19 +72,4 @@ class Monitor():
             traceback.print_exception(exc_type, exc_value, exc_traceback)
             exit()
 
-if __name__ == '__main__':
-   
-    logging.basicConfig(level=logging.DEBUG)
-    logging.debug("Controller(): instantiated")
 
-    omqueue = multiprocessing.Queue()
-    cmd = "sample/time_cont.sh"
-    m = Monitor("monitor", omqueue, cmd)
-    mp = multiprocessing.Process(target=m.run_monitor)
-    mp.start()
-    
-    # Get output and print to screen
-    while True:
-        logging.debug("OM Queue: " + omqueue.get())
-    
-    logging.debug("Monitor(): Completed")

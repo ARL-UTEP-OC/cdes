@@ -9,7 +9,7 @@ import time
 import sys
 import os
 import json
-from Controller import Controller
+from controller import Controller
 
 if __name__ == '__main__':
    

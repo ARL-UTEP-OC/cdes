@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from pyparsing import nestedExpr, originalTextFor
 import logging

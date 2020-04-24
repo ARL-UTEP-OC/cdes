@@ -1,12 +1,11 @@
 import multiprocessing
 from multiprocessing import TimeoutError
-from Queue import Empty
 import logging
 import subprocess
 import shlex
 import threading
 import time
-from trigger import Trigger
+from Trigger.trigger import Trigger
 import sys
 from COREIfx.session_reader import SessionReader
 

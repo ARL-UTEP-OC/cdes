@@ -1,6 +1,6 @@
 import multiprocessing
 from multiprocessing import TimeoutError
-from Queue import Empty
+import queue
 import logging
 import subprocess
 import shlex
@@ -42,8 +42,8 @@ class Trigger():
         except TimeoutError:
             logging.debug("Trigger(): process_data(): Timed out")
             return None
-        except Exception:
-            logging.debug("Trigger(): process_data(): Exception occured")
+        except queue.Empty:
+            logging.debug("Trigger(): process_data(): Timed out")
             return None
 
     #abstractmethod

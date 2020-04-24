@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 """
 coresendmsg: utility for generating CORE messages
 """
