@@ -11,6 +11,9 @@ import select
 
 from Monitor.monitor import Monitor
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 if __name__ == '__main__':
    
     logging.basicConfig(level=logging.DEBUG)

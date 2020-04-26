@@ -10,6 +10,9 @@ from COREIfx.session_reader import SessionReader
 from COREIfx import msg_ifx
 from Swapper.swapper import Swapper
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 def short_session_id(session_number):
     logging.debug("Controller(): short_session_id(): Instantiated")
     snum = int(session_number)

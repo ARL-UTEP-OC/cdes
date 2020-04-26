@@ -6,6 +6,9 @@ import sys, traceback
 import fileinput
 from COREIfx.imnparser import imnparser
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 if __name__ == '__main__':
     import pprint
 

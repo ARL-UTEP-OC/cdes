@@ -10,6 +10,9 @@ from COREIfx.session_reader import SessionReader
 from Trigger.trigger import Trigger
 from Trigger.timer_trigger import TimerTrigger
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     logging.debug("Trigger(): Main(): instantiated")

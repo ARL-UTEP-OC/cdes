@@ -14,6 +14,9 @@ import os
 import json
 import shutil
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 def get_sorted_in_dirs(path, dircontains=""):
     logging.debug("CDES_Loader(): get_sorted_in_dirs(): Instantiated")
     name_list = os.listdir(path)

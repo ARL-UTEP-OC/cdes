@@ -1,17 +1,15 @@
 # The Cybersecurity Deception and Experimentation System (CDES)
 ## Table of Contents
-- [The Cybersecurity Deception and Experimentation System (CDES)](#the-cybersecurity-deception-and-experimentation-system-cdes)
-  - [Table of Contents](#table-of-contents)
-    - [Description](#description)
-    - [Limitations](#limitations)
-      - [Issues related to CORE](#issues-related-to-core)
-    - [Installation](#installation)
-        - [Requirements](#requirements)
-        - [Linux](#linux)
-    - [Run a Sample Scenario](#run-a-sample-scenario)
-    - [Run a Sample with Suricata](#run-a-sample-with-suricata)
-    - [Create a New Scenario](#create-a-new-scenario)
-    - [Troubleshooting](#troubleshooting)
+- [Description](#description)
+- [Limitations](#limitations)
+   - [Issues related to CORE](#issues-related-to-core)
+- [Installation](#installation)
+   - [Requirements](#requirements)
+   - [Linux](#linux)
+- [Run a Sample Scenario](#run-a-sample-scenario)
+- [Run a Sample with Suricata](#run-a-sample-with-suricata)
+- [Create a New Scenario](#create-a-new-scenario)
+- [Troubleshooting](#troubleshooting)
 
 ### Description
 CDES is an extension to the Common Open Research Emulator. The main purpose of this system is to enable conditional connections among nodes in emulated networks. 
