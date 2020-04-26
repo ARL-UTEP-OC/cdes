@@ -346,6 +346,53 @@ annotation a8 {
     canvas c1
 }
 
+annotation a9 {
+    iconcoords {19.0 489.0}
+    type text
+    label {Instructions}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a10 {
+    iconcoords {21.0 511.0}
+    type text
+    label {1. Open 2 terminals from "outclient"}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a11 {
+    iconcoords {22.0 530.0}
+    type text
+    label {2. ping 10.0.2.1 from terminal 1; ping 10.0.4.1 from terminal 2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a12 {
+    iconcoords {39.0 584.0}
+    type text
+    label {Ping responses alternate every 15 seconds}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a13 {
+    type text
+    iconcoords {124.0 573.0}
+    label {}
+    canvas c1
+}
+
 canvas c1 {
     name {Canvas1}
 }

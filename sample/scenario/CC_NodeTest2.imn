@@ -426,9 +426,56 @@ annotation a8 {
 }
 
 annotation a9 {
-    iconcoords {191.0 625.0}
+    iconcoords {6.0 344.0}
     type text
-    label {Changes after 90 seconds.}
+    label {10.0.1.3 will be accessible after 90 sec.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a10 {
+    iconcoords {6.0 243.0}
+    type text
+    label {Instructions:}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a11 {
+    type text
+    iconcoords {51.0 226.0}
+    label {}
+    canvas c1
+}
+
+annotation a12 {
+    iconcoords {9.0 263.0}
+    type text
+    label {1. Open 2 terminals from n1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a13 {
+    iconcoords {8.0 286.0}
+    type text
+    label {2. ping 10.0.1.2 from term 1;}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a14 {
+    iconcoords {62.0 307.0}
+    type text
+    label {10.0.1.3 from term2}
     labelcolor black
     fontfamily {Arial}
     fontsize {12}
