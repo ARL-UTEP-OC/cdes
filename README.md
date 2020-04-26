@@ -9,6 +9,7 @@
         - [Requirements](#requirements)
         - [Linux](#linux)
     - [Run a Sample Scenario](#run-a-sample-scenario)
+    - [Run a Sample with Suricata](#run-a-sample-with-suricata)
     - [Create a New Scenario](#create-a-new-scenario)
     - [Troubleshooting](#troubleshooting)
 
@@ -43,9 +44,9 @@ CIT-GEN has been tested on:
 * CORE (4.7+) 
 
 ##### Requirements
-* [Python 2.x ](https://www.python.org/download/releases/2.7/)
-* [CORE v4.7+](https://github.com/coreemu/core/)
-* [pyparsing](https://pypi.org/project/pyparsing/)
+* [Python 3.6 ](https://www.python.org/downloads/release/python-369/)
+* [CORE v6.2](https://github.com/coreemu/core/releases/tag/release-6.2.0)
+* Additional python Modules as specified in requirements.txt
 
 ##### Linux
 Clone the source and then cd into the directory:
@@ -77,24 +78,62 @@ To run the sample scenario, follow the steps in [Run a Sample scenario](#run-a-s
 ### Run a Sample Scenario
 The provided sample scenario consists of a decision node and two conditional nodes. This scenario simply switches between the two nodes (indicated by the blue and yellow link in the GUI). 
 
-The following are the steps for staring the sample:
-Run the Core Daemon if it is not yet started
+1. Run the Core Daemon if it is not yet started
 ```
 sudo /etc/init.d/core-daemon restart
 ```
-Open the scenario in the CORE-GUI
+2. Open the scenario in the CORE-GUI
 ```
 core-gui sample/scenario/CC_NodeTest.imn
 ```
-Click on Session -> Hooks
+3. Click on Session -> Hooks
 - Modify the runtime hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
 ```
 python /home/username/cdes/cdes_loader.py &
 ```
 
-Lastly, press the Start button on the GUI.
+4. Lastly, press the Start button on the GUI.
 
 At this time, you should see the link between the CC Decision Node and the CC Nodes toggle from blue (connected) to yellow (not connected) in 60 second intervals.
+
+Several other samples are available. They are located in the samples/scenario/ directory.
+
+### Run a Sample with Suricata
+This scenarios is an extension to the simple scenario, showing how CDES can be used to read suricata alerts and execute a trigger based on those alerts. 
+*Note: For this sample to work, ensure that you have suricata installed.* 
+
+1. On Ubuntu 16+, you can install suricata by running the following.
+```
+sudo apt-get install suricata
+```
+2. Run the Core Daemon if it is not yet started
+```
+sudo /etc/init.d/core-daemon restart
+```
+3. Open the scenario in the CORE-GUI
+```
+core-gui sample/scenario/CC_NodeTest_suricata.imn
+```
+4. Click on Session -> Hooks
+- Modify the startcdes_runtime_hook.sh hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
+```
+python /home/username/cdes/cdes_loader.py &
+```
+There are 3 other hooks (no need to modify these) that accomplish the following:
+
+- suricatarule_instantiation_hook.sh: Creates a suricata rule that will generate an alert on any ICMP packets originating from the untrusted node (10.0.1.10). This rule written to /tmp/suricata-out/rules/custom.rules. 
+- suricatastart_runtime_hook.sh: starts an instance of suricata using the rules created with the suricata_rule_hook.sh hook. Alerts are written to /tmp/suricata-out/fast.log
+- suricatastop_shutdown_hook.sh: Stops the instance of suricata when the scenario is stopped.
+
+5. Next, press the Start button on the GUI.
+
+6. Double-click on the node labeled outclient. When the terminal appears, enter the following command to send 21 ICMP echo requests to a node in the Legitimate Network.
+```
+ping 10.0.1.1 -c 21
+```
+At this time, you should see the link between the CC Decision Node toggle to the Honey Network. Recall that a blue link indicates *connected* and yellow indicates *not connected*.
+
+The corresponding suricata alerts are located in /tmp/suricata-out/fast.log
 
 Several other samples are available. They are located in the samples/scenario/ directory.
 
