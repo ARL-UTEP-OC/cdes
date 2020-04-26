@@ -4,6 +4,7 @@
   - [Table of Contents](#table-of-contents)
     - [Description](#description)
     - [Limitations](#limitations)
+      - [Issues related to CORE](#issues-related-to-core)
     - [Installation](#installation)
         - [Requirements](#requirements)
         - [Linux](#linux)
@@ -27,7 +28,7 @@ This system is based on the following node constructs:
 * For CDES to work correctly, only a single instance of CORE and a single session is allowed. 
 * When using the default Trigger, there is a short time at the start of the emulation when all conditional links will be enabled (roughly 3-4 seconds).
 
-### Issues related to CORE
+#### Issues related to CORE
 * If a hook script contains invalid characters (like ") it will work, but will not be read/loaded properly when the .imn file is loaded.
 
   This becomes an issue especially when including suricata rules, since they usually contain the " character. The workaround is to recreate the suricata generation hook script (and copy/paste the rules into the hook script) every time the scenario file is loaded.
