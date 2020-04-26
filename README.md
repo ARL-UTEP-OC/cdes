@@ -27,7 +27,14 @@ This system is based on the following node constructs:
 * For CDES to work correctly, only a single instance of CORE and a single session is allowed. 
 * When using the default Trigger, there is a short time at the start of the emulation when all conditional links will be enabled (roughly 3-4 seconds).
 
-There will be a fix in the next update.
+### Issues related to CORE
+* If a hook script contains the " character it will work, but will not be read/loaded properly when the .imn file is loaded.
+
+  This becomes an issue especially when including suricata rules, since they usually contain the " character. The workaround is to recreate the suricata generation hook script (and copy/paste the rules into the hook script) every time the scenario file is loaded.
+* With CORE 6.2.0, the coresendmsg handler for link (and others, like node) is broken, therefore, the link color will not change when the "swap" occurs
+
+  This issue is fixed in 6.3.0, but the cdes code requires small modifications since the coresendmsg interface has changed
+
 
 ### Installation
 CIT-GEN has been tested on:

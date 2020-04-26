@@ -83,13 +83,15 @@ class Swapper():
         msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
         logging.error("enable other node cmd: " + '-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
         msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh" --tcp')
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" --tcp')
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" --tcp')
         cc_node["connected"] = True
 
     def disable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): disable_other_node(): instantiated")
         msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow" --tcp')
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow" --tcp')
         cc_node["connected"] = False
 
     def enable_net_node(self, short_session_number, cc_dec_number, cc_node):
@@ -104,7 +106,8 @@ class Swapper():
         localname = "veth" + suffix
         cmd = 'ifconfig '+ localname + ' up'
         p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" --tcp')
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" --tcp')
         cc_node["connected"] = True
 
     def disable_net_node(self, short_session_number, cc_dec_number, cc_node):
