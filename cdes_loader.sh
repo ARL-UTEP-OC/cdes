@@ -1,4 +1,7 @@
 #!/bin/sh
+#__author__ = "Jaime C. Acosta"
+#__license__ = "GPL 3.0"
+
 ###CHANGE THE FOLLOWING LINE TO THE DIRECTORY WITH YOUR CODE##
 CODE_PATH = /home/researchdev/cdes/
 

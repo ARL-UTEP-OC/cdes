@@ -1,6 +1,6 @@
 import multiprocessing
 from multiprocessing import TimeoutError
-from Queue import Empty
+import queue
 import logging
 import subprocess
 import shlex
@@ -29,7 +29,6 @@ class Swapper():
         cc_node_numbers = []
         cc_gw_numbers = []
 
-
         self.conditional_conns_cc_dec[cc_dec_number] = {}
         for node in self.conditional_conns[cc_dec_number]["connected_nodes"]:
             if node["role"] == "cc_node":
@@ -49,7 +48,7 @@ class Swapper():
         except TimeoutError:
             logging.debug("Swapper(): read_input(): Timed out")
             return None
-        except Empty:
+        except queue.Empty: 
             logging.debug("Swapper(): read_input(): Timed out")
             return None
 
@@ -76,19 +75,23 @@ class Swapper():
                         if node["node_type"] == "SWITCH":
                             self.disable_net_node(self.short_session_number, cc_dec, node)
                         else:
+                            logging.error("Disabling other cc_dec: " + str(cc_dec) + " node: " + str(node))
                             self.disable_other_node(self.session_number, cc_dec, node)
 
     def enable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): enable_other_node(): instantiated")
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up"')
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh"')
-        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
+        logging.error("enable other node cmd: " + '-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh" --tcp')
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
         cc_node["connected"] = True
 
     def disable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): disable_other_node(): instantiated")
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down"')
-        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow"')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow" ')
         cc_node["connected"] = False
 
     def enable_net_node(self, short_session_number, cc_dec_number, cc_node):
@@ -97,14 +100,14 @@ class Swapper():
         suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
         localname = "veth" + suffix
         cmd = 'ifconfig '+ localname + ' up'
-        p = subprocess.Popen(shlex.split(cmd))
+        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
 
         suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
         localname = "veth" + suffix
         cmd = 'ifconfig '+ localname + ' up'
-        p = subprocess.Popen(shlex.split(cmd))
-
-        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
         cc_node["connected"] = True
 
     def disable_net_node(self, short_session_number, cc_dec_number, cc_node):
@@ -113,14 +116,14 @@ class Swapper():
         suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
         localname = "veth" + suffix
         cmd = 'ifconfig '+ localname + ' down'
-        p = subprocess.Popen(shlex.split(cmd))
+        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
 
         suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
         localname = "veth" + suffix
         cmd = 'ifconfig '+ localname + ' down'
-        p = subprocess.Popen(shlex.split(cmd))
-
-        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue"')
+        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
+###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###
+        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
         cc_node["connected"] = False
             
 
@@ -129,34 +132,3 @@ def short_session_id(session_number):
         snum = int(session_number)
         ans = (snum >> 8) ^ (snum & ((1 << 8) - 1))
         return ("%x" % ans)
-
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
-    logging.debug("Swapper(): instantiated")
-    
-    if len(sys.argv) < 2:
-        logging.error("Usage: python controller.py <session-number>")
-        exit()       
-
-    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
-    sr = SessionReader(sys.argv[1])
-    conditional_conns = sr.relevant_session_to_JSON()
-
-    omqueue = multiprocessing.Queue()
-    otqueue = multiprocessing.Queue()
-
-    sw = Swapper("swapper", omqueue, otqueue, conditional_conns, sys.argv[1], short_session_id(int(sys.argv[1])), "3")
-    sw = multiprocessing.Process(target=sw.update_connection)
-    sw.start()
-    
-    # Get output and print to screen
-    for i in xrange(60):
-        omqueue.put(["3", "1", "4"])
-        time.sleep(10)
-        omqueue.put(["3", "1", "5"])    
-        time.sleep(10)
-        omqueue.put(["3", "1", "13"])    
-        time.sleep(10)
-        omqueue.put(["3", "1", "14"])    
-        time.sleep(10)
-    logging.debug("Swapper(): Completed")

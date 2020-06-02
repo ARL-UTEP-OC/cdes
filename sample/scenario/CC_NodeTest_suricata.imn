@@ -239,7 +239,7 @@ link l4 {
 }
 
 link l5 {
-    color yellow
+    color Blue
     nodes {n13 n6}
 }
 
@@ -346,6 +346,93 @@ annotation a8 {
     canvas c1
 }
 
+annotation a9 {
+    iconcoords {17.0 455.0}
+    type text
+    label {Instructions:}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a10 {
+    iconcoords {25.0 530.0}
+    type text
+    label {C1. Open 2 terminals on outclient}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a11 {
+    iconcoords {27.0 481.0}
+    type text
+    label {H1. Open terminal on host (not CORE nodes)}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a12 {
+    iconcoords {27.0 499.0}
+    type text
+    label {H2. tail -f /tmp/suricata-out/fast.log (optional, but will show suricata alerts)}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a13 {
+    iconcoords {24.0 550.0}
+    type text
+    label {C2. ping 10.0.2.1 from first terminal, 10.0.4.1 from second terminal}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a14 {
+    iconcoords {110.0 586.0}
+    type text
+    label {10.0.2.1 responds at start}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a15 {
+    iconcoords {110.0 604.0}
+    type text
+    label {After 20 ICMP packets (from outclient) observed,}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a16 {
+    iconcoords {109.0 619.0}
+    type text
+    label {10.0.4.1 responds, 10.0.2.1 no longer accessible}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a17 {
+    type text
+    iconcoords {189.0 623.0}
+    label {}
+    canvas c1
+}
+
 canvas c1 {
     name {Canvas1}
 }
@@ -354,7 +441,7 @@ hook 4:startcdes_runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
 # specified state
-python /home/researchdev/cdes/cdes_loader.py &
+python3 /home/researchdev/cdes/cdes_loader.py &
 }
 
 hook 6:suricatastop_shutdown_hook.sh {
@@ -415,3 +502,4 @@ option global {
 
 option session {
 }
+

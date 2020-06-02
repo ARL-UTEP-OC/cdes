@@ -1,10 +1,13 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 from pyparsing import nestedExpr, originalTextFor
 import logging
 import sys, traceback
 import fileinput
 from COREIfx.imnparser import imnparser
+
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
 
 if __name__ == '__main__':
     import pprint

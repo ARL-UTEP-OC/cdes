@@ -14,6 +14,9 @@ import os
 import json
 import shutil
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 def get_sorted_in_dirs(path, dircontains=""):
     logging.debug("CDES_Loader(): get_sorted_in_dirs(): Instantiated")
     name_list = os.listdir(path)
@@ -133,7 +136,7 @@ if __name__ == '__main__':
 ###Instantiate the new module via a system call
 
         #cmd = "python "+os.path.join(cdes_scen_dir,"controller.py")+" " +os.path.join(monitor_file_node_path,"MyMonitor.sh")+" "+session_number
-        #p = subprocess.Popen(shlex.split(cmd), cwd=cdes_scen_dir)
+        #p = subprocess.Popen(shlex.split(cmd), cwd=cdes_scen_dir, encoding="utf-8")
         controller = imp.load_source('Controller', os.path.join(cdes_scen_dir,"controller.py"))
         cr = controller.Controller()
         cr.cdes_run(monitor_cmd=os.path.join(monitor_file_node_path,"MyMonitor.sh"), session_number=session_number, conditional_conns=conditional_conns)

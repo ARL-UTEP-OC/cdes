@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import xml.etree.ElementTree as ET
 import logging
@@ -9,6 +9,9 @@ from COREIfx import msg_ifx
 from COREIfx.imnparser import imnparser
 from pyparsing import nestedExpr, originalTextFor
 from COREIfx.session_reader import SessionReader
+
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
 
 if __name__ == "__main__":
 

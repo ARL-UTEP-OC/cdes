@@ -1,16 +1,16 @@
 # The Cybersecurity Deception and Experimentation System (CDES)
 ## Table of Contents
-- [The Cybersecurity Deception and Experimentation System (CDES)](#the-cybersecurity-deception-and-experimentation-system-cdes)
-  - [Table of Contents](#table-of-contents)
-    - [Description](#description)
-    - [Limitations](#limitations)
-    - [Installation](#installation)
-        - [Requirements](#requirements)
-        - [Linux](#linux)
-    - [Run a Sample Scenario](#run-a-sample-scenario)
-    - [Run a Sample with Suricata](#run-a-sample-with-suricata)
-    - [Create a New Scenario](#create-a-new-scenario)
-    - [Troubleshooting](#troubleshooting)
+
+- [Description](#description)
+- [Limitations](#limitations)
+   - [Issues related to CORE](#issues-related-to-core)
+- [Installation](#installation)
+   - [Requirements](#requirements)
+   - [Linux](#linux)
+- [Run a Sample Scenario](#run-a-sample-scenario)
+- [Run a Sample with Suricata](#run-a-sample-with-suricata)
+- [Create a New Scenario](#create-a-new-scenario)
+- [Troubleshooting](#troubleshooting)
 
 ### Description
 CDES is an extension to the Common Open Research Emulator. The main purpose of this system is to enable conditional connections among nodes in emulated networks. 
@@ -28,7 +28,14 @@ This system is based on the following node constructs:
 * For CDES to work correctly, only a single instance of CORE and a single session is allowed. 
 * When using the default Trigger, there is a short time at the start of the emulation when all conditional links will be enabled (roughly 3-4 seconds).
 
-There will be a fix in the next update.
+#### Issues related to CORE
+* If a hook script contains invalid characters (like ") it will work, but will not be read/loaded properly when the .imn file is loaded.
+
+  This becomes an issue especially when including suricata rules, since they usually contain the " character. The workaround is to recreate the suricata generation hook script (and copy/paste the rules into the hook script) every time the scenario file is loaded.
+* With CORE 6.2.0, the coresendmsg handler for link (and others, like node) is broken, therefore, the link color will not change when the "swap" occurs
+
+  This issue is fixed in 6.3.0, but the cdes code requires small modifications since the coresendmsg interface has changed
+
 
 ### Installation
 CIT-GEN has been tested on:
@@ -36,9 +43,9 @@ CIT-GEN has been tested on:
 * CORE (4.7+) 
 
 ##### Requirements
-* [Python 2.x ](https://www.python.org/download/releases/2.7/)
-* [CORE v4.7+](https://github.com/coreemu/core/)
-* [pyparsing](https://pypi.org/project/pyparsing/)
+* [Python 3.6 ](https://www.python.org/downloads/release/python-369/)
+* [CORE v6.2](https://github.com/coreemu/core/releases/tag/release-6.2.0)
+* Additional python Modules as specified in requirements.txt
 
 ##### Linux
 Clone the source and then cd into the directory:
@@ -113,10 +120,9 @@ python /home/username/cdes/cdes_loader.py &
 ```
 There are 3 other hooks (no need to modify these) that accomplish the following:
 
-- suricata_rule_hook.sh: Creates a suricata rule that will generate an alert on any ICMP packets originating from the untrusted node (10.0.1.10). This rule written to /tmp/suricata-out/rules/custom.rules. 
+- suricatarule_instantiation_hook.sh: Creates a suricata rule that will generate an alert on any ICMP packets originating from the untrusted node (10.0.1.10). This rule written to /tmp/suricata-out/rules/custom.rules. 
 - suricatastart_runtime_hook.sh: starts an instance of suricata using the rules created with the suricata_rule_hook.sh hook. Alerts are written to /tmp/suricata-out/fast.log
-- startcdes_runtime_hook: Instantiates the CDES loader.
-d. suricatastop_shutdown_hook.sh: Stops the instance of suricata when the scenario is stopped.
+- suricatastop_shutdown_hook.sh: Stops the instance of suricata when the scenario is stopped.
 
 5. Next, press the Start button on the GUI.
 

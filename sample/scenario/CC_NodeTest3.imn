@@ -105,12 +105,19 @@ node n7 {
 	!
     }
     canvas c1
-    iconcoords {327.0 141.0}
-    labelcoords {327.0 165.0}
+    iconcoords {322.0 138.0}
+    labelcoords {322.0 162.0}
     interface-peer {e0 n3}
     interface-peer {e1 n5}
     interface-peer {e2 n6}
     services {CC_DecisionNode}
+    custom-config {
+	custom-config-id service:CC_DecisionNode
+	custom-command CC_DecisionNode
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', )
+	}
+    }
     custom-config {
 	custom-config-id service:CC_DecisionNode:MyTrigger.py
 	custom-command MyTrigger.py
@@ -122,7 +129,7 @@ node n7 {
 	# 2. Read the input (from the Monitor) by calling self.read_input_line()
 	# 3. Call the self.active_conn method with the cc node number as a parameter.
 	# The following is a sample that reads time information from the Monitor and 
-	# will enable other honeynet after 30 seconds
+	# will enable other honeynet after 20 seconds
 	
 	import time
 	#Required import
@@ -138,6 +145,7 @@ node n7 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
+	        self.set_active_conn(nodes[0], disable_others=True)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -152,9 +160,9 @@ node n7 {
 	            new_time = int(data)
 	            if start_time == 0:
 	                start_time = new_time
-	            #enable other honeynet after 30 seconds
-	            if (new_time - start_time >= 30) and changed == False:
-	                print("SWITCHING TO NODE 1")
+	            #enable other honeynet after 20 seconds
+	            if (new_time - start_time >= 20) and changed == False:
+	                print("Enabling second path")
 	                self.set_active_conn(nodes[1], disable_others=False)
 	                changed = True               
 	####
@@ -179,13 +187,6 @@ node n7 {
 	
 	}
     }
-    custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
-	}
-    }
 }
 
 node n8 {
@@ -195,8 +196,8 @@ node n8 {
 	!
     }
     canvas c1
-    iconcoords {329.0 363.0}
-    labelcoords {329.0 387.0}
+    iconcoords {325.0 365.0}
+    labelcoords {325.0 389.0}
     interface-peer {e0 n3}
     interface-peer {e1 n9}
     interface-peer {e2 n10}
@@ -235,6 +236,7 @@ node n8 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
+	        self.set_active_conn(nodes[0], disable_others=True)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -251,7 +253,7 @@ node n8 {
 	                start_time = new_time
 	            #enable other honeynet after 30 seconds
 	            if (new_time - start_time >= 30) and changed == False:
-	                print("SWITCHING TO NODE 1")
+	                print("Enabling 4th path")
 	                self.set_active_conn(nodes[1], disable_others=False)
 	                changed = True               
 	####
@@ -367,7 +369,7 @@ link l3 {
 }
 
 link l4 {
-    color Yellow
+    color Blue
     nodes {n7 n6}
 }
 
@@ -392,7 +394,7 @@ link l8 {
 }
 
 link l9 {
-    color yellow
+    color Blue
     nodes {n8 n10}
 }
 
@@ -412,7 +414,7 @@ annotation a1 {
     label {Legit Net 1}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -426,7 +428,7 @@ annotation a2 {
     label {Honey Net 1}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -440,7 +442,7 @@ annotation a3 {
     label {Legit Net 2}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -454,7 +456,7 @@ annotation a4 {
     label {Honey Net 2}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     color #C0C0FF
     width 0
     border black
@@ -468,14 +470,91 @@ annotation a5 {
     label {CDES supports multiple decision nodes (enables additional honeynets after 30 seconds).}
     labelcolor black
     fontfamily {Arial}
-    fontsize 18
+    fontsize {18}
     canvas c1
 }
 
 annotation a6 {
-    iconcoords {34.0 510.0}
+    iconcoords {249.0 501.0}
     type text
-    label {Allow ~60 seconds for routes to converge after switch before accessing deep nodes.}
+    label {Note: Allow ~60 seconds for routes to converge after switch before accessing deep nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a7 {
+    iconcoords {22.0 518.0}
+    type text
+    label {Instructions:}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a8 {
+    iconcoords {25.0 538.0}
+    type text
+    label {1. Open 4 terminals from r1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
+    canvas c1
+}
+
+annotation a9 {
+    iconcoords {25.0 556.0}
+    type text
+    label {2. ping 10.0.1.2, 10.0.1.3, 10.0.4.2 and 10.0.4.3}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a10 {
+    iconcoords {27.0 572.0}
+    type text
+    label {(one in each terminal)}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a11 {
+    type text
+    iconcoords {30.0 596.0}
+    label {}
+    canvas c1
+}
+
+annotation a12 {
+    iconcoords {6.0 598.0}
+    type text
+    label {Notice that 10.0.1.2 and 10.0.4.2 respond from the start}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a13 {
+    iconcoords {6.0 616.0}
+    type text
+    label {10.0.1.3 responds after 20 seconds}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a14 {
+    iconcoords {5.0 635.0}
+    type text
+    label {10.0.4.3 responds after 30 seconds}
     labelcolor black
     fontfamily {Arial}
     fontsize {12}
@@ -490,7 +569,7 @@ hook 4:runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
 # specified state
-python /home/researchdev/cdes/cdes_loader.py &
+python3 /home/researchdev/cdes/cdes_loader.py &
 }
 
 option global {

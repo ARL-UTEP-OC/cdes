@@ -10,6 +10,9 @@ import sys
 import os
 import json
 
+__author__ = "Jaime C. Acosta"
+__license__ = "GPL 3.0"
+
 class Controller():
     def __init__(self):
         logging.debug("Controller(): instantiated")   

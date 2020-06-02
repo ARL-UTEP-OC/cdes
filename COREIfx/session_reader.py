@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import xml.etree.ElementTree as ET
 import logging
@@ -77,8 +77,8 @@ class SessionReader():
             try:
                 tree = ET.parse(self.xmlfilename)
             except Exception:
-                logging.error("SessionReader(): relevant_session_to_JSON(): XML file not found: " + str(self.imnfilename))
-                logging.error("SessionReader(): relevant_session_to_JSON(): " + self.session_number + " has been run at least once or is running." )
+                logging.error("SessionReader(): relevant_session_to_JSON(): XML file not found: " + str(self.xmlfilename))
+                logging.error("SessionReader(): relevant_session_to_JSON(): Make sure " + self.session_number + " has been run at least once or is running." )
                 return None
 
             root = tree.getroot()
