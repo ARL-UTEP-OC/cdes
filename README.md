@@ -1,5 +1,6 @@
 # The Cybersecurity Deception and Experimentation System (CDES)
 ## Table of Contents
+
 - [Description](#description)
 - [Limitations](#limitations)
    - [Issues related to CORE](#issues-related-to-core)
@@ -156,14 +157,14 @@ Follow these steps to create and run a simple cdes scenario.
 - cdes1: **CC_DecisionNode** (Modify the MyMonitor.sh and MyTrigger.py to define custom behavior)
 - cn1 and cn2: **CC_Node**
 
-4. Load CDES into the CORE scenario by 
+4. Load CDES into the CORE scenario by doing the following
 - Click on Session -> Hooks
 - Add a new runtime hook and have it load the cdes_loader.py at startup, e.g., add the line
 ```
 python /home/username/cdes/cdes_loader.py &
 ```
 
-5. Run the scenario by click on the play button
+5. Run the scenario by clicking on the play button
 
 You should now see the links between the cdes1 and cdes2 nodes alternating blue and yellow every 60 seconds. Try to ping from r1 -> h1 and r1 -> r2 and notice that the connectivity is mutually exclusive.
 
