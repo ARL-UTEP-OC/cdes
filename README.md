@@ -34,9 +34,6 @@ This system is based on the following node constructs:
   This becomes an issue especially when including suricata rules, since they usually contain the " character. The workaround is to recreate the suricata generation hook script (and copy/paste the rules into the hook script) every time the scenario file is loaded.
 * With CORE 6.2.0, the coresendmsg handler for link (and others, like node) is broken, therefore, the link color will not change when the "swap" occurs
 
-  This issue is fixed in 6.3.0, but the cdes code requires small modifications since the coresendmsg interface has changed
-
-
 ### Installation
 CIT-GEN has been tested on:
 * Ubuntu 16.04 LTE (64-bit)
@@ -44,7 +41,7 @@ CIT-GEN has been tested on:
 
 ##### Requirements
 * [Python 3.6 ](https://www.python.org/downloads/release/python-369/)
-* [CORE v6.2](https://github.com/coreemu/core/releases/tag/release-6.2.0)
+* [CORE >= v6.3b+] (6.3b included in the source)
 * Additional python Modules as specified in requirements.txt
 
 ##### Linux
