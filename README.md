@@ -45,11 +45,8 @@ CIT-GEN has been tested on:
 * Additional python Modules as specified in requirements.txt
 
 ##### Linux
-Clone the source and then cd into the directory:
-```
-git clone https://github.com/raistlinJ/cdes
-cd cdes
-```
+Clone the source and then cd into the directory.
+
 Install the dependencies
 ```
 pip install -r requirements.txt
