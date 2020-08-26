@@ -1,4 +1,4 @@
-# The Cybersecurity Dynamic Experimentation System (CDES)
+# The Cybersecurity Deception Experimentation System (CDES)
 ## Table of Contents
 
 - [Description](#description)
