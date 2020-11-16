@@ -32,15 +32,16 @@ This system is based on the following node constructs:
 * If a hook script contains invalid characters (like ") it will work, but will not be read/loaded properly when the .imn file is loaded.
 
   This becomes an issue especially when including suricata rules, since they usually contain the " character. The workaround is to recreate the suricata generation hook script (and copy/paste the rules into the hook script) every time the scenario file is loaded.
+* With CORE 6.2.0, the coresendmsg handler for link (and others, like node) is broken, therefore, the link color will not change when the "swap" occurs
 
 ### Installation
 CIT-GEN has been tested on:
-* Ubuntu 16.04/18.04 LTE (64-bit)
-* CORE (7.2.1) 
+* Ubuntu 16.04 LTE (64-bit)
+* CORE (4.7+) 
 
 ##### Requirements
 * [Python 3.6 ](https://www.python.org/downloads/release/python-369/)
-* [CORE >= v7.2.1] (https://github.com/coreemu/core/releases/tag/release-7.2.1)
+* [CORE >= v6.3b+] (6.3b included in the source)
 * Additional python Modules as specified in requirements.txt
 
 ##### Linux
@@ -109,7 +110,7 @@ core-gui sample/scenario/CC_NodeTest_suricata.imn
 4. Click on Session -> Hooks
 - Modify the startcdes_runtime_hook.sh hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
 ```
-python3 /home/username/cdes/cdes_loader.py &
+python /home/username/cdes/cdes_loader.py &
 ```
 There are 3 other hooks (no need to modify these) that accomplish the following:
 
