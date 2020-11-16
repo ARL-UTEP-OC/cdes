@@ -49,7 +49,7 @@ Clone the source and then cd into the directory.
 
 Install the dependencies
 ```
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 Copy the custom services into your CORE services folder:
@@ -82,7 +82,7 @@ core-gui sample/scenario/CC_NodeTest.imn
 3. Click on Session -> Hooks
 - Modify the runtime hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
 ```
-python /home/username/cdes/cdes_loader.py &
+python3 /home/username/cdes/cdes_loader.py &
 ```
 
 4. Lastly, press the Start button on the GUI.
@@ -110,7 +110,7 @@ core-gui sample/scenario/CC_NodeTest_suricata.imn
 4. Click on Session -> Hooks
 - Modify the startcdes_runtime_hook.sh hook (click on the wrench icon) and update the path with the directory where you have the cdes source as shown below.
 ```
-python /home/username/cdes/cdes_loader.py &
+python3 /home/username/cdes/cdes_loader.py &
 ```
 There are 3 other hooks (no need to modify these) that accomplish the following:
 
@@ -155,7 +155,7 @@ Follow these steps to create and run a simple cdes scenario.
 - Click on Session -> Hooks
 - Add a new runtime hook and have it load the cdes_loader.py at startup, e.g., add the line
 ```
-python /home/username/cdes/cdes_loader.py &
+python3 /home/username/cdes/cdes_loader.py &
 ```
 
 5. Run the scenario by clicking on the play button
