@@ -181,16 +181,16 @@ class SessionReader():
                 for link in links:
                     connected_node = {}
                     #logging.debug("Checking:" + str(link.attrib["node_one"] + " == " + cc_node_number))
-                    if link.attrib["node_one"] == cc_node_number:
-                        connected_node["number"] = link.attrib["node_two"]
-                    if link.attrib["node_two"] == cc_node_number:
-                        connected_node["number"] = link.attrib["node_one"]
+                    if link.attrib["node1"] == cc_node_number:
+                        connected_node["number"] = link.attrib["node2"]
+                    if link.attrib["node2"] == cc_node_number:
+                        connected_node["number"] = link.attrib["node1"]
                     if "number" not in connected_node:
                         continue
 
-                    ifx = link.find("interface_one")
+                    ifx = link.find("iface1")
                     if ifx == None:
-                        ifx = link.find("interface_two")
+                        ifx = link.find("iface2")
                         if ifx == None:
                             continue
                         #found a connection, now we have to add all details
