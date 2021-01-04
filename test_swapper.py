@@ -32,7 +32,8 @@ if __name__ == '__main__':
     #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
     sr = SessionReader(sys.argv[1])
     conditional_conns = sr.relevant_session_to_JSON()
-    
+    print("CONDITIONAL CONNS: " + str(sr.relevant_session_to_JSON()))
+    #exit()
     omqueue = multiprocessing.Queue()
     otqueue = multiprocessing.Queue()
 
