@@ -250,9 +250,6 @@ class SessionReader():
                 code_section = True
                 file_code += code_line.split("DATA: ")[1] + "\n"
                 continue
-            if "NODE: " in code_line:
-                code_section = False
-                break
             if code_section:
                 file_code += code_line + "\n"
         return file_code
