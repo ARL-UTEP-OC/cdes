@@ -134,28 +134,28 @@ class SessionReader():
 
             #Iterating through all switch nodes to consolidate source files and conditional connections
             for node in switches:
-                logging.debug("SessionReader(): relevant_session_to_JSON(): " + "traversing through switches; processing CC_DecisionNode")
+                logging.debug("SessionReader(): relevant_session_to_JSON(): " + "traversing through switches; processing CC_DecisionNode_OVS")
                 node_id = node.attrib["id"]
                 #check if this is a decision node
                 #if it isn't move on to the next switch
-                if "CC_DecisionNode" not in device_services[node_id]:
+                if "CC_DecisionNode_OVS" not in device_services[node_id]:
                     continue
 
                 #get the source code for files
                 #First get data from xml file
                 #if it's not there, then it means that values are from default, so we use coresendmsg
-                if (node_id, "CC_DecisionNode", "MyMonitor.sh") in switch_service_configurations:
-                    monitor_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyMonitor.sh")]
+                if (node_id, "CC_DecisionNode_OVS", "MyMonitor.sh") in switch_service_configurations:
+                    monitor_code = switch_service_configurations[(node_id, "CC_DecisionNode_OVS", "MyMonitor.sh")]
                 else: 
-                    monitor_code = self.get_node_file(node_id, "CC_DecisionNode", "MyMonitor.sh")
-                if (node_id, "CC_DecisionNode", "MyTrigger.py") in switch_service_configurations:
-                    trigger_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyTrigger.py")]
+                    monitor_code = self.get_node_file(node_id, "CC_DecisionNode_OVS", "MyMonitor.sh")
+                if (node_id, "CC_DecisionNode_OVS", "MyTrigger.py") in switch_service_configurations:
+                    trigger_code = switch_service_configurations[(node_id, "CC_DecisionNode_OVS", "MyTrigger.py")]
                 else: 
-                    trigger_code = self.get_node_file(node_id, "CC_DecisionNode", "MyTrigger.py")
-                if (node_id, "CC_DecisionNode", "MySwapper.py") in switch_service_configurations:
-                    swapper_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MySwapper.py")]
+                    trigger_code = self.get_node_file(node_id, "CC_DecisionNode_OVS", "MyTrigger.py")
+                if (node_id, "CC_DecisionNode_OVS", "MySwapper.py") in switch_service_configurations:
+                    swapper_code = switch_service_configurations[(node_id, "CC_DecisionNode_OVS", "MySwapper.py")]
                 else: 
-                    swapper_code = self.get_node_file(node_id, "CC_DecisionNode", "MySwapper.py")
+                    swapper_code = self.get_node_file(node_id, "CC_DecisionNode_OVS", "MySwapper.py")
 
                 #setup entry for node
                 conditional_conn = {}
