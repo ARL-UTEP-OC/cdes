@@ -1,0 +1,228 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scenario name="/home/researchdev/cdes/sample/scenario/xml_ovs_based_tmp.xml">
+  <networks/>
+  <devices>
+    <device id="2" name="outclient" type="host" class="" image="">
+      <position x="153" y="387" lat="47.57564888355958" lon="-122.13026036642295" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="3" name="n3" icon="router_black.gif" type="router" class="" image="">
+      <position x="238" y="188" lat="47.57745781610653" lon="-122.1291150144357" alt="2.0"/>
+      <services>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="zebra"/>
+        <service name="CC_Node"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="4" name="n4" type="router" class="" image="">
+      <position x="380" y="213" lat="47.57723056670632" lon="-122.12720160288052" alt="2.0"/>
+      <services>
+        <service name="zebra"/>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="5" name="legitserver" type="host" class="" image="">
+      <position x="514" y="162" lat="47.577694154436486" lon="-122.12539598915944" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="1" name="legitclient" type="PC" class="" image="">
+      <position x="90" y="212" lat="47.57723965670126" lon="-122.13110927436645" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+      </services>
+    </device>
+    <device id="6" name="n6" icon="router_black.gif" type="router" class="" image="">
+      <position x="350" y="357" lat="47.57592159095905" lon="-122.12760584475838" alt="2.0"/>
+      <services>
+        <service name="OSPFv2"/>
+        <service name="OSPFv3"/>
+        <service name="zebra"/>
+        <service name="CC_Node"/>
+        <service name="IPForward"/>
+      </services>
+    </device>
+    <device id="7" name="honeyserver" type="host" class="" image="">
+      <position x="502" y="399" lat="47.575539800202115" lon="-122.1255576859106" alt="2.0"/>
+      <services>
+        <service name="DefaultRoute"/>
+        <service name="SSH"/>
+      </services>
+    </device>
+    <device id="13" name="n13" type="cc_dec_node_ovs" class="" image="">
+      <position x="234" y="302" lat="47.57642155083598" lon="-122.12916891335274" alt="2.0"/>
+      <services>
+        <service name="CC_DecisionNode_OVS"/>
+      </services>
+    </device>
+  </devices>
+  <links>
+    <link node1="1" node2="3">
+      <iface1 id="0" name="eth0" mac="00:00:00:aa:00:70" ip4="10.0.0.20" ip4_mask="24"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:71" ip4="10.0.0.1" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="3" node2="4">
+      <iface1 id="1" name="eth1" mac="00:00:00:aa:00:72" ip4="10.0.2.1" ip4_mask="24"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:73" ip4="10.0.2.2" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="4" node2="5">
+      <iface1 id="1" name="eth1" mac="00:00:00:aa:00:74" ip4="10.0.3.1" ip4_mask="24"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:75" ip4="10.0.3.10" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="6" node2="7">
+      <iface1 id="1" name="eth1" mac="00:00:00:aa:00:09" ip4="10.0.4.1" ip4_mask="24"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:77" ip4="10.0.4.10" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="2" node2="13">
+      <iface1 id="0" name="eth0" mac="00:00:00:aa:00:06" ip4="10.0.1.10" ip4_mask="24"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:07"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="13" node2="6">
+      <iface1 id="1" name="eth1" mac="00:00:00:aa:00:08"/>
+      <iface2 id="0" name="eth0" mac="00:00:00:aa:00:0b" ip4="10.0.1.1" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+    <link node1="13" node2="3">
+      <iface1 id="2" name="eth2" mac="00:00:00:aa:00:0a"/>
+      <iface2 id="2" name="eth2" mac="00:00:00:aa:00:0b" ip4="10.0.1.1" ip4_mask="24"/>
+      <options delay="0" bandwidth="0" loss="0.0" dup="0" jitter="0" unidirectional="0"/>
+    </link>
+  </links>
+  <emane_global_configuration>
+    <emulator/>
+    <core>
+      <configuration name="platform_id_start" value="1"/>
+      <configuration name="nem_id_start" value="1"/>
+      <configuration name="link_enabled" value="1"/>
+      <configuration name="loss_threshold" value="30"/>
+      <configuration name="link_interval" value="1"/>
+      <configuration name="link_timeout" value="4"/>
+    </core>
+  </emane_global_configuration>
+  <service_configurations>
+    <service name="CC_DecisionNode" node="13">
+      <files>
+        <file name="MyTrigger.py"><![CDATA[# auto-generated by CC_DecisionNode service
+# Short python to implement Trigger.
+# The following three items are important:
+# 1. You must write the process_data(self) function
+# 2. Read the input (from the Monitor) by calling self.read_input_line()
+# 3. Call the self.active_conn method with the cc node number as a parameter.
+# The following is a sample that reads time information from the Monitor and 
+# will swap between nodes every 120 seconds
+
+import time
+#Required import
+from Trigger.trigger import Trigger
+
+#Required class name that inherits Trigger
+class MyTrigger(Trigger):  
+    
+    #Required function
+    def process_data(self):
+        #forever loop to process data
+        while True:
+####Modify to process Monitor's data and Trigger a switch####
+            # read a line of input (from Monitor's stdout)
+            data = self.read_input_line()
+            print("READ: " + str(data))
+            #if data yet exists, restart loop
+            if data == None:
+                continue
+            # if data exists, we know it's epoch time; 
+            # read it as an integer
+            new_time = int(data)
+            #get the cc_node numbers
+            nodes = self.get_cc_node_numbers()
+            #set active node every 120 seconds
+            if new_time % 240 == 0:
+                self.set_active_conn(nodes[1])                
+            elif new_time % 120 == 0:
+                self.set_active_conn(nodes[0])                       
+####
+]]></file>
+        <file name="MyMonitor.sh"><![CDATA[#!/bin/sh
+# auto-generated by CC_DecisionNode service
+# Call any/all scripts needed for the Monitor.
+# The stdout from this code will be given to MyTrigger.py for processing.
+# This is an example of using epoch time as the monitor data
+
+while [ True ]
+do
+sleep 1
+date +%s
+done
+]]></file>
+      </files>
+    </service>
+  </service_configurations>
+  <session_origin lat="47.5791667" lon="-122.132322" alt="2.0" scale="150.0"/>
+  <session_options>
+    <configuration name="controlnet" value=""/>
+    <configuration name="controlnet0" value=""/>
+    <configuration name="controlnet1" value=""/>
+    <configuration name="controlnet2" value=""/>
+    <configuration name="controlnet3" value=""/>
+    <configuration name="controlnet_updown_script" value=""/>
+    <configuration name="enablerj45" value="1"/>
+    <configuration name="preservedir" value="0"/>
+    <configuration name="enablesdt" value="0"/>
+    <configuration name="sdturl" value="tcp://127.0.0.1:50000/"/>
+    <configuration name="ovs" value="0"/>
+  </session_options>
+  <session_metadata>
+    <configuration name="annotation a1" value="{iconcoords {26.0 131.0 635.0 260.0}} {type rectangle} {label {Legitimate Network}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {color #C0C0FF} {width 0} {border black} {rad 25} {canvas c1}"/>
+    <configuration name="annotation a2" value="{iconcoords {246.0 313.0 600.0 463.0}} {type rectangle} {label {Honey Network}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {color #C0C0FF} {width 0} {border black} {rad 25} {canvas c1}"/>
+    <configuration name="annotation a3" value="{iconcoords {98.0 326.0 239.0 431.0}} {type rectangle} {label {Untrusted Node}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {color #c0c04b} {width 0} {border black} {rad 25} {canvas c1}"/>
+    <configuration name="annotation a4" value="{iconcoords {165 256 289 312}} {type rectangle} {label {Decision Maker}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {color #19be56} {width 0} {border black} {rad 20} {canvas c1}"/>
+    <configuration name="annotation a5" value="{iconcoords {7.0 87.0}} {type text} {label {An untrusted node is conditionally connected to either the legitimate or honeynet.}} {labelcolor black} {fontfamily {Arial}} {fontsize {18}} {canvas c1}"/>
+    <configuration name="annotation a6" value="{type text} {iconcoords {266.0 98.0}} {label {}} {canvas c1}"/>
+    <configuration name="annotation a7" value="{iconcoords {310.0 286.0}} {type text} {label {Allow ~60 seconds for routes to converge before accessing deep nodes.}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a8" value="{iconcoords {69.0 108.0}} {type text} {label {Changes every 15 seconds.}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a9" value="{iconcoords {19.0 489.0}} {type text} {label {Instructions}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a10" value="{iconcoords {21.0 511.0}} {type text} {label {1. Open 2 terminals from &quot;outclient&quot;}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a11" value="{iconcoords {22.0 530.0}} {type text} {label {2. ping 10.0.2.1 from terminal 1; ping 10.0.4.1 from terminal 2}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a12" value="{iconcoords {39.0 584.0}} {type text} {label {Ping responses alternate every 15 seconds}} {labelcolor black} {fontfamily {Arial}} {fontsize {12}} {canvas c1}"/>
+    <configuration name="annotation a13" value="{type text} {iconcoords {124.0 573.0}} {label {}} {canvas c1}"/>
+    <configuration name="canvas c1" value="{name {Canvas1}}"/>
+    <configuration name="global_options" value="interface_names=no ip_addresses=yes ipv6_addresses=yes node_labels=yes link_labels=yes show_api=yes background_images=no annotations=yes grid=yes traffic_start=0"/>
+  </session_metadata>
+  <default_services>
+    <node type="mdr">
+      <service name="zebra"/>
+      <service name="OSPFv3MDR"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="PC">
+      <service name="DefaultRoute"/>
+    </node>
+    <node type="prouter"/>
+    <node type="router">
+      <service name="zebra"/>
+      <service name="OSPFv2"/>
+      <service name="OSPFv3"/>
+      <service name="IPForward"/>
+    </node>
+    <node type="host">
+      <service name="DefaultRoute"/>
+      <service name="SSH"/>
+    </node>
+    <node type="cc_dec_node_ovs">
+      <service name="CC_Decision_Node_OVS"/>
+    </node>
+  </default_services>
+</scenario>

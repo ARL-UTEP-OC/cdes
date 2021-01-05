@@ -37,6 +37,14 @@ curl -X GET http://localhost:8080/stats/port/11141200
 
 
 -------------------
+#make sure directories exist (private/per-node)
+/etc/openvswitch
+/var/run/openvswitch
+/var/log/openvswitch
+
+#Start service
+/etc/init.d/openvswitch-switch start < /dev/null
+
 https://northboundnetworks.com/blogs/sdn/what-is-open-vswitch
 
 ovs-vsctl add-br mybridge
@@ -51,6 +59,7 @@ dhclient mybridge
 
 route -n
 
+####following aren't really needed if we're just tying in the interfaces/don't need more than 1 per interface
 ip tuntap add mode tap vport1
 ip tuntap add mode tap vport2
 
@@ -59,20 +68,17 @@ ifconfig vport2 up
 
 ovs-vsctl add-port mybridge vport1 -- ovs-vsctl add-port mybridge vport2
 ovs-vsctl show
+####
 
 ovs-appctl fdb/show mybridge (show MAC table)
 ovs-ofctl show mybridge (show ports with names)
 
 ovs-ofctl dump-flows mybridge (single flow by default with normal action = normal L2 forwarding)
 
-
-
 route add -net default mybridge
 ovs-ofctl add-flow mybridge ip,nw_dst=10.0.1.2/24,actions=output:2
 ovs-ofctl add-flow mybridge ip,nw_dst=10.0.0.1/24,actions=output:1
 
-/etc/openvswitch
-/var/run/openvswitch
-/var/log/openvswitch
+#kill processes on exit
 killall ovs-vswitchd
 killall ovsdb-server

@@ -94,7 +94,7 @@ class SessionReader():
             #find all devices (non-switch/hub/wireless) and identify their name/id mappings and services
             logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding devices")
             for device in root.find('devices').findall('device'):
-                if device.attrib["type"] == "cc_dec_node":
+                if device.attrib["type"] == "cc_dec_node_ovs":
                     switches.append(device)
                     switch_ids.append(device.attrib["id"])
                 #keep track of mappings
@@ -104,15 +104,6 @@ class SessionReader():
                     services += " " + str(service.attrib["name"])
                 #store the services that are enabled for this device
                 device_services[device.attrib["id"]] = services
-
-            # logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding switches")
-            # #find switch type nodes (the type "cc_dec_node") and then store the name/id mappings
-            # for node in root.find('networks').findall('network'):
-            #     if node.attrib["type"] == "cc_dec_node":
-            #         switches.append(node)
-            #         switch_ids.append(node.attrib["id"])
-            #         #keep track of mappings
-            #         name_id_map[node.attrib["name"]] = node.attrib["id"]
 
             #find service files for switch type nodes and then store them
             services = root.find('service_configurations')
@@ -138,8 +129,6 @@ class SessionReader():
 
             #now obtain the "enabled" services for all switch nodes
             logging.debug("SessionReader(): relevant_session_to_JSON(): " + "obtaining enabled services for switches")
-            #data = iparser.get_file_data()       
-            #switch_services = iparser.extract_lanswitch_services(data)
 
             logging.debug("SessionReader(): relevant_session_to_JSON():Switch services found: " + str(switch_services)) 
 

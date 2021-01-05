@@ -75,8 +75,12 @@ class Swapper():
                         if node["node_type"] == "SWITCH":
                             self.disable_net_node(self.short_session_number, cc_dec, node)
                         else:
-                            logging.error("Disabling other cc_dec: " + str(cc_dec) + " node: " + str(node))
+                            logging.debug("Disabling other cc_dec: " + str(cc_dec) + " node: " + str(node))
                             self.disable_other_node(self.session_number, cc_dec, node)
+
+    def startovs(self, session_number, cc_dec_number):
+        #msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
+        pass
 
     def enable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): enable_other_node(): instantiated")
@@ -89,6 +93,7 @@ class Swapper():
 
     def disable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): disable_other_node(): instantiated")
+        logging.debug("Swapper(): disable_other_node(): executing: " + '-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
         msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
 ###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
         msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow" ')
