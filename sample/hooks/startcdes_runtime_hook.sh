@@ -4,5 +4,5 @@ CODE_PATH=/home/researchdev/cdes/
 
 
 ######DO NOT MODIFY (UNLESS YOU KNOW WHAT YOU"RE DOING)#######
-python $CODE_PATH/cdes_loader.py &
+python3 $CODE_PATH/cdes_loader.py &
 
