@@ -172,7 +172,6 @@ class SessionReader():
                 for link in links:
                     connected_node = {}
                     #find interface for node connected to switch
-                    #logging.debug("Checking:" + str(link.attrib["node_one"] + " == " + cc_dec_node_number))
                     if link.attrib["node1"] == cc_dec_node_number:
                         connected_node["number"] = link.attrib["node2"]
                         cc_dec_node_ifx = link.find("iface1")
@@ -183,30 +182,22 @@ class SessionReader():
                         cc_node_ifx = link.find("iface1")
                     if "number" not in connected_node:
                         continue
-
                     if cc_node_ifx == None:
                         continue
                     #found a connection, now we have to add all details 
                     #process remote node (cc_node)
-                    #get the type of the node
-                    if connected_node["number"] in switch_ids:
-                        #switch to switch conns won't have any other useful information
-                        connected_node["node_type"] = "SWITCH"
-                    else:
-                        #switch to node will have additional useful information
-                        connected_node["node_type"] = "other"
-                        connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
-                        connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
-                        if "ip4" in cc_node_ifx:
-                            connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
-                            connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
-                        if "ip6" in cc_node_ifx.attrib:
-                            connected_node["cc_ip6"] = cc_node_ifx.attrib["ip6"]
-                            connected_node["cc_ip6_mask"] = cc_node_ifx.attrib["ip6_mask"]
+                    connected_node["node_type"] = "other"
+                    connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
+                    connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
+                    if "ip4" in cc_node_ifx:
+                        connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
+                        connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
+                    if "ip6" in cc_node_ifx.attrib:
+                        connected_node["cc_ip6"] = cc_node_ifx.attrib["ip6"]
+                        connected_node["cc_ip6_mask"] = cc_node_ifx.attrib["ip6_mask"]
                     #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
                     connected_node["role"] = "cc_gw"
                     #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
-                    ##TODO REPLACE DEVICE TRAVERSAL
                     if connected_node["number"] in device_services:
                         if "CC_Node" in device_services[connected_node["number"]]:
                             #we know this is a good node
@@ -217,7 +208,6 @@ class SessionReader():
                         if "CC_Node" in switch_services[connected_node["number"]]:
                             #we know this is a good node
                             connected_node["role"] = "cc_node"
-
 
                     #add information about the cc_dec node associated with this link
                     connected_node["cc_dec_nic"] = cc_dec_node_ifx.attrib["name"]
