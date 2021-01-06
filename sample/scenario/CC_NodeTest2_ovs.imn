@@ -1,0 +1,535 @@
+node n1 {
+    type router
+    model router
+    network-config {
+	hostname n1
+	!
+	interface eth0
+	 ip address 10.0.1.1/24
+	 mac address 00:00:00:aa:00:22
+	!
+    }
+    canvas c1
+    iconcoords {204.0 156.0}
+    labelcoords {204.0 188.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n2}
+}
+
+node n4 {
+    type router
+    model cc_node
+    network-config {
+	hostname n4
+	!
+	interface eth0
+	 ip address 10.0.1.2/24
+	 mac address 00:00:00:aa:00:25
+	!
+	interface eth1
+	 ip address 10.0.3.1/24
+	 mac address 00:00:00:aa:00:16
+	!
+    }
+    canvas c1
+    iconcoords {380.0 109.0}
+    labelcoords {380.0 141.0}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    interface-peer {eth1 n6}
+    interface-peer {eth0 n2}
+}
+
+node n5 {
+    type router
+    model cc_node
+    network-config {
+	hostname n5
+	!
+	interface eth0
+	 ip address 10.0.1.3/24
+	 mac address 00:00:00:aa:00:27
+	!
+	interface eth3
+	 ip address 10.0.5.1/24
+	 ipv6 address 2001:5::1/64
+	 mac address 00:00:00:aa:00:1a
+	!
+	interface eth2
+	 ip address 10.0.4.1/24
+	 mac address 00:00:00:aa:00:18
+	!
+	interface eth1
+	 ip address 10.0.2.1/24
+	 mac address 00:00:00:aa:00:14
+	!
+    }
+    canvas c1
+    iconcoords {370.0 312.0}
+    labelcoords {370.0 344.0}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    interface-peer {eth1 n7}
+    interface-peer {eth2 n8}
+    interface-peer {eth3 n9}
+    interface-peer {eth0 n2}
+}
+
+node n6 {
+    type router
+    model host
+    network-config {
+	hostname n6
+	!
+	interface eth0
+	 ip address 10.0.3.10/24
+	 ipv6 address 2001:3::10/64
+	 mac address 00:00:00:aa:00:17
+	!
+    }
+    canvas c1
+    iconcoords {528.0 85.0}
+    labelcoords {528.0 117.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n4}
+}
+
+node n7 {
+    type router
+    model router
+    network-config {
+	hostname n7
+	!
+	interface eth1
+	 ip address 10.0.6.1/24
+	 ipv6 address 2001:6::1/64
+	 mac address 00:00:00:aa:00:1c
+	!
+	interface eth0
+	 ip address 10.0.2.2/24
+	 ipv6 address 2001:2::2/64
+	 mac address 00:00:00:aa:00:15
+	!
+    }
+    canvas c1
+    iconcoords {509.0 280.0}
+    labelcoords {509.0 312.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n5}
+    interface-peer {eth1 n10}
+}
+
+node n8 {
+    type router
+    model router
+    network-config {
+	hostname n8
+	!
+	interface eth1
+	 ip address 10.0.7.1/24
+	 ipv6 address 2001:7::1/64
+	 mac address 00:00:00:aa:00:1e
+	!
+	interface eth0
+	 ip address 10.0.4.2/24
+	 ipv6 address 2001:4::2/64
+	 mac address 00:00:00:aa:00:19
+	!
+    }
+    canvas c1
+    iconcoords {507.0 388.0}
+    labelcoords {507.0 420.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n5}
+    interface-peer {eth1 n11}
+}
+
+node n9 {
+    type router
+    model router
+    network-config {
+	hostname n9
+	!
+	interface eth1
+	 ip address 10.0.8.1/24
+	 ipv6 address 2001:8::1/64
+	 mac address 00:00:00:aa:00:20
+	!
+	interface eth0
+	 ip address 10.0.5.2/24
+	 ipv6 address 2001:5::2/64
+	 mac address 00:00:00:aa:00:1b
+	!
+    }
+    canvas c1
+    iconcoords {405.0 447.0}
+    labelcoords {405.0 479.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n5}
+    interface-peer {eth1 n12}
+}
+
+node n10 {
+    type router
+    model host
+    network-config {
+	hostname n10
+	!
+	interface eth0
+	 ip address 10.0.6.10/24
+	 ipv6 address 2001:6::10/64
+	 mac address 00:00:00:aa:00:1d
+	!
+    }
+    canvas c1
+    iconcoords {664.0 313.0}
+    labelcoords {664.0 345.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n7}
+}
+
+node n11 {
+    type router
+    model host
+    network-config {
+	hostname n11
+	!
+	interface eth0
+	 ip address 10.0.7.10/24
+	 ipv6 address 2001:7::10/64
+	 mac address 00:00:00:aa:00:1f
+	!
+    }
+    canvas c1
+    iconcoords {647.0 416.0}
+    labelcoords {647.0 448.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n8}
+}
+
+node n12 {
+    type router
+    model host
+    network-config {
+	hostname n12
+	!
+	interface eth0
+	 ip address 10.0.8.10/24
+	 ipv6 address 2001:8::10/64
+	 mac address 00:00:00:aa:00:21
+	!
+    }
+    canvas c1
+    iconcoords {478.0 534.0}
+    labelcoords {478.0 566.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n9}
+}
+
+node n2 {
+    type router
+    model cc_dec_node_ovs
+    network-config {
+	hostname decnode
+	!
+	interface eth2
+	 mac address 00:00:00:aa:00:26
+	!
+	interface eth1
+	 mac address 00:00:00:aa:00:24
+	!
+	interface eth0
+	 mac address 00:00:00:aa:00:23
+	!
+    }
+    canvas c1
+    iconcoords {282.0 205.0}
+    labelcoords {282.0 237.0}
+    services {CC_DecisionNode_OVS}
+    interface-peer {eth0 n1}
+    interface-peer {eth1 n4}
+    interface-peer {eth2 n5}
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS
+	custom-command CC_DecisionNode_OVS
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', 'start_ovs.sh', )
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyTrigger.py
+	custom-command MyTrigger.py
+	config {
+	# auto-generated by CC_DecisionNode_OVS service
+	# Short python to implement Trigger.
+	# The following three items are important:
+	# 1. You must write the process_data(self) function
+	# 2. Read the input (from the Monitor) by calling self.read_input_line()
+	# 3. Call the self.active_conn method with the cc node number as a parameter.
+	# The following is a sample that reads time information from the Monitor and 
+	# will swap (and stay swapped) after 90 seconds
+	
+	import time
+	#Required import
+	from Trigger.trigger import Trigger
+	
+	#Required class name that inherits Trigger
+	class MyTrigger(Trigger):  
+	    
+	    #Required function
+	    def process_data(self):
+	        #forever loop to process data
+	        while True:
+	####Modify to process Monitor's data and Trigger a switch####
+	            # read a line of input (from Monitor's stdout)
+	            data = self.read_input_line()
+	            print("READ: " + str(data))
+	            #if data yet exists, restart loop
+	            if data == None:
+	                continue
+	            # if data exists, we know it's epoch time; 
+	            # read it as an integer
+	            new_time = int(data)
+	            #get the cc_node numbers
+	            nodes = self.get_cc_node_numbers()
+	            #switch to other network after 90 seconds
+	            if new_time % 90 == 0:
+	                self.set_active_conn(nodes[1])                
+	####
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyMonitor.sh
+	custom-command MyMonitor.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	# Call any/all scripts needed for the Monitor.
+	# The stdout from this code will be given to MyTrigger.py for processing.
+	# This is an example of using epoch time as the monitor data
+	
+	while [ True ]
+	do
+	sleep 1
+	date +%s
+	done
+	
+	}
+    }
+}
+
+link l1 {
+    nodes {n5 n7}
+}
+
+link l2 {
+    nodes {n4 n6}
+}
+
+link l3 {
+    nodes {n5 n8}
+}
+
+link l4 {
+    nodes {n5 n9}
+}
+
+link l5 {
+    nodes {n7 n10}
+}
+
+link l6 {
+    nodes {n8 n11}
+}
+
+link l7 {
+    nodes {n9 n12}
+}
+
+link l8 {
+    nodes {n1 n2}
+}
+
+link l9 {
+    color Blue
+    nodes {n2 n4}
+}
+
+link l10 {
+    color blue
+    nodes {n2 n5}
+}
+
+annotation a1 {
+    iconcoords {304.0 9.0 650.0 167.0}
+    type rectangle
+    label {HoneyNet1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a2 {
+    iconcoords {292.0 236.0 717.0 568.0}
+    type rectangle
+    label {HoneyNet2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a3 {
+    iconcoords {151.0 597.0}
+    type text
+    label {N1 is conditionally connected to one of two honey nets.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {18}
+    canvas c1
+}
+
+annotation a4 {
+    iconcoords {256.0 596.0}
+    type text
+    label {}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {18}
+    canvas c1
+}
+
+annotation a5 {
+    type text
+    iconcoords {278.0 596.0}
+    label {}
+    canvas c1
+}
+
+annotation a6 {
+    type text
+    iconcoords {318.0 603.0}
+    label {}
+    canvas c1
+}
+
+annotation a7 {
+    iconcoords {362.0 202.0}
+    type text
+    label {Allow ~60 seconds for routes to converge after switch before accessing deep nodes.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a8 {
+    type text
+    iconcoords {155.0 268.0}
+    label {}
+    canvas c1
+}
+
+annotation a9 {
+    iconcoords {6.0 344.0}
+    type text
+    label {10.0.1.3 will be accessible after 90 sec.}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a10 {
+    iconcoords {6.0 243.0}
+    type text
+    label {Instructions:}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a11 {
+    type text
+    iconcoords {51.0 226.0}
+    label {}
+    canvas c1
+}
+
+annotation a12 {
+    iconcoords {9.0 263.0}
+    type text
+    label {1. Open 2 terminals from n1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a13 {
+    iconcoords {8.0 286.0}
+    type text
+    label {2. ping 10.0.1.2 from term 1;}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a14 {
+    iconcoords {62.0 307.0}
+    type text
+    label {10.0.1.3 from term2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+canvas c1 {
+    name {Canvas1}
+}
+
+hook 4:runtime_hook.sh {
+#!/bin/sh
+# session hook script; write commands here to execute on the host at the
+# specified state
+python3 /home/researchdev/cdes/cdes_loader.py &
+}
+
+option global {
+    interface_names no
+    ip_addresses yes
+    ipv6_addresses no
+    node_labels yes
+    link_labels yes
+    show_api no
+    background_images no
+    annotations yes
+    grid yes
+    traffic_start 0
+}
+
+option session {
+    controlnet=
+    controlnet0=
+    controlnet1=
+    controlnet2=
+    controlnet3=
+    controlnet_updown_script=
+    enablerj45=1
+    enablesdt=0
+    ovs=0
+    preservedir=0
+    sdturl=tcp://127.0.0.1:50000/
+}
+
