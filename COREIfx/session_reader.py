@@ -189,7 +189,7 @@ class SessionReader():
                     connected_node["node_type"] = "other"
                     connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
                     connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
-                    if "ip4" in cc_node_ifx:
+                    if "ip4" in cc_node_ifx.attrib:
                         connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
                         connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
                     if "ip6" in cc_node_ifx.attrib:
@@ -212,10 +212,10 @@ class SessionReader():
                     #add information about the cc_dec node associated with this link
                     connected_node["cc_dec_nic"] = cc_dec_node_ifx.attrib["name"]
                     connected_node["cc_dec_mac"] = cc_dec_node_ifx.attrib["mac"]
-                    if "ip4" in cc_dec_node_ifx:
+                    if "ip4" in cc_dec_node_ifx.attrib:
                         connected_node["cc_dec_ip4"] = cc_dec_node_ifx.attrib["ip4"]
                         connected_node["cc_dec_ip4_mask"] = cc_dec_node_ifx.attrib["ip4_mask"]
-                    if "ip6" in cc_node_ifx.attrib:
+                    if "ip6" in cc_dec_node_ifx.attrib:
                         connected_node["cc_dec_ip6"] = cc_dec_node_ifx.attrib["ip6"]
                         connected_node["cc_dec_ip6_mask"] = cc_dec_node_ifx.attrib["ip6_mask"]
 

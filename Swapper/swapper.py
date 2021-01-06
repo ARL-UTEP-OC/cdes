@@ -66,74 +66,29 @@ class Swapper():
             logging.debug("Swapper(): update_connection(): looking at nodes: " + str(self.conditional_conns_cc_dec[cc_dec]))
             for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
                 if node["number"] == active_node_number:
-                    if node["node_type"] == "SWITCH":
-                        self.enable_net_node(self.short_session_number, cc_dec, node)
-                    else:
-                        self.enable_other_node(self.session_number, cc_dec, node)
+                    self.enable_other_node(self.session_number, cc_dec, node)
                 else:
                     if disable_others == True:
-                        if node["node_type"] == "SWITCH":
-                            self.disable_net_node(self.short_session_number, cc_dec, node)
-                        else:
-                            logging.debug("Disabling other cc_dec: " + str(cc_dec) + " node: " + str(node))
-                            self.disable_other_node(self.session_number, cc_dec, node)
+                        logging.debug("Disabling other cc_dec: " + str(cc_dec) + " node: " + str(node))
+                        self.disable_other_node(self.session_number, cc_dec, node)
 
     def startovs(self, session_number, cc_dec_number):
-        #msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
+        #eventually move the ovs service start logic here... maybe
+        #msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ovs-vsctl add-port ovsbr0 '+cc_node["cc_dec_nic"]+'" --tcp')
         pass
 
     def enable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): enable_other_node(): instantiated")
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
-        logging.error("enable other node cmd: " + '-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' up" --tcp')
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="sh defaultroute.sh" --tcp')
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
+        logging.debug("enable other node cmd: " + '-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ovs-vsctl add-port ovsbr0 '+cc_node["cc_dec_nic"]+' --tcp')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ovs-vsctl add-port ovsbr0 '+cc_node["cc_dec_nic"]+'" --tcp')
+###TODO: The following will trigger an non-fatal error on core-daemon because it claims the interface numbers need to be specified... still works though
         msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
         cc_node["connected"] = True
 
     def disable_other_node(self, session_number, cc_dec_number, cc_node):
         logging.debug("Swapper(): disable_other_node(): instantiated")
-        logging.debug("Swapper(): disable_other_node(): executing: " + '-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
-        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_node["number"]+' NUMBER=1000 COMMAND="ifconfig '+cc_node["cc_nic"]+' down" --tcp')
+        logging.debug("enable other node cmd: " + '-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ovs-vsctl del-port ovsbr0 '+cc_node["cc_dec_nic"]+' --tcp')
+        msg_ifx.send_command('-s'+session_number+' EXECUTE NODE='+cc_dec_number+' NUMBER=1000 COMMAND="ovs-vsctl del-port ovsbr0 '+cc_node["cc_dec_nic"]+'" --tcp')
 ###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
         msg_ifx.send_command('-s'+session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=yellow" ')
-        cc_node["connected"] = False
-
-    def enable_net_node(self, short_session_number, cc_dec_number, cc_node):
-        logging.debug("Swapper(): enable_net_node(): instantiated")
-        #system call to enable the interface (since CORE doesn't properly remove/stop the interfaces... yet?)
-        suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
-        localname = "veth" + suffix
-        cmd = 'ifconfig '+ localname + ' up'
-        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
-
-        suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
-        localname = "veth" + suffix
-        cmd = 'ifconfig '+ localname + ' up'
-        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###        
-        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
-        cc_node["connected"] = True
-
-    def disable_net_node(self, short_session_number, cc_dec_number, cc_node):
-        logging.debug("Swapper(): disable_net_node(): instantiated")
-        #system call to enable the interface (since CORE doesn't properly remove/stop the interfaces... yet?)
-        suffix = "%x.%x.%s" % (int(cc_node["number"]), int(cc_dec_number), short_session_number)
-        localname = "veth" + suffix
-        cmd = 'ifconfig '+ localname + ' down'
-        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
-
-        suffix = "%x.%x.%s" % (int(cc_dec_number), int(cc_node["number"]), short_session_number)
-        localname = "veth" + suffix
-        cmd = 'ifconfig '+ localname + ' down'
-        p = subprocess.Popen(shlex.split(cmd), encoding="utf-8")
-###TODO: The following does not work with CORE 6.2, there is however a fix in the latest verison of CORE###
-        msg_ifx.send_command('-s'+short_session_number+' LINK N1_NUMBER='+cc_dec_number+' N2_NUMBER='+cc_node["number"]+' GUI_ATTRIBUTES="color=blue" ')
-        cc_node["connected"] = False
-            
-
-def short_session_id(session_number):
-        logging.debug("Swapper(): short_session_id(): Instantiated")
-        snum = int(session_number)
-        ans = (snum >> 8) ^ (snum & ((1 << 8) - 1))
-        return ("%x" % ans)
+        cc_node["connected"] = False         
