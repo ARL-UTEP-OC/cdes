@@ -131,9 +131,9 @@ class MyTrigger(Trigger):
             count = count + 1
             new_time = int(data)
             #set active node every 15 seconds
-            if count % 15 == 0:
+            if count == 15:
                 self.set_active_conn(nodes[1])
-            if count % 30 == 0:
+            if count == 30:
                 self.set_active_conn(nodes[0])
                 count = 1
 ####
