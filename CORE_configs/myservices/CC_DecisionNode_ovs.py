@@ -115,7 +115,8 @@ class MyTrigger(Trigger):
     def process_data(self):
         #get the cc_node numbers
         nodes = self.get_cc_node_numbers()
-        self.set_active_conn(nodes[0], disable_others=True)
+        self.set_active_conn("eth0", disable_others=True)
+        self.set_active_conn("eth1", disable_others=False)
         #use a counter to trigger call to swap
         count = 1
         #forever loop to process data
@@ -132,9 +133,11 @@ class MyTrigger(Trigger):
             new_time = int(data)
             #set active node every 15 seconds
             if count == 15:
-                self.set_active_conn(nodes[1])
+                self.set_active_conn("eth0", disable_others=True)
+                self.set_active_conn("eth2", disable_others=False)
             if count == 30:
-                self.set_active_conn(nodes[0])
+                self.set_active_conn("eth0", disable_others=True)
+                self.set_active_conn("eth1", disable_others=False)
                 count = 1
 ####
 """            

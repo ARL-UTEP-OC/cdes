@@ -21,18 +21,15 @@ class Trigger():
         self.conditional_conns = conditional_conns
         #works for the specific cc_dec
         self.cc_dec = cc_dec_number
-        self.cc_gw_numbers = []
         self.cc_node_numbers = []
+        self.cc_dec_node_ifxs = []
     
         for node in self.conditional_conns[self.cc_dec]["connected_nodes"]:
+            logging.debug("Trigger(): init(): found interface to connected node: " + str(node))
+            self.cc_dec_node_ifxs.append(node["cc_dec_nic"])
             if node["role"] == "cc_node":
-                logging.debug("Trigger(): set_active_conn(): found cc_node: " + str(node))
+                logging.debug("Trigger(): init(): found cc_node: " + str(node))
                 self.cc_node_numbers.append(node["number"])
-            elif node["role"] == "cc_gw":
-                logging.debug("Trigger(): set_active_conn(): found cc_gw: " + str(node))
-                self.cc_gw_numbers.append(node["number"])
-        if len(self.cc_node_numbers) > 0:
-                self.set_active_conn(self.cc_node_numbers[0])
 
     def read_input_line(self):
         logging.debug("Trigger(): read_input_line(): instantiated")
@@ -50,24 +47,24 @@ class Trigger():
     def process_data(self):
         raise NotImplementedError()
     
-    def set_active_conn(self, active_cc_node_number, disable_others=True):
+    def set_active_conn(self, active_cc_dec_nic, disable_others=True):
         logging.debug("Trigger(): set_active_conn(): instantiated")
 
         #find the node to activate
-        if active_cc_node_number in self.cc_node_numbers:
+        if active_cc_dec_nic in self.cc_dec_node_ifxs:
             logging.debug("Trigger(): set_active_conn(): found node to activate")
-            self.oqueue.put([self.cc_dec, self.cc_gw_numbers, active_cc_node_number, disable_others])
+            self.oqueue.put([self.cc_dec, active_cc_dec_nic, disable_others])
         else:
-            logging.error("Invalid Node Specified for Activation")
+            logging.error("Invalid DEC Interface Specified for Activation")
             raise NameError()
 
     def get_cc_node_numbers(self):
          logging.debug("Trigger(): get_cc_node_names(): instantiated")
          return self.cc_node_numbers
 
-    def get_cc_gw_numbers(self):
-         logging.debug("Trigger(): get_cc_gw_name(): instantiated")
-         return self.cc_gw_numbers
+    def get_cc_dec_node_ifxs(self):
+         logging.debug("Trigger(): get_cc_node_names(): instantiated")
+         return self.cc_dec_node_ifxs
 
     def get_cc_decision_number(self):
          logging.debug("Trigger(): get_cc_decision_name(): instantiated")
@@ -81,7 +78,6 @@ if __name__ == '__main__':
         logging.error("Usage: python controller.py <session-number>")
         exit()       
 
-    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
     sr = SessionReader(sys.argv[1])
     conditional_conns = sr.relevant_session_to_JSON()
     omqueue = multiprocessing.Queue()

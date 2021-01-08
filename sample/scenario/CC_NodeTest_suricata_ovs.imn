@@ -182,7 +182,8 @@ node n13 {
 	        numAlerts = 0
 	        #get the cc_node numbers
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0])    
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
 	            # read a line of input (from Monitor's stdout)
@@ -197,7 +198,8 @@ node n13 {
 	                numAlerts = numAlerts + 1
 	                if numAlerts == 20:
 	                    #set active node
-	                    self.set_active_conn(nodes[1])
+	                    self.set_active_conn("eth0", disable_others=True)
+	                    self.set_active_conn("eth2", disable_others=False)
 	####
 	}
     }
@@ -238,17 +240,17 @@ link l6 {
 }
 
 link l1 {
+    color blue
     nodes {n2 n13}
-    bandwidth 0
 }
 
 link l5 {
-    color Blue
+    color yellow
     nodes {n13 n3}
 }
 
 link l7 {
-    color blue
+    color yellow
     nodes {n13 n6}
 }
 
@@ -436,13 +438,6 @@ canvas c1 {
     name {Canvas1}
 }
 
-hook 4:startcdes_runtime_hook.sh {
-#!/bin/sh
-# session hook script; write commands here to execute on the host at the
-# specified state
-python3 /home/researchdev/cdes/cdes_loader.py &
-}
-
 hook 4:suricatastart_runtime_hook.sh {
 #!/bin/sh
 # session hook script; write commands here to execute on the host at the
@@ -486,6 +481,16 @@ hook 6:suricatastop_shutdown_hook.sh {
 # specified state
 
 kill `cat /tmp/suricata.pid`
+}
+
+hook 4:startcdes_runtime_hook.sh {
+#!/bin/sh
+###CHANGE THE FOLLOWING LINE TO THE DIRECTORY WITH YOUR CODE##
+CODE_PATH=/home/researchdev/cdes/
+
+
+######DO NOT MODIFY (UNLESS YOU KNOW WHAT YOU"RE DOING)#######
+python3 $CODE_PATH/cdes_loader.py &
 }
 
 option global {

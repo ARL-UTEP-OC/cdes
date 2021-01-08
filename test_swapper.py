@@ -29,22 +29,22 @@ if __name__ == '__main__':
         logging.error("Usage: python test_swapper.py <session-number>")
         exit()       
 
-    #conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
     sr = SessionReader(sys.argv[1])
     conditional_conns = sr.relevant_session_to_JSON()
     print("CONDITIONAL CONNS: " + str(sr.relevant_session_to_JSON()))
-    #exit()
     omqueue = multiprocessing.Queue()
     otqueue = multiprocessing.Queue()
 
     sw = Swapper("swapper", omqueue, otqueue, conditional_conns, sys.argv[1], short_session_id(int(sys.argv[1])), cc_dec_node)
     sw = multiprocessing.Process(target=sw.update_connection)
     sw.start()
-    #[cc_dec, cc_gw, active_node_number, disable_others]
+    #[cc_dec, cc_dec_nic, disable_others]
     # Get output and print to screen
     for i in range(60):
-        omqueue.put([cc_dec_node, "2", "3", True])
+        omqueue.put([cc_dec_node, "eth0", True])
+        omqueue.put([cc_dec_node, "eth1", False])
         time.sleep(10)
-        omqueue.put([cc_dec_node, "2", "6", True])
+        omqueue.put([cc_dec_node, "eth0", True])
+        omqueue.put([cc_dec_node, "eth2", False])
         time.sleep(10)
     logging.debug("Swapper(): Completed")

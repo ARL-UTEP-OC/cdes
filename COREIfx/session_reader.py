@@ -166,8 +166,7 @@ class SessionReader():
 
                 logging.debug("SessionReader(): relevant_session_to_JSON(): Processing node: " + str(conditional_conn))
 
-                #now find all connected nodes and whether they're cc_gw or cc_node; store associated data
-                
+                #now find all connected nodes                
                 connected_nodes = []
                 for link in links:
                     connected_node = {}
@@ -182,32 +181,34 @@ class SessionReader():
                         cc_node_ifx = link.find("iface1")
                     if "number" not in connected_node:
                         continue
-                    if cc_node_ifx == None:
-                        continue
-                    #found a connection, now we have to add all details 
-                    #process remote node (cc_node)
-                    connected_node["node_type"] = "other"
-                    connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
-                    connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
-                    if "ip4" in cc_node_ifx.attrib:
-                        connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
-                        connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
-                    if "ip6" in cc_node_ifx.attrib:
-                        connected_node["cc_ip6"] = cc_node_ifx.attrib["ip6"]
-                        connected_node["cc_ip6_mask"] = cc_node_ifx.attrib["ip6_mask"]
-                    #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
-                    connected_node["role"] = "cc_gw"
-                    #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
-                    if connected_node["number"] in device_services:
-                        if "CC_Node" in device_services[connected_node["number"]]:
-                            #we know this is a good node
-                            connected_node["role"] = "cc_node"
+                    connected_node["node_type"] = "SWITCH"
+                    #wlan, switch, don't have ifx information
+                    if cc_node_ifx != None:
+                        #if we do have ifx information, we know it's a layer 3 model (router)
+                        connected_node["node_type"] = "router"
+                        #found a connection, now we have to add all details 
+                        #process remote node (cc_node)
+                        connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
+                        connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
+                        if "ip4" in cc_node_ifx.attrib:
+                            connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
+                            connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
+                        if "ip6" in cc_node_ifx.attrib:
+                            connected_node["cc_ip6"] = cc_node_ifx.attrib["ip6"]
+                            connected_node["cc_ip6_mask"] = cc_node_ifx.attrib["ip6_mask"]
+                    #by default we consider this a cc_node
+                    connected_node["role"] = "cc_node"
+                    # #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
+                    # if connected_node["number"] in device_services:
+                    #     if "CC_Node" in device_services[connected_node["number"]]:
+                    #         #we know this is a good node
+                    #         connected_node["role"] = "cc_node"
 
-                    #now check if the connected switches/nets have the CC_Node service enabled
-                    if connected_node["number"] in switch_services:
-                        if "CC_Node" in switch_services[connected_node["number"]]:
-                            #we know this is a good node
-                            connected_node["role"] = "cc_node"
+                    # #now check if the connected switches/nets have the CC_Node service enabled
+                    # if connected_node["number"] in switch_services:
+                    #     if "CC_Node" in switch_services[connected_node["number"]]:
+                    #         #we know this is a good node
+                    #         connected_node["role"] = "cc_node"
 
                     #add information about the cc_dec node associated with this link
                     connected_node["cc_dec_nic"] = cc_dec_node_ifx.attrib["name"]

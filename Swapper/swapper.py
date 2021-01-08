@@ -27,18 +27,13 @@ class Swapper():
         self.short_session_number = short_session_number
 
         cc_node_numbers = []
-        cc_gw_numbers = []
 
         self.conditional_conns_cc_dec[cc_dec_number] = {}
         for node in self.conditional_conns[cc_dec_number]["connected_nodes"]:
             if node["role"] == "cc_node":
                 logging.debug("Swapper(): set_active_conn(): found cc_node: " + str(node))
                 cc_node_numbers.append(node)
-            elif node["role"] == "cc_gw":
-                logging.debug("Swapper(): set_active_conn(): found cc_gw: " + str(node))
-                cc_gw_numbers.append(node)
         self.conditional_conns_cc_dec[cc_dec_number]["cc_node_numbers"] = cc_node_numbers
-        self.conditional_conns_cc_dec[cc_dec_number]["cc_gw_numbers"] = cc_gw_numbers
 
     def read_input(self):
         logging.debug("Swapper(): read_input(): instantiated")
@@ -62,10 +57,10 @@ class Swapper():
                 continue
             logging.debug("Swapper(): update_connection(): data pulled from queue: " + str(data))
             #get data from queue
-            [cc_dec, cc_gw, active_node_number, disable_others] = data
+            [cc_dec, active_dec_nic, disable_others] = data
             logging.debug("Swapper(): update_connection(): looking at nodes: " + str(self.conditional_conns_cc_dec[cc_dec]))
             for node in self.conditional_conns_cc_dec[cc_dec]["cc_node_numbers"]:
-                if node["number"] == active_node_number:
+                if node["cc_dec_nic"] == active_dec_nic:
                     self.enable_other_node(self.session_number, cc_dec, node)
                 else:
                     if disable_others == True:
