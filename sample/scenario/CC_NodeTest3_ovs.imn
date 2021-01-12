@@ -289,7 +289,8 @@ node n7 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0], disable_others=True)
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -307,7 +308,7 @@ node n7 {
 	            #enable other honeynet after 20 seconds
 	            if (new_time - start_time >= 20) and changed == False:
 	                print("Enabling second path")
-	                self.set_active_conn(nodes[1], disable_others=False)
+	                self.set_active_conn("eth2", disable_others=False)
 	                changed = True               
 	####
 	}
@@ -416,7 +417,8 @@ node n8 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0], disable_others=True)
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -434,7 +436,7 @@ node n8 {
 	            #enable other honeynet after 30 seconds
 	            if (new_time - start_time >= 30) and changed == False:
 	                print("Enabling 4th path")
-	                self.set_active_conn(nodes[1], disable_others=False)
+	                self.set_active_conn("eth2", disable_others=False)
 	                changed = True               
 	####
 	}

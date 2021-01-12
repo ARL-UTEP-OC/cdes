@@ -305,7 +305,8 @@ node n2 {
 	    def process_data(self):
 	        #get the cc_node numbers
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0])
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        count = 1
 	        #forever loop to process data
 	        while True:
@@ -320,7 +321,8 @@ node n2 {
 	            count = count + 1
 	            #switch to other network after 90 seconds
 	            if count == 90:
-	                self.set_active_conn(nodes[1])                
+	                self.set_active_conn("eth0", disable_others=True)
+	                self.set_active_conn("eth2", disable_others=False)             
 	####
 	
 	}
