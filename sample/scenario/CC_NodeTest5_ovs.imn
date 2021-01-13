@@ -1,0 +1,943 @@
+node n1 {
+    type router
+    model PC
+    network-config {
+	hostname n1
+	!
+	interface eth0
+	 ip address 10.0.2.20/24
+	!
+    }
+    canvas c1
+    iconcoords {51.0 311.0}
+    labelcoords {51.0 343.0}
+    interface-peer {eth0 n2}
+}
+
+node n2 {
+    type router
+    model router
+    network-config {
+	hostname n2
+	!
+	interface eth1
+	 ip address 10.0.3.1/24
+	!
+	interface eth2
+	 ip address 10.0.4.1/24
+	!
+	interface eth0
+	 ip address 10.0.2.1/24
+	!
+    }
+    canvas c1
+    iconcoords {163.0 297.0}
+    labelcoords {163.0 329.0}
+    interface-peer {eth0 n1}
+    interface-peer {eth2 n6}
+    interface-peer {eth1 n3}
+    services {OSPFv2 OSPFv3 zebra IPForward}
+}
+
+node n4 {
+    type router
+    model mdr
+    network-config {
+	hostname n4
+	!
+	interface eth0
+	 ip address 10.0.0.2/32
+	!
+    }
+    canvas c1
+    iconcoords {409.0 230.0}
+    labelcoords {409.0 262.0}
+    interface-peer {eth0 n12}
+}
+
+node n5 {
+    type router
+    model mdr
+    network-config {
+	hostname n5
+	!
+	interface eth0
+	 ip address 10.0.0.3/32
+	!
+    }
+    canvas c1
+    iconcoords {585.0 230.0}
+    labelcoords {585.0 262.0}
+    interface-peer {eth0 n12}
+}
+
+node n6 {
+    type router
+    model mdr
+    network-config {
+	hostname n6
+	!
+	interface eth1
+	 ip address 10.0.5.1/32
+	!
+	interface eth0
+	 ip address 10.0.4.2/24
+	!
+    }
+    canvas c1
+    iconcoords {318.0 400.0}
+    labelcoords {318.0 432.0}
+    interface-peer {eth0 n2}
+    interface-peer {eth1 n17}
+    custom-config {
+	custom-config-id service:zebra
+	custom-command zebra
+	config {
+	files=('/usr/local/etc/quagga/Quagga.conf', 'quaggaboot.sh', '/usr/local/etc/quagga/vtysh.conf', )
+	}
+    }
+    custom-config {
+	custom-config-id service:zebra:/usr/local/etc/quagga/Quagga.conf
+	custom-command /usr/local/etc/quagga/Quagga.conf
+	config {
+	interface eth0
+	  ip address 10.0.4.2/24
+	  ip ospf network point-to-point
+	  ip ospf hello-interval 2
+	  ip ospf dead-interval 6
+	  ip ospf retransmit-interval 5
+	  
+	!
+	interface eth1
+	  ip address 10.0.5.1/32
+	  ipv6 ospf6 hello-interval 2
+	  ipv6 ospf6 dead-interval 6
+	  ipv6 ospf6 retransmit-interval 5
+	  ipv6 ospf6 network manet-designated-router
+	  ipv6 ospf6 twohoprefresh 3
+	  ipv6 ospf6 adjacencyconnectivity uniconnected
+	  ipv6 ospf6 lsafullness mincostlsa
+	  
+	!
+	router ospf
+	  router-id 10.0.4.2
+	  network 10.0.4.2/24 area 0
+	  network 10.0.5.1/32 area 0
+	!
+	router ospf6
+	  instance-id 65
+	  router-id 10.0.4.2
+	  interface eth0 area 0.0.0.0
+	  interface eth1 area 0.0.0.0
+	!
+	
+	}
+    }
+    services {OSPFv2 OSPFv3MDR zebra IPForward}
+}
+
+node n7 {
+    type router
+    model mdr
+    network-config {
+	hostname n7
+	!
+	interface eth0
+	 mac address 00:00:00:00:00:aa
+	 ip address 10.0.5.2/32
+	!
+    }
+    canvas c1
+    iconcoords {413.0 437.0}
+    labelcoords {413.0 469.0}
+    interface-peer {eth0 n14}
+}
+
+node n8 {
+    type router
+    model mdr
+    network-config {
+	hostname n8
+	!
+	interface eth0
+	 ip address 10.0.5.3/32
+	!
+    }
+    canvas c1
+    iconcoords {592.0 430.0}
+    labelcoords {592.0 462.0}
+    interface-peer {eth0 n14}
+}
+
+node n9 {
+    type router
+    model mdr
+    network-config {
+	hostname n9
+	!
+	interface eth0
+	 ip address 10.0.1.1/32
+	!
+    }
+    canvas c1
+    iconcoords {409.0 91.0}
+    labelcoords {409.0 123.0}
+    interface-peer {eth0 n13}
+}
+
+node n10 {
+    type router
+    model mdr
+    network-config {
+	hostname n10
+	!
+	interface eth0
+	 ip address 10.0.1.2/32
+	!
+    }
+    canvas c1
+    iconcoords {582.0 77.0}
+    labelcoords {582.0 109.0}
+    interface-peer {eth0 n13}
+}
+
+node n11 {
+    type router
+    model mdr
+    network-config {
+	hostname n11
+	!
+	interface eth0
+	 ip address 10.0.1.3/32
+	!
+    }
+    canvas c1
+    iconcoords {757.0 78.0}
+    labelcoords {757.0 110.0}
+    interface-peer {eth0 n13}
+}
+
+node n12 {
+    type wlan
+    network-config {
+	hostname wlan1
+	!
+	interface e3
+	!
+	interface e0
+	!
+	interface e2
+	!
+	interface e1
+	!
+	interface wireless
+	 ip address 10.0.0.0/32
+	 ipv6 address 2001:0::0/128
+	!
+	mobmodel
+	coreapi
+	basic_range
+	!
+    }
+    custom-config {
+	custom-config-id basic_range
+	custom-command {3 3 9 9 9}
+	config {
+	range=275
+	bandwidth=54000000
+	jitter=0
+	delay=20000
+	error=0
+	}
+    }
+    canvas c1
+    iconcoords {400.0 156.0}
+    labelcoords {400.0 188.0}
+    interface-peer {e1 n4}
+    interface-peer {e2 n5}
+    interface-peer {e0 n15}
+    interface-peer {e3 n21}
+}
+
+node n13 {
+    type wlan
+    network-config {
+	hostname wlanHoney1
+	!
+	interface e3
+	!
+	interface e2
+	!
+	interface e1
+	!
+	interface e0
+	!
+	interface wireless
+	 ipv6 address 2001:1::0/128
+	 ip address 10.0.1.1/32
+	!
+	mobmodel
+	coreapi
+	basic_range
+	!
+    }
+    custom-config {
+	custom-config-id basic_range
+	custom-command {3 3 9 9 9}
+	config {
+	range=275
+	bandwidth=54000000
+	jitter=0
+	delay=20000
+	error=0
+	}
+    }
+    canvas c1
+    iconcoords {408.0 23.0}
+    labelcoords {408.0 55.0}
+    interface-peer {e0 n9}
+    interface-peer {e1 n10}
+    interface-peer {e2 n11}
+    interface-peer {e3 n15}
+}
+
+node n14 {
+    type wlan
+    network-config {
+	hostname wlan2
+	!
+	interface e3
+	!
+	interface e2
+	!
+	interface e1
+	!
+	interface e0
+	!
+	interface wireless
+	 ip address 10.0.5.0/32
+	 ipv6 address 2001:0::0/128
+	!
+	mobmodel
+	coreapi
+	basic_range
+	!
+    }
+    custom-config {
+	custom-config-id basic_range
+	custom-command {3 3 9 9 9}
+	config {
+	range=275
+	bandwidth=54000000
+	jitter=0
+	delay=20000
+	error=0
+	}
+    }
+    canvas c1
+    iconcoords {414.0 357.0}
+    labelcoords {414.0 389.0}
+    interface-peer {e0 n7}
+    interface-peer {e1 n8}
+    interface-peer {e2 n16}
+    interface-peer {e3 n17}
+}
+
+node n15 {
+    type router
+    model cc_dec_node_ovs
+    network-config {
+	hostname decnode1
+	!
+	interface eth0
+	!
+	interface eth2
+	!
+	interface eth1
+	!
+    }
+    canvas c1
+    iconcoords {294.0 137.0}
+    labelcoords {294.0 169.0}
+    interface-peer {eth1 n12}
+    interface-peer {eth2 n13}
+    services {CC_DecisionNode_OVS}
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS
+	custom-command CC_DecisionNode_OVS
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', 'start_ovs.sh', )
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyTrigger.py
+	custom-command MyTrigger.py
+	config {
+	# auto-generated by CC_DecisionNode_OVS service
+	# Short python to implement Trigger.
+	# The following three items are important:
+	# 1. You must write the process_data(self) function
+	# 2. Read the input (from the Monitor) by calling self.read_input_line()
+	# 3. Call the self.active_conn method with the cc node number as a parameter.
+	# The following is a sample that reads time information from the Monitor and 
+	# will swap between nodes every 30 seconds
+	
+	import time
+	#Required import
+	from Trigger.trigger import Trigger
+	
+	#Required class name that inherits Trigger
+	class MyTrigger(Trigger):  
+	    
+	    #Required function
+	    def process_data(self):
+	        #get the cc_node numbers
+	        nodes = self.get_cc_node_numbers()
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
+	        #use a counter to trigger call to swap
+	        count = 1
+	        #forever loop to process data
+	        while True:
+	####Modify to process Monitor's data and Trigger a switch####
+	            # read a line of input (from Monitor's stdout)
+	            data = self.read_input_line()
+	            print("READ: " + str(data))
+	            #if data yet exists, restart loop
+	            if data == None:
+	                continue
+	            # assuming we get one update per second
+	            count = count + 1
+	            new_time = int(data)
+	            #set active node every 30 seconds
+	            if count == 30:
+	                self.set_active_conn("eth0", disable_others=True)
+	                self.set_active_conn("eth2", disable_others=False)
+	            if count == 60:
+	                self.set_active_conn("eth0", disable_others=True)
+	                self.set_active_conn("eth1", disable_others=False)
+	                count = 1
+	####
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyMonitor.sh
+	custom-command MyMonitor.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	# Call any/all scripts needed for the Monitor.
+	# The stdout from this code will be given to MyTrigger.py for processing.
+	# This is an example of using epoch time as the monitor data
+	
+	while [ True ]
+	do
+	sleep 1
+	date +%s
+	done
+	
+	}
+    }
+    interface-peer {eth0 n3}
+}
+
+node n16 {
+    type router
+    model mdr
+    network-config {
+	hostname n16
+	!
+	interface eth0
+	 ip address 10.0.5.4/32
+	!
+    }
+    canvas c1
+    iconcoords {759.0 427.0}
+    labelcoords {759.0 459.0}
+    interface-peer {eth0 n14}
+}
+
+node n17 {
+    type router
+    model cc_dec_node_ovs
+    network-config {
+	hostname decnode2
+	!
+	interface eth2
+	!
+	interface eth1
+	!
+	interface eth0
+	!
+    }
+    canvas c1
+    iconcoords {319.0 493.0}
+    labelcoords {317.0 526.0}
+    interface-peer {eth0 n14}
+    interface-peer {eth1 n22}
+    interface-peer {eth2 n6}
+    services {CC_DecisionNode_OVS}
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS
+	custom-command CC_DecisionNode_OVS
+	config {
+	files=('MyMonitor.sh', 'MyTrigger.py', 'start_ovs.sh', )
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyTrigger.py
+	custom-command MyTrigger.py
+	config {
+	# auto-generated by CC_DecisionNode_OVS service
+	# Short python to implement Trigger.
+	# The following three items are important:
+	# 1. You must write the process_data(self) function
+	# 2. Read the input (from the Monitor) by calling self.read_input_line()
+	# 3. Call the self.active_conn method with the cc node number as a parameter.
+	# The following is a sample that reads time information from the Monitor and 
+	# will swap between nodes every 30 seconds
+	
+	import time
+	#Required import
+	from Trigger.trigger import Trigger
+	
+	#Required class name that inherits Trigger
+	class MyTrigger(Trigger):  
+	    
+	    #Required function
+	    def process_data(self):
+	        #get the cc_node numbers
+	        nodes = self.get_cc_node_numbers()
+	        self.set_active_conn("eth2", disable_others=True)
+	        self.set_active_conn("eth0", disable_others=False)
+	        #use a counter to trigger call to swap
+	        count = 1
+	        #forever loop to process data
+	        while True:
+	####Modify to process Monitor's data and Trigger a switch####
+	            # read a line of input (from Monitor's stdout)
+	            data = self.read_input_line()
+	            print("READ: " + str(data))
+	            #if data yet exists, restart loop
+	            if data == None:
+	                continue
+	            # assuming we get one update per second
+	            count = count + 1
+	            new_time = int(data)
+	            #set active node every 30 seconds
+	            if count == 30:
+	                self.set_active_conn("eth2", disable_others=True)
+	                self.set_active_conn("eth1", disable_others=False)
+	            if count == 60:
+	                self.set_active_conn("eth2", disable_others=True)
+	                self.set_active_conn("eth0", disable_others=False)
+	                count = 1
+	####
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyMonitor.sh
+	custom-command MyMonitor.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	# Call any/all scripts needed for the Monitor.
+	# The stdout from this code will be given to MyTrigger.py for processing.
+	# This is an example of using epoch time as the monitor data
+	
+	while [ True ]
+	do
+	sleep 1
+	date +%s
+	done
+	
+	}
+    }
+}
+
+node n18 {
+    type router
+    model mdr
+    network-config {
+	hostname n18
+	!
+	interface eth0
+	 mac address 00:00:00:00:00:aa
+	 ip address 10.0.5.2/32
+	!
+    }
+    canvas c1
+    iconcoords {412.0 569.0}
+    labelcoords {412.0 601.0}
+    interface-peer {eth0 n22}
+}
+
+node n19 {
+    type router
+    model mdr
+    network-config {
+	hostname n19
+	!
+	interface eth0
+	 ip address 10.0.5.3/32
+	!
+    }
+    canvas c1
+    iconcoords {589.0 571.0}
+    labelcoords {589.0 603.0}
+    interface-peer {eth0 n22}
+}
+
+node n20 {
+    type router
+    model mdr
+    network-config {
+	hostname n20
+	!
+	interface eth0
+	 ip address 10.0.5.4/32
+	!
+    }
+    canvas c1
+    iconcoords {758.0 570.0}
+    labelcoords {758.0 602.0}
+    interface-peer {eth0 n22}
+}
+
+node n21 {
+    type router
+    model mdr
+    network-config {
+	hostname n21
+	!
+	interface eth0
+	 ip address 10.0.0.4/32
+	!
+    }
+    canvas c1
+    iconcoords {755.0 222.0}
+    labelcoords {755.0 254.0}
+    interface-peer {eth0 n12}
+}
+
+node n22 {
+    type wlan
+    network-config {
+	hostname wlanHoney2
+	!
+	interface e3
+	!
+	interface e2
+	!
+	interface e1
+	!
+	interface e0
+	!
+	interface wireless
+	 ipv6 address 2001:1::0/128
+	 ip address 10.0.5.0/32
+	!
+	mobmodel
+	coreapi
+	basic_range
+	!
+    }
+    custom-config {
+	custom-config-id basic_range
+	custom-command {3 3 9 9 9}
+	config {
+	range=275
+	bandwidth=54000000
+	jitter=0
+	delay=20000
+	error=0
+	}
+    }
+    canvas c1
+    iconcoords {415.0 523.0}
+    labelcoords {423.0 508.0}
+    interface-peer {e0 n18}
+    interface-peer {e1 n19}
+    interface-peer {e2 n20}
+    interface-peer {e3 n17}
+}
+
+node n3 {
+    type router
+    model mdr
+    network-config {
+	hostname n3
+	!
+	interface eth1
+	 ip address 10.0.0.1/32
+	!
+	interface eth0
+	 ip address 10.0.3.2/24
+	!
+    }
+    canvas c1
+    iconcoords {272.0 211.0}
+    labelcoords {272.0 243.0}
+    interface-peer {eth0 n2}
+    interface-peer {eth1 n15}
+    services {OSPFv2 OSPFv3MDR zebra IPForward}
+    custom-config {
+	custom-config-id service:zebra
+	custom-command zebra
+	config {
+	files=('/usr/local/etc/quagga/Quagga.conf', 'quaggaboot.sh', '/usr/local/etc/quagga/vtysh.conf', )
+	}
+    }
+    custom-config {
+	custom-config-id service:zebra:/usr/local/etc/quagga/Quagga.conf
+	custom-command /usr/local/etc/quagga/Quagga.conf
+	config {
+	interface eth0
+	  ip address 10.0.3.2/24
+	  ip ospf network point-to-point
+	  ip ospf hello-interval 2
+	  ip ospf dead-interval 6
+	  ip ospf retransmit-interval 5
+	  
+	!
+	interface eth1
+	  ip address 10.0.0.1/32
+	  ipv6 ospf6 hello-interval 2
+	  ipv6 ospf6 dead-interval 6
+	  ipv6 ospf6 retransmit-interval 5
+	  ipv6 ospf6 network manet-designated-router
+	  ipv6 ospf6 twohoprefresh 3
+	  ipv6 ospf6 adjacencyconnectivity uniconnected
+	  ipv6 ospf6 lsafullness mincostlsa
+	  
+	!
+	router ospf
+	  router-id 10.0.3.2
+	  network 10.0.3.2/24 area 0
+	  network 10.0.0.1/32 area 0
+	!
+	router ospf6
+	  instance-id 65
+	  router-id 10.0.3.2
+	  interface eth0 area 0.0.0.0
+	  interface eth1 area 0.0.0.0
+	!
+	
+	}
+    }
+}
+
+link l2 {
+    nodes {n12 n4}
+}
+
+link l3 {
+    nodes {n12 n5}
+}
+
+link l4 {
+    nodes {n13 n9}
+}
+
+link l5 {
+    nodes {n13 n10}
+}
+
+link l6 {
+    nodes {n13 n11}
+}
+
+link l8 {
+    nodes {n1 n2}
+    bandwidth 0
+}
+
+link l10 {
+    nodes {n2 n6}
+    bandwidth 0
+}
+
+link l7 {
+    color yellow
+    nodes {n12 n15}
+}
+
+link l9 {
+    color blue
+    nodes {n13 n15}
+}
+
+link l12 {
+    nodes {n14 n7}
+}
+
+link l13 {
+    nodes {n14 n8}
+}
+
+link l14 {
+    nodes {n14 n16}
+}
+
+link l15 {
+    color yellow
+    nodes {n14 n17}
+}
+
+link l16 {
+    nodes {n12 n21}
+}
+
+link l17 {
+    nodes {n22 n18}
+}
+
+link l18 {
+    nodes {n22 n19}
+}
+
+link l19 {
+    nodes {n22 n20}
+}
+
+link l20 {
+    color blue
+    nodes {n22 n17}
+}
+
+link l21 {
+    color blue
+    nodes {n6 n17}
+}
+
+link l1 {
+    nodes {n2 n3}
+    bandwidth 0
+}
+
+link l11 {
+    color blue
+    nodes {n3 n15}
+}
+
+annotation a1 {
+    iconcoords {307.0 3.0 814.0 130.0}
+    type rectangle
+    label {WLAN-Honey 1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a2 {
+    iconcoords {363.0 489.0 830.0 624.0}
+    type rectangle
+    label {WLAN-Honey 2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #C0C0FF
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a3 {
+    iconcoords {357.0 137.0 814.0 271.0}
+    type rectangle
+    label {WLAN 1}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #41f146
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a4 {
+    iconcoords {370 336 831 474}
+    type rectangle
+    label {WLAN 2}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    color #41f146
+    width 0
+    border black
+    rad 25
+    canvas c1
+}
+
+annotation a5 {
+    iconcoords {14.0 35.0}
+    type text
+    label {WLAN Honey 1 is conditionally swapped}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a7 {
+    iconcoords {3.0 507.0}
+    type text
+    label {(same IPs as legit net) every 30 seconds}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+annotation a8 {
+    iconcoords {2.0 483.0}
+    type text
+    label {WLAN Honey 2 is conditionally swapped}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize {12}
+    canvas c1
+}
+
+canvas c1 {
+    name {Canvas1}
+}
+
+hook 4:runtime_hook.sh {
+#!/bin/sh
+#__author__ = "Jaime C. Acosta"
+#__license__ = "GPL 3.0"
+
+###CHANGE THE FOLLOWING LINE TO THE DIRECTORY WITH YOUR CODE##
+CODE_PATH=/home/researchdev/cdes/
+
+
+######DO NOT MODIFY (UNLESS YOU KNOW WHAT YOU"RE DOING)#######
+python3 $CODE_PATH/cdes_loader.py &
+}
+
+option global {
+    interface_names no
+    ip_addresses yes
+    ipv6_addresses yes
+    node_labels yes
+    link_labels yes
+    show_api yes
+    background_images no
+    annotations yes
+    grid yes
+    traffic_start 0
+}
+
+option session {
+}
+
