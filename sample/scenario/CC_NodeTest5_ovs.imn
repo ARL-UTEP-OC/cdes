@@ -678,8 +678,8 @@ node n3 {
 	!
     }
     canvas c1
-    iconcoords {272.0 211.0}
-    labelcoords {272.0 243.0}
+    iconcoords {273.0 211.0}
+    labelcoords {273.0 243.0}
     interface-peer {eth0 n2}
     interface-peer {eth1 n15}
     services {OSPFv2 OSPFv3MDR zebra IPForward}
@@ -905,6 +905,16 @@ annotation a8 {
     labelcolor black
     fontfamily {Arial}
     fontsize {12}
+    canvas c1
+}
+
+annotation a6 {
+    iconcoords {16.0 57.0}
+    type text
+    label {(diff IPs than legit net) every 30 seconds}
+    labelcolor black
+    fontfamily {Arial}
+    fontsize 12
     canvas c1
 }
 
