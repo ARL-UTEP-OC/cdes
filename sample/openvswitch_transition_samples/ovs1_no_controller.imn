@@ -32,36 +32,16 @@ node n2 {
 	## First make sure that the ovs services are up and running
 	/etc/init.d/openvswitch-switch start < /dev/null
 	
-	## create the switch itself, set the fail mode to secure, 
-	## this stops it from routing traffic without defined flows.
+	## create the switch itself
 	ovs-vsctl add-br ovsbr0 
 	## Set the default device to the bridge so that it can handle where packets go
 	route add -net default ovsbr0
 	
 	## Now add all our interfaces as ports to the switch
-	###eth0
-	ip addr del 10.0.0.1 dev eth0
-	ip -6 addr del 2001::1 dev eth0
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth0
-	###eth1
-	ip addr del 10.0.1.1 dev eth1
-	ip -6 addr del 2001:1::1 dev eth1
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth1
-	## start them up so we can send/receive data
-	ovs-ofctl mod-port ovsbr0 eth1 up
-	###eth2
-	ip addr del 10.0.4.1 dev eth2
-	ip -6 addr del 2001:4::1 dev eth2
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth2
-	## start them up so we can send/receive data
-	ovs-ofctl mod-port ovsbr0 eth2 up
 	
-	## We assume there will be an SDN controller on the other end of this, 
-	## but it will still function if there's not
-	#ovs-vsctl set-controller ovsbr0 tcp:127.0.0.1:6633
 	}
     }
     services {OvsService IPForward}
@@ -102,42 +82,15 @@ node n3 {
 	## First make sure that the ovs services are up and running
 	/etc/init.d/openvswitch-switch start < /dev/null
 	
-	## create the switch itself, set the fail mode to secure, 
-	## this stops it from routing traffic without defined flows.
-	## remove the -- and everything after if you want it to act as a regular switch
+	## create the switch itself
 	ovs-vsctl add-br ovsbr0
 	## Set the default device to the bridge so that it can handle where packets go
 	route add -net default ovsbr0
 	
 	## Now add all our interfaces as ports to the switch
-	## Create a veth pair to send the data to
-	###eth0
-	ip addr del 10.0.2.1 dev eth0
-	ip -6 addr del 2001:2::1 dev eth0
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth0
-	## start them up so we can send/receive data
-	ovs-ofctl mod-port ovsbr0 eth0 up
-	
-	###eth1
-	## Create a veth pair to send the data to
-	ip addr del 10.0.3.1 dev eth1
-	ip -6 addr del 2001:3::1 dev eth1
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth1
-	## start them up so we can send/receive data
-	ovs-ofctl mod-port ovsbr0 eth1 up
-	## Create a veth pair to send the data to
-	ip addr del 10.0.5.1 dev eth2
-	ip -6 addr del 2001:5::1 dev eth2
-	## Add the CORE interface to the switch
 	ovs-vsctl add-port ovsbr0 eth2
-	## start them up so we can send/receive data
-	ovs-ofctl mod-port ovsbr0 eth2 up
-	
-	## We assume there will be an SDN controller on the other end of this, 
-	## but it will still function if there's not
-	#ovs-vsctl set-controller ovsbr0 tcp:127.0.0.1:6633
 	
 	}
     }
@@ -272,7 +225,7 @@ annotation a1 {
     label {OVS routers act as normal switches}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
@@ -282,7 +235,7 @@ annotation a2 {
     label {1. from n4, "ping 10.0.1.11"}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
@@ -292,7 +245,7 @@ annotation a3 {
     label {Notice that traffic traverses the network normally and through a legacy router}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
