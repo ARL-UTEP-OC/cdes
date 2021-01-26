@@ -12,21 +12,27 @@ ovs-ofctl add-flow ovsbr0 ip,nw_dst=10.0.4.1/24,actions=output:all
 curl -X GET http://localhost:8080/stats/switches
 
 curl -X POST -d '{
-    "dpid": 11141200,
+    "dpid": 11141206,
     "cookie": 1,
     "cookie_mask": 1,
     "table_id": 0,
-    "idle_timeout": 30,
-    "hard_timeout": 30,
-    "priority": 11111,
+    "idle_timeout": 0,
+    "hard_timeout": 0,
+    "priority": 1000,
     "flags": 1,
     "match":{
         "in_port":1
     },
-    "actions":[
+    "instructions": [
         {
-            "type":"OUTPUT",
-            "port": 2
+            "type": "APPLY_ACTIONS",
+            "actions": [
+                {
+                    "max_len": 65535,
+                    "port": 2,
+                    "type": "OUTPUT"
+                }
+            ]
         }
     ]
  }' http://localhost:8080/stats/flowentry/add
