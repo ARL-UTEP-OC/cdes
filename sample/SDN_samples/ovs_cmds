@@ -81,7 +81,7 @@ ovs-ofctl show mybridge (show ports with names)
 
 ovs-ofctl dump-flows mybridge (single flow by default with normal action = normal L2 forwarding)
 
-route add -net default mybridge
+ip route add default dev mybridge
 ovs-ofctl add-flow mybridge ip,nw_dst=10.0.1.2/24,actions=output:2
 ovs-ofctl add-flow mybridge ip,nw_dst=10.0.0.1/24,actions=output:1
 

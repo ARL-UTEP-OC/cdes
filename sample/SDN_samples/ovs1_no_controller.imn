@@ -35,7 +35,7 @@ node n2 {
 	## create the switch itself
 	ovs-vsctl add-br ovsbr0 
 	## Set the default device to the bridge so that it can handle where packets go
-	route add -net default ovsbr0
+	ip route add default dev ovsbr0
 	
 	## Now add all our interfaces as ports to the switch
 	ovs-vsctl add-port ovsbr0 eth0
@@ -85,7 +85,7 @@ node n3 {
 	## create the switch itself
 	ovs-vsctl add-br ovsbr0
 	## Set the default device to the bridge so that it can handle where packets go
-	route add -net default ovsbr0
+	ip route add default dev ovsbr0
 	
 	## Now add all our interfaces as ports to the switch
 	ovs-vsctl add-port ovsbr0 eth0

@@ -277,7 +277,7 @@ node n2 {
 	## Add the interface to the bridge
 	ovs-vsctl add-port ovsbr0 eth2 -- set Interface eth2 ofport_request=3
 	## Set the default device to the bridge so that it can handle where packets go
-	route add -net default ovsbr0
+	ip route add default dev ovsbr0
 	
 	}
     }

@@ -171,7 +171,7 @@ class MyTrigger(Trigger):
                 )
                 portnum += 1
             cfg += "\n## Set the default device to the bridge so that it can handle where packets go\n"
-            cfg += "route add -net default ovsbr0\n"
+            cfg += "ip route add default dev ovsbr0\n"
         return cfg
 
     @classmethod
