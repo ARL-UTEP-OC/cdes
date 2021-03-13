@@ -17,6 +17,20 @@ def send_command(cmd):
     output = p.stdout.read()
     return output
 
+def run_command(cmd):
+    logging.debug("msg_ifx(): get_node_file(): instantiated")
+    cmd = "vcmd " + cmd
+    p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, encoding="utf-8")
+    return 
+
+def run_command_wait(cmd):
+    logging.debug("msg_ifx(): get_node_file(): instantiated")
+    cmd = "vcmd " + cmd
+    p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE, encoding="utf-8")
+    p.wait()
+    output = p.stdout.read()
+    return output
+
 if __name__ == "__main__":
 
     logging.basicConfig(level=logging.DEBUG)
