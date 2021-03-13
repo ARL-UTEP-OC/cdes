@@ -6,6 +6,7 @@ import sys, traceback
 import psutil
 import os, signal 
 import select
+import time
 
 class Monitor():
     
@@ -28,6 +29,7 @@ class Monitor():
             poll_obj = select.poll()
             poll_obj.register(self.p.stdout, select.POLLIN)
             while True:
+                time.sleep(.1)
                 if self.iqueue.empty() == False:
                     self.cleanup()
                     break
