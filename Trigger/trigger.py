@@ -21,6 +21,7 @@ class Trigger():
         self.conditional_conns = conditional_conns
         #works for the specific cc_dec
         self.cc_dec = cc_dec_number
+        self.cc_dec_name = self.conditional_conns[cc_dec_number]["name"]
         self.cc_node_numbers = []
         self.cc_dec_node_ifxs = []
     
@@ -49,15 +50,29 @@ class Trigger():
     
     def set_active_conn(self, active_cc_dec_nic, disable_others=True):
         logging.debug("Trigger(): set_active_conn(): instantiated")
-
-        #find the node to activate
+#######TODO: need to disable_others and ensure the new queue is picked up properly###
+        #check that the nic exists
         if active_cc_dec_nic in self.cc_dec_node_ifxs:
             logging.debug("Trigger(): set_active_conn(): found node to activate")
-            self.oqueue.put([self.cc_dec, active_cc_dec_nic, disable_others])
+            self.oqueue.put([1, self.cc_dec, active_cc_dec_nic, disable_others])
         else:
             logging.error("Invalid DEC Interface Specified for Activation")
             raise NameError()
 
+    def set_decnode_conns(self, active=[], deactive=[]):
+        logging.debug("Trigger(): set_decnode_conns(): instantiated")
+    
+        #check that the nic exists
+        for nic in active:
+            if nic not in self.cc_dec_node_ifxs:
+                logging.error("Invalid DEC Interface Specified for Activation: " + str(nic))
+                raise NameError()
+        for nic in deactive:
+            if nic not in self.cc_dec_node_ifxs:
+                logging.error("Invalid DEC Interface Specified for De-Activation: " + str(nic))
+                raise NameError()
+        self.oqueue.put([2, self.cc_dec, active, deactive])
+        
     def get_cc_node_numbers(self):
          logging.debug("Trigger(): get_cc_node_names(): instantiated")
          return self.cc_node_numbers
