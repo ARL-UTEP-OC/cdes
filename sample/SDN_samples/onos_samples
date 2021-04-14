@@ -1,0 +1,109 @@
+#Samples when using a mock-up CORE scenario with fake nodes
+###HORIZONTAL PATH: 
+# dev1: 1->2
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0054\",
+   \"isPermanent\":\"true\",
+   \"priority\": 0,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"2\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                           \"type\": \"IN_PORT\",
+                           \"port\": \"1\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0054" --user username:pass
+
+############### dev1: 2->1
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0054\",
+   \"isPermanent\":\"true\",
+   \"priority\": 0,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"1\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                           \"type\": \"IN_PORT\",
+                           \"port\": \"2\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0054" --user username:pass
+
+############### dev2: 1->2
+# dev2: 1->2
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0056\",
+   \"isPermanent\":\"true\",
+   \"priority\": 0,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"2\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                           \"type\": \"IN_PORT\",
+                           \"port\": \"1\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0056" --user username:pass
+
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0056\",
+   \"isPermanent\":\"true\",
+   \"priority\": 0,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"1\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                           \"type\": \"IN_PORT\",
+                           \"port\": \"2\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0056" --user username:pass
