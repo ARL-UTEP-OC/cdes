@@ -2,6 +2,8 @@ ovs-vsctl add-br ovsbr0 #-- set Bridge ovsbr0 fail-mode=secure
 
 watch -n 1 ovs-ofctl dump-flows ovsbr0
 
+ovs-vsctl -- --columns=name,ofport list Interface
+
 ovs-ofctl add-flow ovsbr0 priority=1000,in_port=1,action=output:2
 ovs-ofctl add-flow ovsbr0 priority=1000,in_port=2,action=output:1
 ovs-ofctl add-flow ovsbr0 priority=1000,in_port=3,action=output:4
