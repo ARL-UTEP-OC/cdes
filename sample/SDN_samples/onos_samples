@@ -107,3 +107,70 @@ curl -X POST --header "Content-Type: application/json" --header "Accept: applica
                }
        }
 " "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0056" --user username:pass
+
+##SAMPLE IP-BASED:
+#!/bin/bash
+
+######OVS1-2
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0050\",
+   \"isPermanent\":\"false\",
+   \"timeout\":1,
+   \"priority\": 100,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"1\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                          \"type\": \"ETH_TYPE\",
+                          \"ethType\": \"0x800\"
+                       }
+                       {   
+                           \"type\": \"IPV4_DST\",
+                           \"ip\": \"10.0.0.0/24\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0050" --user username:pass
+
+######OVS2-1
+curl -X POST --header "Content-Type: application/json" --header "Accept: application/json" -d "
+{
+   \"deviceId\": \"of:0000000000aa0050\",
+   \"isPermanent\":\"false\",
+   \"timeout\":1,
+   \"priority\": 100,
+   \"state\": \"ADD\",
+   \"treatment\": {
+               \"instructions\": [
+                                   {
+                                   \"type\": \"OUTPUT\",
+                                   \"port\": \"2\"
+                                   }
+                               ],
+               \"deferred\": []
+               },
+   \"selector\": {
+       \"criteria\": [
+                       {
+                          \"type\": \"ETH_TYPE\",
+                          \"ethType\": \"0x800\"
+                       },
+                       {   
+                           \"type\": \"IPV4_DST\",
+                           \"ip\": \"10.0.1.0/24\"
+                       }
+                   ]
+               }
+       }
+" "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0050" --user username:pass
