@@ -27,9 +27,9 @@ class Monitor():
             self.p = subprocess.Popen(shlex.split(self.cmd), stdout=subprocess.PIPE, encoding="utf-8")
             logging.debug("Monitor(): run_monitor(): starting readline loop")
             poll_obj = select.poll()
-            poll_obj.register(self.p.stdout, select.POLLIN | select.POLLERR | select.POLLHUP)
+            poll_obj.register(self.p.stdout, select.POLLIN)
             while True:
-                time.sleep(.0000001)
+                time.sleep(.1)
                 if self.iqueue.empty() == False:
                     self.cleanup()
                     break
@@ -43,7 +43,6 @@ class Monitor():
                         break
                     else: 
                         logging.debug("Monitor(): run_monitor(): adding to queue: " + out.strip())
-                        #logging.error("iqueue: " + str(time.time()))
                         # Before adding to the output queue, make sure we're not terminating
                         self.oqueue.put(out.strip())
         except Exception as e:

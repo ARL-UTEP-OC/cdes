@@ -36,7 +36,6 @@ class Trigger():
         logging.debug("Trigger(): read_input_line(): instantiated")
         try:                
             data = self.iqueue.get(timeout=1)
-            #logging.error("T got iqueue: " + str(time.time()))
             return data
         except TimeoutError:
             logging.debug("Trigger(): process_data(): Timed out")

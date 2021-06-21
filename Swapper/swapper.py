@@ -41,7 +41,6 @@ class Swapper():
         logging.debug("Swapper(): read_input(): instantiated")
         try:                
             data = self.iqueue.get(timeout=1)
-            #logging.error("S got iqueue: " + str(time.time()))
             return data
         except TimeoutError:
             logging.debug("Swapper(): read_input(): Timed out")
@@ -87,9 +86,7 @@ class Swapper():
                     for node in self.conditional_conns_cc_dec[cc_dec_number]["cc_node_numbers"]:
                         if node["cc_dec_nic"] in deactive_cc_dec_nics:
                             deactivate_nodes.append(node)
-                    #logging.error("S will call activate: " + str(time.time()))
                     self.set_decnode_conns(self.session_number, cc_dec_number, activate_nodes, deactivate_nodes)
-                    #logging.error("S activate done: " + str(time.time()))
                 else:
                     logging.error("Swapper(): unknown message type recieved: " + str(data[0]))
 
