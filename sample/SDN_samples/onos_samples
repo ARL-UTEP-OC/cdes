@@ -143,3 +143,5 @@ curl -X POST --header "Content-Type: application/json" --header "Accept: applica
        }
 " "http://172.17.0.2:8181/onos/v1/flows/of:0000000000aa0050" --user username:pass
 
+#Clear out the persistent flow tables, open cli to onos controller and then:
+wipe-out please
