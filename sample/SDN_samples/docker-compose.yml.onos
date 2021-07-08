@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  onos:
+    image: onosproject/onos:2.2.0
+    ports:
+      - "8181:8181" #GUI
+      - "8101:8101" #CLI
+      - "6653:6653" #Controller
+    environment:
+      - ONOS_APPS=gui,drivers.bmv2,lldpprovider,hostprovider,proxyarp,route-service,openflow

@@ -29,7 +29,7 @@ class Monitor():
             poll_obj = select.poll()
             poll_obj.register(self.p.stdout, select.POLLIN)
             while True:
-                time.sleep(.01)
+                time.sleep(.1)
                 if self.iqueue.empty() == False:
                     self.cleanup()
                     break
