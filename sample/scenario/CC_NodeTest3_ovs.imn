@@ -5,13 +5,14 @@ node n2 {
 	hostname h2
 	!
 	interface eth0
-	 ip address 10.0.2.10/24
-	 ipv6 address 2001:2::10/64
+	 ip address 10.0.0.10/24
+	 ipv6 address 2001:0::10/64
 	!
     }
     canvas c1
     iconcoords {561.0 219.0}
     labelcoords {561.0 251.0}
+    services {DefaultRoute SSH}
     interface-peer {eth0 n6}
 }
 
@@ -21,20 +22,21 @@ node n3 {
     network-config {
 	hostname r1
 	!
-	interface eth2
-	 ip address 10.0.4.1/24
-	 ipv6 address 2001:4::1/64
-	!
 	interface eth1
+	 ip address 10.0.4.1/24
+	 mac address 00:00:00:aa:00:4a
+	!
+	interface eth0
 	 ip address 10.0.1.1/24
-	 ipv6 address 2001:1::1/64
+	 mac address 00:00:00:aa:00:44
 	!
     }
     canvas c1
     iconcoords {178.0 142.0}
     labelcoords {178.0 174.0}
-    interface-peer {eth1 n7}
-    interface-peer {eth2 n8}
+    services {zebra OSPFv2 OSPFv3 IPForward}
+    interface-peer {eth0 n7}
+    interface-peer {eth1 n8}
 }
 
 node n4 {
@@ -45,12 +47,13 @@ node n4 {
 	!
 	interface eth0
 	 ip address 10.0.3.2/24
-	 ipv6 address 2001:3::2/64
+	 mac address 00:00:00:aa:00:3f
 	!
     }
     canvas c1
     iconcoords {569.0 83.0}
     labelcoords {569.0 115.0}
+    services {zebra OSPFv2 OSPFv3 IPForward}
     interface-peer {eth0 n5}
 }
 
@@ -60,20 +63,23 @@ node n5 {
     network-config {
 	hostname cn1
 	!
-	interface eth1
-	 ip address 10.0.3.1/24
-	 ipv6 address 2001:3::1/64
-	!
 	interface eth0
 	 ip address 10.0.1.2/24
 	 ipv6 address 2001:1::2/64
+	 mac address 00:00:00:aa:00:47
+	!
+	interface eth1
+	 ip address 10.0.3.1/24
+	 ipv6 address 2001:3::1/64
+	 mac address 00:00:00:aa:00:3e
 	!
     }
     canvas c1
     iconcoords {422.0 74.0}
     labelcoords {422.0 106.0}
-    interface-peer {eth0 n7}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
     interface-peer {eth1 n4}
+    interface-peer {eth0 n7}
 }
 
 node n6 {
@@ -83,43 +89,181 @@ node n6 {
 	hostname cn2
 	!
 	interface eth1
-	 ip address 10.0.2.1/24
-	 ipv6 address 2001:2::1/64
+	 ip address 10.0.0.1/24
+	 ipv6 address 2001:0::1/64
 	!
 	interface eth0
 	 ip address 10.0.1.3/24
-	 ipv6 address 2001:1::3/64
+	 mac address 00:00:00:aa:00:49
 	!
     }
     canvas c1
     iconcoords {420.0 199.0}
     labelcoords {420.0 231.0}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
     interface-peer {eth0 n7}
     interface-peer {eth1 n2}
 }
 
-node n7 {
-    type lanswitch
+node n9 {
+    type router
+    model cc_node
     network-config {
-	hostname decnode1
+	hostname n9
+	!
+	interface eth0
+	 ip address 10.0.4.2/24
+	 mac address 00:00:00:aa:00:4d
+	!
+	interface eth1
+	 ip address 10.0.5.1/24
+	 mac address 00:00:00:aa:00:40
 	!
     }
     canvas c1
-    iconcoords {322.0 138.0}
-    labelcoords {322.0 162.0}
-    interface-peer {e0 n3}
-    interface-peer {e1 n5}
-    interface-peer {e2 n6}
-    services {CC_DecisionNode}
+    iconcoords {399.0 306.0}
+    labelcoords {399.0 338.0}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    interface-peer {eth1 n11}
+    interface-peer {eth0 n8}
+}
+
+node n10 {
+    type router
+    model cc_node
+    network-config {
+	hostname n10
+	!
+	interface eth0
+	 ip address 10.0.4.3/24
+	 mac address 00:00:00:aa:00:4f
+	!
+	interface eth1
+	 ip address 10.0.6.1/24
+	 mac address 00:00:00:aa:00:42
+	!
+    }
+    canvas c1
+    iconcoords {407.0 420.0}
+    labelcoords {407.0 452.0}
+    services {OSPFv2 OSPFv3 zebra CC_Node IPForward}
+    interface-peer {eth1 n12}
+    interface-peer {eth0 n8}
+}
+
+node n11 {
+    type router
+    model host
+    network-config {
+	hostname n11
+	!
+	interface eth0
+	 ip address 10.0.5.10/24
+	 mac address 00:00:00:aa:00:41
+	!
+    }
+    canvas c1
+    iconcoords {549.0 323.0}
+    labelcoords {549.0 355.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n9}
+}
+
+node n12 {
+    type router
+    model host
+    network-config {
+	hostname n12
+	!
+	interface eth0
+	 ip address 10.0.6.10/24
+	 mac address 00:00:00:aa:00:43
+	!
+    }
+    canvas c1
+    iconcoords {555.0 457.0}
+    labelcoords {555.0 489.0}
+    services {DefaultRoute SSH}
+    interface-peer {eth0 n10}
+}
+
+node n7 {
+    type router
+    model cc_dec_node_ovs
+    network-config {
+	hostname decnode1
+	!
+	interface eth2
+	 mac address 00:00:00:aa:00:48
+	!
+	interface eth1
+	 mac address 00:00:00:aa:00:46
+	!
+	interface eth0
+	 mac address 00:00:00:aa:00:45
+	!
+    }
+    canvas c1
+    iconcoords {278.0 144.0}
+    labelcoords {278.0 176.0}
+    services {CC_DecisionNode_OVS}
+    interface-peer {eth0 n3}
+    interface-peer {eth1 n5}
+    interface-peer {eth2 n6}
     custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
+	custom-config-id service:CC_DecisionNode_OVS
+	custom-command CC_DecisionNode_OVS
 	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
+	files=('MyTrigger.py', 'MyMonitor.sh', 'start_ovs.sh', )
 	}
     }
     custom-config {
-	custom-config-id service:CC_DecisionNode:MyTrigger.py
+	custom-config-id service:CC_DecisionNode_OVS:start_ovs.sh
+	custom-command start_ovs.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	## Start OVS service.
+	/etc/init.d/openvswitch-switch start < /dev/null
+	
+	## create the switch
+	ovs-vsctl add-br ovsbr0
+	
+	## Add all our interfaces as ports to the switch
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth0 -- set Interface eth0 ofport_request=1
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth1 -- set Interface eth1 ofport_request=2
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth2 -- set Interface eth2 ofport_request=3
+	## Set the default device to the bridge so that it can handle where packets go
+	ip route add default dev ovsbr0
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyMonitor.sh
+	custom-command MyMonitor.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	# Call any/all scripts needed for the Monitor.
+	# The stdout from this code will be given to MyTrigger.py for processing.
+	# This is an example of using epoch time as the monitor data
+	
+	while [ True ]
+	do
+	sleep 1
+	date +%s
+	done
+	
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
 	# auto-generated by CC_DecisionNode service
@@ -145,7 +289,8 @@ node n7 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0], disable_others=True)
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -163,18 +308,76 @@ node n7 {
 	            #enable other honeynet after 20 seconds
 	            if (new_time - start_time >= 20) and changed == False:
 	                print("Enabling second path")
-	                self.set_active_conn(nodes[1], disable_others=False)
+	                self.set_active_conn("eth2", disable_others=False)
 	                changed = True               
 	####
+	}
+    }
+}
+
+node n8 {
+    type router
+    model cc_dec_node_ovs
+    network-config {
+	hostname decnode2
+	!
+	interface eth2
+	 mac address 00:00:00:aa:00:4e
+	!
+	interface eth1
+	 mac address 00:00:00:aa:00:4c
+	!
+	interface eth0
+	 mac address 00:00:00:aa:00:4b
+	!
+    }
+    canvas c1
+    iconcoords {271.0 364.0}
+    labelcoords {271.0 396.0}
+    services {CC_DecisionNode_OVS}
+    interface-peer {eth0 n3}
+    interface-peer {eth1 n9}
+    interface-peer {eth2 n10}
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS
+	custom-command CC_DecisionNode_OVS
+	config {
+	files=('MyTrigger.py', 'MyMonitor.sh', 'start_ovs.sh', )
+	}
+    }
+    custom-config {
+	custom-config-id service:CC_DecisionNode_OVS:start_ovs.sh
+	custom-command start_ovs.sh
+	config {
+	#!/bin/sh
+	# auto-generated by CC_DecisionNode_OVS service
+	## Start OVS service.
+	/etc/init.d/openvswitch-switch start < /dev/null
+	
+	## create the switch
+	ovs-vsctl add-br ovsbr0
+	
+	## Add all our interfaces as ports to the switch
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth0 -- set Interface eth0 ofport_request=1
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth1 -- set Interface eth1 ofport_request=2
+	## Remove ip addresses of eths.
+	## Add the interface to the bridge
+	ovs-vsctl add-port ovsbr0 eth2 -- set Interface eth2 ofport_request=3
+	## Set the default device to the bridge so that it can handle where packets go
+	ip route add default dev ovsbr0
 	
 	}
     }
     custom-config {
-	custom-config-id service:CC_DecisionNode:MyMonitor.sh
+	custom-config-id service:CC_DecisionNode_OVS:MyMonitor.sh
 	custom-command MyMonitor.sh
 	config {
 	#!/bin/sh
-	# auto-generated by CC_DecisionNode service
+	# auto-generated by CC_DecisionNode_OVS service
 	# Call any/all scripts needed for the Monitor.
 	# The stdout from this code will be given to MyTrigger.py for processing.
 	# This is an example of using epoch time as the monitor data
@@ -187,30 +390,8 @@ node n7 {
 	
 	}
     }
-}
-
-node n8 {
-    type lanswitch
-    network-config {
-	hostname decnode2
-	!
-    }
-    canvas c1
-    iconcoords {325.0 365.0}
-    labelcoords {325.0 389.0}
-    interface-peer {e0 n3}
-    interface-peer {e1 n9}
-    interface-peer {e2 n10}
-    services {CC_DecisionNode}
     custom-config {
-	custom-config-id service:CC_DecisionNode
-	custom-command CC_DecisionNode
-	config {
-	files=('MyMonitor.sh', 'MyTrigger.py', )
-	}
-    }
-    custom-config {
-	custom-config-id service:CC_DecisionNode:MyTrigger.py
+	custom-config-id service:CC_DecisionNode_OVS:MyTrigger.py
 	custom-command MyTrigger.py
 	config {
 	# auto-generated by CC_DecisionNode service
@@ -236,7 +417,8 @@ node n8 {
 	        start_time = 0
 	        #get the CC_Nodes attached to this DES node
 	        nodes = self.get_cc_node_numbers()
-	        self.set_active_conn(nodes[0], disable_others=True)
+	        self.set_active_conn("eth0", disable_others=True)
+	        self.set_active_conn("eth1", disable_others=False)
 	        #forever loop to process data
 	        while True:
 	####Modify to process Monitor's data and Trigger a switch####
@@ -254,138 +436,41 @@ node n8 {
 	            #enable other honeynet after 30 seconds
 	            if (new_time - start_time >= 30) and changed == False:
 	                print("Enabling 4th path")
-	                self.set_active_conn(nodes[1], disable_others=False)
+	                self.set_active_conn("eth2", disable_others=False)
 	                changed = True               
 	####
-	
-	}
-    }
-    custom-config {
-	custom-config-id service:CC_DecisionNode:MyMonitor.sh
-	custom-command MyMonitor.sh
-	config {
-	#!/bin/sh
-	# auto-generated by CC_DecisionNode service
-	# Call any/all scripts needed for the Monitor.
-	# The stdout from this code will be given to MyTrigger.py for processing.
-	# This is an example of using epoch time as the monitor data
-	
-	while [ True ]
-	do
-	sleep 1
-	date +%s
-	done
-	
 	}
     }
 }
 
-node n9 {
-    type router
-    model cc_node
-    network-config {
-	hostname n9
-	!
-	interface eth1
-	 ip address 10.0.5.1/24
-	 ipv6 address 2001:5::1/64
-	!
-	interface eth0
-	 ip address 10.0.4.2/24
-	 ipv6 address 2001:4::2/64
-	!
-    }
-    canvas c1
-    iconcoords {399.0 306.0}
-    labelcoords {399.0 338.0}
-    interface-peer {eth0 n8}
-    interface-peer {eth1 n11}
-}
-
-node n10 {
-    type router
-    model cc_node
-    network-config {
-	hostname n10
-	!
-	interface eth1
-	 ip address 10.0.6.1/24
-	 ipv6 address 2001:6::1/64
-	!
-	interface eth0
-	 ip address 10.0.4.3/24
-	 ipv6 address 2001:4::3/64
-	!
-    }
-    canvas c1
-    iconcoords {407.0 420.0}
-    labelcoords {407.0 452.0}
-    interface-peer {eth0 n8}
-    interface-peer {eth1 n12}
-}
-
-node n11 {
-    type router
-    model host
-    network-config {
-	hostname n11
-	!
-	interface eth0
-	 ip address 10.0.5.10/24
-	 ipv6 address 2001:5::10/64
-	!
-    }
-    canvas c1
-    iconcoords {549.0 323.0}
-    labelcoords {549.0 355.0}
-    interface-peer {eth0 n9}
-}
-
-node n12 {
-    type router
-    model host
-    network-config {
-	hostname n12
-	!
-	interface eth0
-	 ip address 10.0.6.10/24
-	 ipv6 address 2001:6::10/64
-	!
-    }
-    canvas c1
-    iconcoords {554.0 457.0}
-    labelcoords {554.0 489.0}
-    interface-peer {eth0 n10}
+link l1 {
+    nodes {n5 n4}
 }
 
 link l2 {
-    nodes {n3 n7}
-    bandwidth 0
+    nodes {n9 n11}
 }
 
 link l3 {
+    nodes {n10 n12}
+}
+
+link l4 {
+    nodes {n3 n7}
+}
+
+link l5 {
     color blue
     nodes {n7 n5}
 }
 
-link l4 {
-    color Blue
-    nodes {n7 n6}
-}
-
-link l5 {
-    nodes {n6 n2}
-    bandwidth 0
-}
-
 link l6 {
-    nodes {n5 n4}
-    bandwidth 0
+    color blue
+    nodes {n7 n6}
 }
 
 link l7 {
     nodes {n3 n8}
-    bandwidth 0
 }
 
 link l8 {
@@ -394,17 +479,12 @@ link l8 {
 }
 
 link l9 {
-    color Blue
+    color blue
     nodes {n8 n10}
 }
 
 link l10 {
-    nodes {n9 n11}
-    bandwidth 0
-}
-
-link l11 {
-    nodes {n10 n12}
+    nodes {n6 n2}
     bandwidth 0
 }
 
@@ -500,7 +580,7 @@ annotation a8 {
     label {1. Open 4 terminals from r1}
     labelcolor black
     fontfamily {Arial}
-    fontsize 12
+    fontsize {12}
     canvas c1
 }
 
@@ -575,7 +655,7 @@ python3 /home/researchdev/cdes/cdes_loader.py &
 option global {
     interface_names no
     ip_addresses yes
-    ipv6_addresses yes
+    ipv6_addresses no
     node_labels yes
     link_labels yes
     show_api yes
@@ -586,5 +666,16 @@ option global {
 }
 
 option session {
+    controlnet=
+    controlnet0=
+    controlnet1=
+    controlnet2=
+    controlnet3=
+    controlnet_updown_script=
+    enablerj45=1
+    enablesdt=0
+    ovs=0
+    preservedir=0
+    sdturl=tcp://127.0.0.1:50000/
 }
 

@@ -20,10 +20,6 @@ This system works by leveraging external calls to the CORE-daemon through use of
 This system is based on the following node constructs:
 * Conditional Connection Decision Node (CC_Decision Node): An address-less node that runs logic for determining which connections should be enabled/disabled based on three subcomponents: the Monitor, Trigger, and Swapper
 
-* Conditional Connection Node (CC_Node): A node that is connected to the CC_Decision Node. The connection to this node is dependent on the underlying logic defined in the Decision Node
-
-* Conditional Connection Gateway (CC_GW): A node that is also connected to the CC_Decision Node, but whose connection is connected throughout the emulation. This node may be used for more complex swapping behavior, e.g., using routes, software defined networking, etc. to redirect traffic.
-
 ### Limitations
 * For CDES to work correctly, only a single instance of CORE and a single session is allowed. 
 * When using the default Trigger, there is a short time at the start of the emulation when all conditional links will be enabled (roughly 3-4 seconds).

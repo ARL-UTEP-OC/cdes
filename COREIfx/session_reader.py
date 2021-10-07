@@ -94,6 +94,9 @@ class SessionReader():
             #find all devices (non-switch/hub/wireless) and identify their name/id mappings and services
             logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding devices")
             for device in root.find('devices').findall('device'):
+                if device.attrib["type"] == "cc_dec_node_ovs":
+                    switches.append(device)
+                    switch_ids.append(device.attrib["id"])
                 #keep track of mappings
                 name_id_map[device.attrib["name"]] = device.attrib["id"]
                 services = ""
@@ -101,15 +104,6 @@ class SessionReader():
                     services += " " + str(service.attrib["name"])
                 #store the services that are enabled for this device
                 device_services[device.attrib["id"]] = services
-
-            logging.debug("SessionReader(): relevant_session_to_JSON(): " + "finding switches")
-            #find switch type nodes (the type "SWITCH") and then store the name/id mappings
-            for node in root.find('networks').findall('network'):
-                if node.attrib["type"] == "SWITCH":
-                    switches.append(node)
-                    switch_ids.append(node.attrib["id"])
-                    #keep track of mappings
-                    name_id_map[node.attrib["name"]] = node.attrib["id"]
 
             #find service files for switch type nodes and then store them
             services = root.find('service_configurations')
@@ -135,39 +129,36 @@ class SessionReader():
 
             #now obtain the "enabled" services for all switch nodes
             logging.debug("SessionReader(): relevant_session_to_JSON(): " + "obtaining enabled services for switches")
-            data = iparser.get_file_data()       
-            switch_services = iparser.extract_lanswitch_services(data)
 
             logging.debug("SessionReader(): relevant_session_to_JSON():Switch services found: " + str(switch_services)) 
 
             #Iterating through all switch nodes to consolidate source files and conditional connections
             for node in switches:
-                logging.debug("SessionReader(): relevant_session_to_JSON(): " + "traversing through switches; processing CC_DecisionNode")
-                node_id = node.attrib["id"]
+                logging.debug("SessionReader(): relevant_session_to_JSON(): " + "traversing through switches; processing CC_DecisionNode_OVS")
+                cc_dec_node_number = node.attrib["id"]
                 #check if this is a decision node
                 #if it isn't move on to the next switch
-                if "CC_DecisionNode" not in switch_services[node_id]:
+                if "CC_DecisionNode_OVS" not in device_services[cc_dec_node_number]:
                     continue
 
                 #get the source code for files
                 #First get data from xml file
                 #if it's not there, then it means that values are from default, so we use coresendmsg
-                if (node_id, "CC_DecisionNode", "MyMonitor.sh") in switch_service_configurations:
-                    monitor_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyMonitor.sh")]
+                if (cc_dec_node_number, "CC_DecisionNode_OVS", "MyMonitor.sh") in switch_service_configurations:
+                    monitor_code = switch_service_configurations[(cc_dec_node_number, "CC_DecisionNode_OVS", "MyMonitor.sh")]
                 else: 
-                    monitor_code = self.get_node_file(node_id, "CC_DecisionNode", "MyMonitor.sh")
-                if (node_id, "CC_DecisionNode", "MyTrigger.py") in switch_service_configurations:
-                    trigger_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MyTrigger.py")]
+                    monitor_code = self.get_node_file(cc_dec_node_number, "CC_DecisionNode_OVS", "MyMonitor.sh")
+                if (cc_dec_node_number, "CC_DecisionNode_OVS", "MyTrigger.py") in switch_service_configurations:
+                    trigger_code = switch_service_configurations[(cc_dec_node_number, "CC_DecisionNode_OVS", "MyTrigger.py")]
                 else: 
-                    trigger_code = self.get_node_file(node_id, "CC_DecisionNode", "MyTrigger.py")
-                if (node_id, "CC_DecisionNode", "MySwapper.py") in switch_service_configurations:
-                    swapper_code = switch_service_configurations[(node_id, "CC_DecisionNode", "MySwapper.py")]
+                    trigger_code = self.get_node_file(cc_dec_node_number, "CC_DecisionNode_OVS", "MyTrigger.py")
+                if (cc_dec_node_number, "CC_DecisionNode_OVS", "MySwapper.py") in switch_service_configurations:
+                    swapper_code = switch_service_configurations[(cc_dec_node_number, "CC_DecisionNode_OVS", "MySwapper.py")]
                 else: 
-                    swapper_code = self.get_node_file(node_id, "CC_DecisionNode", "MySwapper.py")
-                    
+                    swapper_code = self.get_node_file(cc_dec_node_number, "CC_DecisionNode_OVS", "MySwapper.py")
+
                 #setup entry for node
                 conditional_conn = {}
-                cc_node_number = node.attrib["id"]            
                 conditional_conn["name"] = node.attrib["name"]
                 conditional_conn["MyMonitor.sh"] = monitor_code
                 conditional_conn["MyTrigger.py"] = trigger_code
@@ -175,58 +166,62 @@ class SessionReader():
 
                 logging.debug("SessionReader(): relevant_session_to_JSON(): Processing node: " + str(conditional_conn))
 
-                #now find all connected nodes and whether they're cc_gw or cc_node; store associated data
-                
+                #now find all connected nodes                
                 connected_nodes = []
                 for link in links:
                     connected_node = {}
-                    #logging.debug("Checking:" + str(link.attrib["node_one"] + " == " + cc_node_number))
-                    if link.attrib["node_one"] == cc_node_number:
-                        connected_node["number"] = link.attrib["node_two"]
-                    if link.attrib["node_two"] == cc_node_number:
-                        connected_node["number"] = link.attrib["node_one"]
+                    #find interface for node connected to switch
+                    if link.attrib["node1"] == cc_dec_node_number:
+                        connected_node["number"] = link.attrib["node2"]
+                        cc_dec_node_ifx = link.find("iface1")
+                        cc_node_ifx = link.find("iface2")
+                    if link.attrib["node2"] == cc_dec_node_number:
+                        connected_node["number"] = link.attrib["node1"]
+                        cc_dec_node_ifx = link.find("iface2")
+                        cc_node_ifx = link.find("iface1")
                     if "number" not in connected_node:
                         continue
+                    connected_node["node_type"] = "SWITCH"
+                    #wlan, switch, don't have ifx information
+                    if cc_node_ifx != None:
+                        #if we do have ifx information, we know it's a layer 3 model (router)
+                        connected_node["node_type"] = "router"
+                        #found a connection, now we have to add all details 
+                        #process remote node (cc_node)
+                        connected_node["cc_nic"] = cc_node_ifx.attrib["name"]
+                        connected_node["cc_mac"] = cc_node_ifx.attrib["mac"]
+                        if "ip4" in cc_node_ifx.attrib:
+                            connected_node["cc_ip4"] = cc_node_ifx.attrib["ip4"]
+                            connected_node["cc_ip4_mask"] = cc_node_ifx.attrib["ip4_mask"]
+                        if "ip6" in cc_node_ifx.attrib:
+                            connected_node["cc_ip6"] = cc_node_ifx.attrib["ip6"]
+                            connected_node["cc_ip6_mask"] = cc_node_ifx.attrib["ip6_mask"]
+                    #by default we consider this a cc_node
+                    connected_node["role"] = "cc_node"
+                    # #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
+                    # if connected_node["number"] in device_services:
+                    #     if "CC_Node" in device_services[connected_node["number"]]:
+                    #         #we know this is a good node
+                    #         connected_node["role"] = "cc_node"
 
-                    ifx = link.find("interface_one")
-                    if ifx == None:
-                        ifx = link.find("interface_two")
-                        if ifx == None:
-                            continue
-                        #found a connection, now we have to add all details
-                        #get the type of the node
-                        if connected_node["number"] in switch_ids:
-                            #switch to switch conns won't have any other useful information
-                            connected_node["node_type"] = "SWITCH"
-                        else:
-                            #switch to node will have additional useful information
-                            connected_node["node_type"] = "other"
-                            connected_node["cc_nic"] = ifx.attrib["name"]
-                            connected_node["cc_mac"] = ifx.attrib["mac"]
-                            connected_node["cc_ip4"] = ifx.attrib["ip4"]
-                            connected_node["cc_ip4_mask"] = ifx.attrib["ip4_mask"]
-                            if "ip6" in ifx.attrib:
-                                connected_node["cc_ip6"] = ifx.attrib["ip6"]
-                                connected_node["cc_ip6_mask"] = ifx.attrib["ip6_mask"]
-                        
-                        #by default we consider this a cc_gw node, but we'll figure out if it's a cc_node next
-                        connected_node["role"] = "cc_gw"
+                    # #now check if the connected switches/nets have the CC_Node service enabled
+                    # if connected_node["number"] in switch_services:
+                    #     if "CC_Node" in switch_services[connected_node["number"]]:
+                    #         #we know this is a good node
+                    #         connected_node["role"] = "cc_node"
 
-                        #if node has the CC_Node service enabled, then we know this is a cc_node; otherwise, it's a gw
-                        ##TODO REPLACE DEVICE TRAVERSAL
-                        if connected_node["number"] in device_services:
-                            if "CC_Node" in device_services[connected_node["number"]]:
-                                #we know this is a good node
-                                connected_node["role"] = "cc_node"
+                    #add information about the cc_dec node associated with this link
+                    connected_node["cc_dec_nic"] = cc_dec_node_ifx.attrib["name"]
+                    connected_node["cc_dec_mac"] = cc_dec_node_ifx.attrib["mac"]
+                    if "ip4" in cc_dec_node_ifx.attrib:
+                        connected_node["cc_dec_ip4"] = cc_dec_node_ifx.attrib["ip4"]
+                        connected_node["cc_dec_ip4_mask"] = cc_dec_node_ifx.attrib["ip4_mask"]
+                    if "ip6" in cc_dec_node_ifx.attrib:
+                        connected_node["cc_dec_ip6"] = cc_dec_node_ifx.attrib["ip6"]
+                        connected_node["cc_dec_ip6_mask"] = cc_dec_node_ifx.attrib["ip6_mask"]
 
-                        #now check if the connected switches/nets have the CC_Node service enabled
-                        if connected_node["number"] in switch_services:
-                            if "CC_Node" in switch_services[connected_node["number"]]:
-                                #we know this is a good node
-                                connected_node["role"] = "cc_node"
-
-                        connected_node["connected"] = "False"
-                        connected_nodes.append(connected_node)
+                    connected_node["connected"] = "False"
+                    connected_nodes.append(connected_node)
                 conditional_conn["connected_nodes"] = connected_nodes
                 conditional_conns[node.attrib["id"]] = conditional_conn
             return conditional_conns
@@ -258,9 +253,6 @@ class SessionReader():
                 code_section = True
                 file_code += code_line.split("DATA: ")[1] + "\n"
                 continue
-            if "NODE: " in code_line:
-                code_section = False
-                break
             if code_section:
                 file_code += code_line + "\n"
         return file_code

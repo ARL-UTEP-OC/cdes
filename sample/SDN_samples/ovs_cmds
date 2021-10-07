@@ -1,0 +1,92 @@
+ovs-vsctl add-br ovsbr0 #-- set Bridge ovsbr0 fail-mode=secure
+
+watch -n 1 ovs-ofctl dump-flows ovsbr0
+
+ovs-vsctl -- --columns=name,ofport list Interface
+
+ovs-ofctl add-flow ovsbr0 priority=1000,in_port=1,action=output:2
+ovs-ofctl add-flow ovsbr0 priority=1000,in_port=2,action=output:1
+ovs-ofctl add-flow ovsbr0 priority=1000,in_port=3,action=output:4
+ovs-ofctl add-flow ovsbr0 priority=1000,in_port=4,action=output:3
+ovs-ofctl add-flow tcp:10.10.0.1:6633 ip,nw_src=1.1.1.1/24,actions=output:all
+ovs-ofctl add-flow ovsbr0 ip,nw_dst=10.0.4.1/24,actions=output:all
+
+curl -X GET http://localhost:8080/stats/switches
+
+curl -X POST -d '{
+    "dpid": 11141206,
+    "cookie": 1,
+    "cookie_mask": 1,
+    "table_id": 0,
+    "idle_timeout": 0,
+    "hard_timeout": 0,
+    "priority": 1000,
+    "flags": 1,
+    "match":{
+        "in_port":1
+    },
+    "instructions": [
+        {
+            "type": "APPLY_ACTIONS",
+            "actions": [
+                {
+                    "max_len": 65535,
+                    "port": 2,
+                    "type": "OUTPUT"
+                }
+            ]
+        }
+    ]
+ }' http://localhost:8080/stats/flowentry/add
+
+curl -X DELETE http://localhost:8080/stats/flowentry/clear/11141200
+
+curl -X GET http://localhost:8080/stats/port/11141200
+
+
+-------------------
+#make sure directories exist (private/per-node)
+/etc/openvswitch
+/var/run/openvswitch
+/var/log/openvswitch
+
+#Start service
+/etc/init.d/openvswitch-switch start < /dev/null
+
+https://northboundnetworks.com/blogs/sdn/what-is-open-vswitch
+
+ovs-vsctl add-br mybridge
+ovs-vsctl show
+ifconfig mybridge up
+
+ovs-vsctl add-port mybridge eth0
+ovs-vsctl show
+
+ifconfig eth0 0
+dhclient mybridge
+
+route -n
+
+####following aren't really needed if we're just tying in the interfaces/don't need more than 1 per interface
+ip tuntap add mode tap vport1
+ip tuntap add mode tap vport2
+
+ifconfig vport1 up
+ifconfig vport2 up
+
+ovs-vsctl add-port mybridge vport1 -- ovs-vsctl add-port mybridge vport2
+ovs-vsctl show
+####
+
+ovs-appctl fdb/show mybridge (show MAC table)
+ovs-ofctl show mybridge (show ports with names)
+
+ovs-ofctl dump-flows mybridge (single flow by default with normal action = normal L2 forwarding)
+
+ip route add default dev mybridge
+ovs-ofctl add-flow mybridge ip,nw_dst=10.0.1.2/24,actions=output:2
+ovs-ofctl add-flow mybridge ip,nw_dst=10.0.0.1/24,actions=output:1
+
+#kill processes on exit
+killall ovs-vswitchd
+killall ovsdb-server

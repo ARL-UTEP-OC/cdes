@@ -24,9 +24,9 @@ class TimerTrigger(Trigger):
             nodes = self.get_cc_node_numbers()
             #set active node every 10 seconds
             if new_time % 20 == 0:
-                self.set_active_conn(nodes[1])                
+                self.set_active_conn("eth1")                
             elif new_time %10 == 0:
-                self.set_active_conn(nodes[0])    
+                self.set_active_conn("eth0")    
     
 if __name__ == '__main__':
    
@@ -37,7 +37,6 @@ if __name__ == '__main__':
         logging.error("Usage: python controller.py <session-number>")
         exit()       
 
-    #sample: conditional_conns = {"4": {"cc_gw": "1", "cc_nodes": {"5": False, "2": False} } }
     sr = SessionReader(sys.argv[1])
     conditional_conns = sr.relevant_session_to_JSON()
 
