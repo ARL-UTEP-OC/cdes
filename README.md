@@ -33,11 +33,11 @@ This system is based on the following node constructs:
 ### Installation
 CIT-GEN has been tested on:
 * Ubuntu 16.04 LTE (64-bit)
-* CORE (4.7+) 
+* CORE (7.2+) 
 
 ##### Requirements
 * [Python 3.6 ](https://www.python.org/downloads/release/python-369/)
-* [CORE >= v6.3b+] (6.3b included in the source)
+* [CORE >= v7.2+] 
 * Additional python Modules as specified in requirements.txt
 
 ##### Linux
